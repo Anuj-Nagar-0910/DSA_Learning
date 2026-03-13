@@ -3,7 +3,7 @@ This Repo consists of the Learnings and know how's about the DSA that I learn an
 
 ## Basic Terminology used in DSA
 ---
-1️⃣ What is Time Complexity?
+### What is Time Complexity?
 
 Time Complexity means:
 
@@ -28,8 +28,7 @@ What Does the Big O Mean?
 | O(2ⁿ)      | exponential        |
 | O(3ⁿ)      | very slow          |
 ---
-
-3️⃣ What is Space Complexity?
+### What is Space Complexity?
 
 Space complexity means:
 
@@ -50,4 +49,34 @@ countWays(4)
 │   └── countWays(-1)
 └── countWays(1)
 ```
+---
+### The Universal LEGO Rule
 
+Dynamic Programming always follows this pattern:
+```
+Solution(n) =
+combine(
+   solution(n-1),
+   solution(n-2),
+   solution(n-3)
+)
+```
+We build big solutions using smaller solutions.
+
+#### The Deep Insight
+
+Almost every DP problem in interviews follows this LEGO rule.
+
+Examples:
+| Problem     | Recurrence                |
+| ----------- | ------------------------- |
+| Fibonacci   | F(n)=F(n−1)+F(n−2)        |
+| Stairs      | W(n)=W(n−1)+W(n−2)+W(n−3) |
+| Coin Change | ways(n)=ways(n−coin)      |
+
+Dynamic Programming is actually just:
+```
+Recursion + Memory
+```
+
+---
