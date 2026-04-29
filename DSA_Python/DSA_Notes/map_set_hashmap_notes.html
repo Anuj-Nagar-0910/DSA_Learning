@@ -1,0 +1,730 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.pg{max-width:740px;margin:0 auto;padding:1rem 0.5rem 3rem}
+.nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1.5rem}
+.nav button{font-size:11px;padding:4px 11px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.nav button.on{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.sec{display:none}.sec.on{display:block}
+h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:.75rem}
+h3{font-size:15px;font-weight:500;color:var(--color-text-primary);margin:1.1rem 0 .4rem}
+p,li{font-size:13px;line-height:1.7;color:var(--color-text-secondary)}
+ul{padding-left:1.15rem;margin-bottom:.6rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:.9rem}
+.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;margin:2px;font-weight:500}
+.tb{background:#E6F1FB;color:#0C447C}.tg{background:#EAF3DE;color:#27500A}.ta{background:#FAEEDA;color:#633806}.tp{background:#EEEDFE;color:#3C3489}.tr{background:#FCEBEB;color:#791F1F}.tq{background:#E1F5EE;color:#085041}
+.tip{border-left:3px solid #7F77DD;background:#EEEDFE;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.55rem .9rem;margin:.5rem 0}
+.tip p{color:#3C3489;font-size:13px}
+.warn{border-left:3px solid #EF9F27;background:#FAEEDA;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.55rem .9rem;margin:.5rem 0}
+.warn p{color:#633806;font-size:13px}
+.good{border-left:3px solid #97C459;background:#EAF3DE;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.55rem .9rem;margin:.5rem 0}
+.good p{color:#27500A;font-size:13px}
+pre,code{font-family:var(--font-mono)}
+.cb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.7rem 1rem;font-size:12.5px;overflow-x:auto;margin:.4rem 0 .7rem;line-height:1.65;white-space:pre}
+.kw{color:#7F77DD}.fn{color:#1D9E75}.cm{color:#888780;font-style:italic}.st{color:#D85A30}.nm{color:#BA7517}
+.ic{font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);padding:1px 6px;border-radius:4px;color:var(--color-text-primary)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:.4rem 0 .7rem}
+th{background:var(--color-background-secondary);font-weight:500;font-size:11.5px;text-align:left;padding:7px 10px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+td{padding:6px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+tr:last-child td{border-bottom:none}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:.75rem}
+.met{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem 1rem}
+.met .lb{font-size:11px;color:var(--color-text-tertiary);margin-bottom:2px}
+.met .vl{font-size:19px;font-weight:500;color:var(--color-text-primary);font-family:var(--font-mono)}
+.qb button{display:block;width:100%;text-align:left;padding:7px 11px;margin-bottom:5px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.qb button:hover{border-color:var(--color-border-primary);color:var(--color-text-primary)}
+.qb button.ok{background:#EAF3DE;border-color:#97C459;color:#27500A}
+.qb button.no{background:#FCEBEB;border-color:#F09595;color:#791F1F}
+.qfb{font-size:12.5px;min-height:18px;margin-top:4px;color:var(--color-text-secondary)}
+.sbar{height:7px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden;margin-top:5px}
+.sfill{height:100%;background:#97C459;border-radius:4px;transition:width .4s}
+.hash-bucket{min-height:40px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:4px 8px;margin:3px 0;font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.hash-item{background:#E6F1FB;color:#0C447C;border-radius:4px;padding:2px 7px;font-size:11.5px;font-weight:500;animation:pop .25s ease}
+.hash-chain{background:#FAEEDA;color:#633806;border-radius:4px;padding:2px 7px;font-size:11.5px;font-weight:500}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.freq-bar{display:flex;align-items:center;gap:8px;margin:3px 0}
+.fb-lbl{font-size:12px;color:var(--color-text-secondary);width:80px;text-align:right;flex-shrink:0;font-family:var(--font-mono)}
+.fb-trk{flex:1;height:18px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden}
+.fb-fill{height:100%;border-radius:4px;background:#378ADD;transition:width .35s}
+.fb-val{font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);min-width:28px}
+.step-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem 1rem;font-size:13px;min-height:46px;color:var(--color-text-secondary);line-height:1.7;margin-top:.5rem}
+.sbtns{display:flex;gap:7px;margin-top:.6rem}
+.sbtns button{font-size:12.5px;padding:4px 13px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:3px 11px;border:0.5px solid var(--color-border-tertiary);border-radius:20px;margin:2px 2px 4px;color:var(--color-text-secondary);background:var(--color-background-primary)}
+.hl{color:var(--color-text-primary);font-weight:500}
+</style>
+
+<div class="pg">
+<h2 style="font-size:22px;margin-bottom:1rem">Map, Set, HashMap, HashSet — Python Notes</h2>
+
+<nav class="nav">
+  <button class="on" onclick="show('intuition',this)">Intuition</button>
+  <button onclick="show('defs',this)">Definitions</button>
+  <button onclick="show('hashing',this)">Hashing</button>
+  <button onclick="show('compare',this)">Comparison</button>
+  <button onclick="show('pyapi',this)">Python API</button>
+  <button onclick="show('ops',this)">Operations</button>
+  <button onclick="show('complexity',this)">Complexity</button>
+  <button onclick="show('patterns',this)">Patterns</button>
+  <button onclick="show('problems',this)">Problems</button>
+  <button onclick="show('quiz',this)">Quiz</button>
+  <button onclick="show('tips',this)">Tips</button>
+</nav>
+
+<!-- INTUITION -->
+<div id="intuition" class="sec on">
+  <h2>Intuition — real-life analogies</h2>
+  <div class="g2">
+    <div class="card">
+      <span class="tag tb">Map / dict</span>
+      <h3 style="margin-top:.5rem">Phonebook</h3>
+      <p>Name (key) → Phone number (value). You look up a name, instantly get the number. No scanning through all entries — jump straight to it.</p>
+      <p style="margin-top:.4rem"><span class="hl">Key insight:</span> pairs of (key, value). Every key is unique. Values can repeat.</p>
+    </div>
+    <div class="card">
+      <span class="tag tg">Set</span>
+      <h3 style="margin-top:.5rem">Guest list</h3>
+      <p>A list of unique attendees. You care only about membership — is this person invited? No duplicates. No order matters.</p>
+      <p style="margin-top:.4rem"><span class="hl">Key insight:</span> uniqueness only. No values, no order, just existence.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">When to use which?</h3>
+    <table>
+      <tr><th>Question</th><th>Use</th><th>Why</th></tr>
+      <tr><td>"Does X exist?"</td><td><span class="tag tg">Set</span></td><td>O(1) membership check</td></tr>
+      <tr><td>"What is the value for X?"</td><td><span class="tag tb">Dict</span></td><td>Key → value lookup</td></tr>
+      <tr><td>"How many times does X appear?"</td><td><span class="tag tb">Dict</span></td><td>Frequency counting</td></tr>
+      <tr><td>"Find duplicates / unique items"</td><td><span class="tag tg">Set</span></td><td>Auto-deduplication</td></tr>
+      <tr><td>"Group items by category"</td><td><span class="tag tb">Dict</span></td><td>Key = category, val = list</td></tr>
+      <tr><td>"Common items between two groups"</td><td><span class="tag tg">Set</span></td><td>intersection()</td></tr>
+    </table>
+  </div>
+  <div class="tip"><p>The core rule: if you need to associate a value with a key → dict. If you only need to know presence/absence → set.</p></div>
+</div>
+
+<!-- DEFINITIONS -->
+<div id="defs" class="sec">
+  <h2>Definitions</h2>
+  <div class="card">
+    <h3 style="margin-top:0">Map (Python: <span class="ic">dict</span>)</h3>
+    <p>A collection of <span class="hl">key-value pairs</span> where each key is unique. Implemented internally as a hash table.</p>
+    <div class="cb"><span class="cm"># Python dict = HashMap</span>
+phonebook = {<span class="st">"Alice"</span>: <span class="nm">9876</span>, <span class="st">"Bob"</span>: <span class="nm">1234</span>}
+<span class="cm"># key="Alice", value=9876</span></div>
+    <table>
+      <tr><th>Property</th><th>dict</th></tr>
+      <tr><td>Keys unique?</td><td>Yes — duplicate key overwrites</td></tr>
+      <tr><td>Values unique?</td><td>No — duplicates allowed</td></tr>
+      <tr><td>Ordered?</td><td>Yes (insertion order, Python 3.7+)</td></tr>
+      <tr><td>Mutable?</td><td>Yes — add, update, delete freely</td></tr>
+      <tr><td>Key type requirement</td><td>Must be hashable (immutable)</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Set (Python: <span class="ic">set</span>)</h3>
+    <p>An <span class="hl">unordered collection of unique elements</span>. Internally, it's a hash table that only stores keys (no values).</p>
+    <div class="cb">guests = {<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Alice"</span>}
+<span class="fn">print</span>(guests) <span class="cm"># {'Alice', 'Bob'} — deduped</span></div>
+    <table>
+      <tr><th>Property</th><th>set</th></tr>
+      <tr><td>Elements unique?</td><td>Yes — automatically</td></tr>
+      <tr><td>Ordered?</td><td>No — no guaranteed order</td></tr>
+      <tr><td>Mutable?</td><td>Yes (use frozenset for immutable)</td></tr>
+      <tr><td>Element type</td><td>Must be hashable</td></tr>
+    </table>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <span class="tag tb">HashMap</span>
+      <p style="margin-top:.5rem">Conceptual name used in CS/Java. In Python, <span class="ic">dict</span> IS the HashMap. Same O(1) operations, same hash table internals.</p>
+    </div>
+    <div class="card">
+      <span class="tag tg">HashSet</span>
+      <p style="margin-top:.5rem">Conceptual name used in CS/Java. In Python, <span class="ic">set</span> IS the HashSet. A hash table storing only keys.</p>
+    </div>
+  </div>
+  <div class="warn"><p>Java/C++ say HashMap/HashSet. Python says dict/set. They're the same concept — tell interviewers you know both.</p></div>
+</div>
+
+<!-- HASHING -->
+<div id="hashing" class="sec">
+  <h2>Hashing — interactive visualizer</h2>
+  <div class="card">
+    <h3 style="margin-top:0">How it works (high-level)</h3>
+    <p>A hash function converts any key into an integer index. That index tells Python exactly which bucket to put/find the value — no searching needed.</p>
+    <div class="cb"><span class="cm"># Python internally does something like:</span>
+index = <span class="fn">hash</span>(key) % num_buckets
+table[index] = value  <span class="cm"># O(1) — direct placement</span></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Try it — hash visualizer</h3>
+    <div style="display:flex;gap:8px;margin-bottom:.75rem;align-items:center">
+      <input id="hash-input" type="text" placeholder='Type a key, e.g. "Alice"' style="flex:1;font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans)" oninput="doHash()">
+      <button onclick="addToTable()" style="font-size:12.5px;padding:5px 14px">Add to table</button>
+      <button onclick="clearTable()" style="font-size:12.5px;padding:5px 14px">Clear</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:.75rem;flex-wrap:wrap">
+      <div class="met" style="flex:1"><div class="lb">hash(key)</div><div class="vl" id="hv-raw" style="font-size:14px">—</div></div>
+      <div class="met" style="flex:1"><div class="lb">bucket (hash % 8)</div><div class="vl" id="hv-bucket">—</div></div>
+      <div class="met" style="flex:1"><div class="lb">items stored</div><div class="vl" id="hv-count">0</div></div>
+    </div>
+    <div id="hash-buckets"></div>
+    <div class="tip" style="margin-top:.5rem"><p>Collision: two keys land in the same bucket. Python handles this via open addressing — it finds the next free slot.</p></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Hashable vs unhashable</h3>
+    <table>
+      <tr><th>Type</th><th>Hashable?</th><th>Can be a dict key / set element?</th></tr>
+      <tr><td><span class="ic">int, float, str, tuple</span></td><td><span class="tag tg">Yes</span></td><td>Yes</td></tr>
+      <tr><td><span class="ic">bool, None</span></td><td><span class="tag tg">Yes</span></td><td>Yes</td></tr>
+      <tr><td><span class="ic">list</span></td><td><span class="tag tr">No</span></td><td>No — TypeError</td></tr>
+      <tr><td><span class="ic">dict</span></td><td><span class="tag tr">No</span></td><td>No — TypeError</td></tr>
+      <tr><td><span class="ic">set</span></td><td><span class="tag tr">No</span></td><td>No (use frozenset)</td></tr>
+    </table>
+    <div class="cb"><span class="cm"># This FAILS:</span>
+d = {[<span class="nm">1</span>,<span class="nm">2</span>]: <span class="st">"value"</span>}  <span class="cm"># TypeError: unhashable type: 'list'</span>
+<span class="cm"># Fix: use tuple as key</span>
+d = {(<span class="nm">1</span>,<span class="nm">2</span>): <span class="st">"value"</span>}  <span class="cm"># OK</span></div>
+  </div>
+</div>
+
+<!-- COMPARE -->
+<div id="compare" class="sec">
+  <h2>Map vs Set vs List vs Tuple</h2>
+  <div class="card">
+    <table style="table-layout:fixed">
+      <tr><th style="width:18%">Feature</th><th style="width:20%">dict</th><th style="width:18%">set</th><th style="width:22%">list</th><th style="width:22%">tuple</th></tr>
+      <tr><td>Stores</td><td>key-value pairs</td><td>unique elements</td><td>ordered elements</td><td>ordered elements</td></tr>
+      <tr><td>Ordered?</td><td>Yes (3.7+)</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Duplicates?</td><td>Values yes, keys no</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Mutable?</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+      <tr><td>Lookup</td><td>O(1) by key</td><td>O(1) membership</td><td>O(n) search</td><td>O(n) search</td></tr>
+      <tr><td>Index access?</td><td>By key only</td><td>No</td><td>Yes (d[i])</td><td>Yes (d[i])</td></tr>
+      <tr><td>Use when</td><td>key→value map</td><td>unique items</td><td>ordered sequence</td><td>immutable sequence</td></tr>
+      <tr><td>Memory</td><td>High</td><td>Medium-high</td><td>Low</td><td>Lowest</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Literal syntax</h3>
+    <div class="cb">d = {<span class="st">"a"</span>: <span class="nm">1</span>, <span class="st">"b"</span>: <span class="nm">2</span>}  <span class="cm"># dict</span>
+s = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>}          <span class="cm"># set</span>
+l = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]          <span class="cm"># list</span>
+t = (<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>)          <span class="cm"># tuple</span>
+e = {}                   <span class="cm"># EMPTY DICT, not set!</span>
+es = <span class="fn">set</span>()              <span class="cm"># empty set (must use set())</span></div>
+    <div class="warn"><p>Common mistake: <span class="ic">{}</span> creates an empty dict, NOT a set. Always use <span class="ic">set()</span> for an empty set.</p></div>
+  </div>
+</div>
+
+<!-- PYTHON API -->
+<div id="pyapi" class="sec">
+  <h2>Python API — dict and set</h2>
+  <div class="card">
+    <h3 style="margin-top:0">dict methods</h3>
+    <table>
+      <tr><th>Method</th><th>What it does</th><th>Returns</th></tr>
+      <tr><td><span class="ic">d.get(k, default)</span></td><td>Get value, no KeyError if missing</td><td>value or default</td></tr>
+      <tr><td><span class="ic">d.keys()</span></td><td>All keys</td><td>dict_keys view</td></tr>
+      <tr><td><span class="ic">d.values()</span></td><td>All values</td><td>dict_values view</td></tr>
+      <tr><td><span class="ic">d.items()</span></td><td>All (key, value) pairs</td><td>dict_items view</td></tr>
+      <tr><td><span class="ic">d.update(other)</span></td><td>Merge another dict in</td><td>None</td></tr>
+      <tr><td><span class="ic">d.pop(k, default)</span></td><td>Remove key, return value</td><td>value or default</td></tr>
+      <tr><td><span class="ic">d.setdefault(k, v)</span></td><td>Get key; insert v if missing</td><td>existing or new value</td></tr>
+      <tr><td><span class="ic">k in d</span></td><td>Membership test O(1)</td><td>bool</td></tr>
+    </table>
+    <div class="cb"><span class="cm"># get() vs direct access</span>
+d = {<span class="st">"a"</span>: <span class="nm">1</span>}
+d[<span class="st">"b"</span>]          <span class="cm"># KeyError!</span>
+d.get(<span class="st">"b"</span>, <span class="nm">0</span>)   <span class="cm"># 0 — safe default</span>
+
+<span class="cm"># setdefault — very useful for grouping</span>
+d = {}
+d.setdefault(<span class="st">"fruits"</span>, []).append(<span class="st">"apple"</span>)
+d.setdefault(<span class="st">"fruits"</span>, []).append(<span class="st">"mango"</span>)
+<span class="cm"># d = {"fruits": ["apple", "mango"]}</span>
+
+<span class="cm"># items() iteration (most common pattern)</span>
+<span class="kw">for</span> k, v <span class="kw">in</span> d.items():
+    <span class="fn">print</span>(k, v)</div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">set methods</h3>
+    <table>
+      <tr><th>Method</th><th>What it does</th><th>Alt syntax</th></tr>
+      <tr><td><span class="ic">s.add(x)</span></td><td>Add element</td><td>—</td></tr>
+      <tr><td><span class="ic">s.remove(x)</span></td><td>Remove — KeyError if missing</td><td>—</td></tr>
+      <tr><td><span class="ic">s.discard(x)</span></td><td>Remove — no error if missing</td><td>—</td></tr>
+      <tr><td><span class="ic">s.union(t)</span></td><td>All elements from both</td><td><span class="ic">s | t</span></td></tr>
+      <tr><td><span class="ic">s.intersection(t)</span></td><td>Elements in both</td><td><span class="ic">s & t</span></td></tr>
+      <tr><td><span class="ic">s.difference(t)</span></td><td>In s but not in t</td><td><span class="ic">s - t</span></td></tr>
+      <tr><td><span class="ic">s.issubset(t)</span></td><td>All of s in t?</td><td><span class="ic">s <= t</span></td></tr>
+      <tr><td><span class="ic">x in s</span></td><td>Membership O(1)</td><td>—</td></tr>
+    </table>
+    <div class="cb">a = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>}
+b = {<span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>}
+a | b   <span class="cm"># {1,2,3,4,5,6}  union</span>
+a & b   <span class="cm"># {3,4}          intersection</span>
+a - b   <span class="cm"># {1,2}          difference</span>
+a ^ b   <span class="cm"># {1,2,5,6}      symmetric difference</span>
+
+<span class="cm"># discard vs remove</span>
+a.discard(<span class="nm">99</span>)  <span class="cm"># silent — no error</span>
+a.remove(<span class="nm">99</span>)   <span class="cm"># KeyError!</span></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Useful extras</h3>
+    <div class="cb"><span class="kw">from</span> collections <span class="kw">import</span> defaultdict, Counter
+
+<span class="cm"># defaultdict — no KeyError on missing keys</span>
+freq = defaultdict(<span class="fn">int</span>)
+freq[<span class="st">"a"</span>] += <span class="nm">1</span>   <span class="cm"># no init needed</span>
+
+<span class="cm"># Counter — frequency dict in one line</span>
+c = Counter(<span class="st">"banana"</span>)
+<span class="cm"># Counter({'a':3,'n':2,'b':1})</span>
+c.most_common(<span class="nm">2</span>)  <span class="cm"># [('a',3),('n',2)]</span></div>
+  </div>
+</div>
+
+<!-- OPERATIONS -->
+<div id="ops" class="sec">
+  <h2>Operations — step through</h2>
+  <div class="card">
+    <h3 style="margin-top:0">dict operations walkthrough</h3>
+    <div id="dict-ops-viz" style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem 1rem;font-family:var(--font-mono);font-size:12.5px;min-height:52px;color:var(--color-text-secondary);margin-bottom:.5rem">Press Next to begin</div>
+    <div id="dict-state" class="step-box" style="margin-top:0">Current dict: {}</div>
+    <div class="sbtns">
+      <button onclick="dictStep()">Next step →</button>
+      <button onclick="dictReset()">Reset</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">All operations — quick reference</h3>
+    <div class="cb"><span class="cm"># ── INSERT / UPDATE ─────────────────────</span>
+d = {}
+d[<span class="st">"key"</span>] = <span class="st">"value"</span>       <span class="cm"># O(1)</span>
+d.update({<span class="st">"a"</span>:<span class="nm">1</span>,<span class="st">"b"</span>:<span class="nm">2</span>})   <span class="cm"># O(k) — k items</span>
+
+<span class="cm"># ── DELETE ──────────────────────────────</span>
+<span class="kw">del</span> d[<span class="st">"key"</span>]               <span class="cm"># O(1), KeyError if missing</span>
+d.pop(<span class="st">"key"</span>, <span class="kw">None</span>)         <span class="cm"># O(1), safe</span>
+d.clear()                  <span class="cm"># O(n) wipes all</span>
+
+<span class="cm"># ── SEARCH / LOOKUP ─────────────────────</span>
+<span class="st">"key"</span> <span class="kw">in</span> d                <span class="cm"># O(1) key check</span>
+d.get(<span class="st">"key"</span>, <span class="nm">0</span>)            <span class="cm"># O(1) safe get</span>
+<span class="st">"val"</span> <span class="kw">in</span> d.values()        <span class="cm"># O(n) value scan!</span>
+
+<span class="cm"># ── ITERATION ───────────────────────────</span>
+<span class="kw">for</span> k <span class="kw">in</span> d:               <span class="cm"># O(n) keys</span>
+<span class="kw">for</span> v <span class="kw">in</span> d.values():      <span class="cm"># O(n) values</span>
+<span class="kw">for</span> k,v <span class="kw">in</span> d.items():    <span class="cm"># O(n) pairs ← most common</span>
+
+<span class="cm"># ── SET OPERATIONS ──────────────────────</span>
+s = {<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>}
+s.add(<span class="nm">4</span>)                  <span class="cm"># O(1)</span>
+s.discard(<span class="nm">99</span>)             <span class="cm"># O(1), safe</span>
+<span class="nm">2</span> <span class="kw">in</span> s                    <span class="cm"># O(1) ← beats list!</span></div>
+  </div>
+</div>
+
+<!-- COMPLEXITY -->
+<div id="complexity" class="sec">
+  <h2>Complexity table</h2>
+  <div class="card">
+    <table>
+      <tr><th>Operation</th><th>dict avg</th><th>dict worst</th><th>set avg</th><th>set worst</th></tr>
+      <tr><td>Insert / Add</td><td><span class="tag tg">O(1)</span></td><td><span class="tag ta">O(n)</span></td><td><span class="tag tg">O(1)</span></td><td><span class="tag ta">O(n)</span></td></tr>
+      <tr><td>Delete / Remove</td><td><span class="tag tg">O(1)</span></td><td><span class="tag ta">O(n)</span></td><td><span class="tag tg">O(1)</span></td><td><span class="tag ta">O(n)</span></td></tr>
+      <tr><td>Lookup / Membership</td><td><span class="tag tg">O(1)</span></td><td><span class="tag ta">O(n)</span></td><td><span class="tag tg">O(1)</span></td><td><span class="tag ta">O(n)</span></td></tr>
+      <tr><td>Iteration</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td></tr>
+      <tr><td>union / intersection</td><td>—</td><td>—</td><td>O(m+n)</td><td>O(m+n)</td></tr>
+      <tr><td>Space</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td></tr>
+    </table>
+    <div class="warn"><p>Worst case O(n) happens on many hash collisions (all keys in one bucket). In practice with Python's dict, this is extremely rare.</p></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Dict vs List — why O(1) matters</h3>
+    <div id="comp-viz">
+      <div class="g3" style="margin-bottom:.5rem">
+        <div class="met"><div class="lb">dict lookup n=1M</div><div class="vl" style="color:#27500A">O(1)</div></div>
+        <div class="met"><div class="lb">list scan n=1M</div><div class="vl" style="color:#633806">O(n)</div></div>
+        <div class="met"><div class="lb">speedup factor</div><div class="vl">~1,000,000x</div></div>
+      </div>
+    </div>
+    <div class="tip"><p>O(1) average comes from the hash function mapping directly to the bucket. No iteration needed. This is why <span class="ic">x in my_set</span> beats <span class="ic">x in my_list</span> for large n.</p></div>
+  </div>
+</div>
+
+<!-- PATTERNS -->
+<div id="patterns" class="sec">
+  <h2>Patterns and use cases</h2>
+
+  <div class="card">
+    <h3 style="margin-top:0">Frequency counting — interactive</h3>
+    <div style="display:flex;gap:8px;margin-bottom:.6rem;align-items:center">
+      <input id="freq-input" type="text" value="banana" placeholder='Type a word...' style="flex:1;font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono)" oninput="doFreq()">
+    </div>
+    <div id="freq-bars"></div>
+    <div class="cb"><span class="cm"># Pattern: freq map</span>
+freq = {}
+<span class="kw">for</span> ch <span class="kw">in</span> word:
+    freq[ch] = freq.get(ch, <span class="nm">0</span>) + <span class="nm">1</span>
+<span class="cm"># OR: Counter(word)</span></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">5 essential patterns</h3>
+    <div class="cb"><span class="cm"># 1. Duplicate detection</span>
+seen = <span class="fn">set</span>()
+<span class="kw">def</span> <span class="fn">has_dup</span>(lst):
+    <span class="kw">for</span> x <span class="kw">in</span> lst:
+        <span class="kw">if</span> x <span class="kw">in</span> seen: <span class="kw">return</span> <span class="kw">True</span>
+        seen.add(x)
+    <span class="kw">return</span> <span class="kw">False</span>
+
+<span class="cm"># 2. Two-sum pattern</span>
+<span class="kw">def</span> <span class="fn">two_sum</span>(nums, target):
+    seen = {}  <span class="cm"># val → index</span>
+    <span class="kw">for</span> i, n <span class="kw">in</span> <span class="fn">enumerate</span>(nums):
+        <span class="kw">if</span> target - n <span class="kw">in</span> seen:
+            <span class="kw">return</span> [seen[target-n], i]
+        seen[n] = i
+
+<span class="cm"># 3. Grouping by key</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+groups = defaultdict(<span class="fn">list</span>)
+<span class="kw">for</span> word <span class="kw">in</span> words:
+    groups[<span class="fn">sorted</span>(word)].append(word) <span class="cm"># anagrams</span>
+
+<span class="cm"># 4. Sliding window with set</span>
+<span class="kw">def</span> <span class="fn">longest_unique</span>(s):
+    seen, l, res = <span class="fn">set</span>(), <span class="nm">0</span>, <span class="nm">0</span>
+    <span class="kw">for</span> r, ch <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        <span class="kw">while</span> ch <span class="kw">in</span> seen:
+            seen.discard(s[l]); l += <span class="nm">1</span>
+        seen.add(ch)
+        res = <span class="fn">max</span>(res, r - l + <span class="nm">1</span>)
+    <span class="kw">return</span> res
+
+<span class="cm"># 5. Indexing for O(1) access</span>
+idx = {v: i <span class="kw">for</span> i, v <span class="kw">in</span> <span class="fn">enumerate</span>(arr)}</div>
+  </div>
+</div>
+
+<!-- PROBLEMS -->
+<div id="problems" class="sec">
+  <h2>Practice problems</h2>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+      <h3 style="margin:0">Two Sum</h3><span class="tag tg">Easy</span>
+    </div>
+    <p style="margin-bottom:.6rem">Given nums and target, return indices of two numbers that add to target.</p>
+    <div class="cb"><span class="kw">def</span> <span class="fn">twoSum</span>(nums, target):
+    seen = {}             <span class="cm"># {value: index}</span>
+    <span class="kw">for</span> i, n <span class="kw">in</span> <span class="fn">enumerate</span>(nums):
+        complement = target - n
+        <span class="kw">if</span> complement <span class="kw">in</span> seen:   <span class="cm"># O(1) lookup</span>
+            <span class="kw">return</span> [seen[complement], i]
+        seen[n] = i
+    <span class="kw">return</span> []
+
+<span class="cm"># Dry run: nums=[2,7,11,15], target=9
+# i=0: n=2, comp=7, seen={}    → add {2:0}
+# i=1: n=7, comp=2, seen={2:0} → FOUND! return [0,1]</span></div>
+    <p style="font-size:12px;color:var(--color-text-tertiary)">Time: O(n) — Space: O(n)</p>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+      <h3 style="margin:0">First non-repeating character</h3><span class="tag tb">Medium</span>
+    </div>
+    <div class="cb"><span class="kw">def</span> <span class="fn">firstUniqChar</span>(s):
+    freq = Counter(s)         <span class="cm"># O(n)</span>
+    <span class="kw">for</span> i, ch <span class="kw">in</span> <span class="fn">enumerate</span>(s): <span class="cm"># O(n)</span>
+        <span class="kw">if</span> freq[ch] == <span class="nm">1</span>:
+            <span class="kw">return</span> i
+    <span class="kw">return</span> -<span class="nm">1</span>
+
+<span class="cm"># Dry run: s="leetcode"
+# freq={'l':1,'e':3,'t':1,'c':1,'o':1,'d':1}
+# i=0: 'l' → freq=1 → return 0 ✓</span></div>
+    <p style="font-size:12px;color:var(--color-text-tertiary)">Time: O(n) — Space: O(1) since at most 26 chars</p>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+      <h3 style="margin:0">Longest substring without repeating characters</h3><span class="tag tb">Medium</span>
+    </div>
+    <div class="cb"><span class="kw">def</span> <span class="fn">lengthOfLongestSubstring</span>(s):
+    seen = {}    <span class="cm"># char → last seen index</span>
+    l, res = <span class="nm">0</span>, <span class="nm">0</span>
+    <span class="kw">for</span> r, ch <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        <span class="kw">if</span> ch <span class="kw">in</span> seen <span class="kw">and</span> seen[ch] >= l:
+            l = seen[ch] + <span class="nm">1</span>  <span class="cm"># shrink window</span>
+        seen[ch] = r
+        res = <span class="fn">max</span>(res, r - l + <span class="nm">1</span>)
+    <span class="kw">return</span> res
+
+<span class="cm"># Dry run: s="abcabcbb"
+# r=0:'a' l=0 seen={a:0} res=1
+# r=1:'b' l=0 seen={a:0,b:1} res=2
+# r=2:'c' l=0 res=3
+# r=3:'a' → dup! l=1, seen={a:3,...} res=3
+# ... final res=3 ✓</span></div>
+    <p style="font-size:12px;color:var(--color-text-tertiary)">Time: O(n) — Space: O(min(n, alphabet))</p>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+      <h3 style="margin:0">Top K frequent elements</h3><span class="tag tp">Interview</span>
+    </div>
+    <div class="cb"><span class="kw">import</span> heapq
+<span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">topKFrequent</span>(nums, k):
+    freq = Counter(nums)    <span class="cm"># {num: count}</span>
+    <span class="cm"># min-heap of size k</span>
+    <span class="kw">return</span> heapq.nlargest(k, freq.keys(), key=freq.get)
+
+<span class="cm"># nums=[1,1,1,2,2,3], k=2
+# freq={1:3,2:2,3:1}
+# nlargest(2,...) → [1,2] ✓</span>
+<span class="cm"># Time: O(n log k)  Space: O(n)</span>
+
+<span class="cm"># Bucket sort approach → O(n)</span>
+<span class="kw">def</span> <span class="fn">topKFrequent_On</span>(nums, k):
+    freq = Counter(nums)
+    buckets = [[] <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(nums)+<span class="nm">1</span>)]
+    <span class="kw">for</span> num, cnt <span class="kw">in</span> freq.items():
+        buckets[cnt].append(num)
+    res = []
+    <span class="kw">for</span> b <span class="kw">in</span> <span class="fn">reversed</span>(buckets):
+        res.extend(b)
+        <span class="kw">if</span> <span class="fn">len</span>(res) >= k: <span class="kw">return</span> res[:k]</div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="sec">
+  <h2>Concept check</h2>
+  <div style="margin-bottom:1rem">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-tertiary)">
+      <span>Score</span><span id="sc-txt">0 / 0</span>
+    </div>
+    <div class="sbar"><div class="sfill" id="sc-fill" style="width:0%"></div></div>
+  </div>
+  <div class="card" id="qcon"></div>
+  <button style="margin-top:.75rem;font-size:13px;padding:5px 14px;display:none" id="nxt-btn" onclick="nextQ()">Next question →</button>
+</div>
+
+<!-- TIPS -->
+<div id="tips" class="sec">
+  <h2>Interview tips and mistakes</h2>
+  <div class="card">
+    <h3 style="margin-top:0">Pattern recognition — reach for dict/set when you see:</h3>
+    <div>
+      <span class="chip">counting occurrences</span>
+      <span class="chip">find pair with sum X</span>
+      <span class="chip">detect duplicates</span>
+      <span class="chip">O(1) lookup needed</span>
+      <span class="chip">grouping/anagrams</span>
+      <span class="chip">sliding window unique</span>
+      <span class="chip">first/last seen index</span>
+      <span class="chip">common elements</span>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Common mistakes</h3>
+    <table>
+      <tr><th>Mistake</th><th>Problem</th><th>Fix</th></tr>
+      <tr><td>Using list as dict key</td><td>TypeError: unhashable</td><td>Convert to tuple first</td></tr>
+      <tr><td><span class="ic">d["k"]</span> on missing key</td><td>KeyError</td><td><span class="ic">d.get("k", 0)</span></td></tr>
+      <tr><td><span class="ic">{}</span> for empty set</td><td>Creates dict, not set</td><td><span class="ic">set()</span></td></tr>
+      <tr><td>Mutating dict during iteration</td><td>RuntimeError</td><td>Iterate over <span class="ic">list(d.keys())</span></td></tr>
+      <tr><td><span class="ic">x in d.values()</span></td><td>O(n) not O(1)</td><td>Restructure — key lookup instead</td></tr>
+      <tr><td>Assuming set is ordered</td><td>Wrong output</td><td>Use list + sort if order matters</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Optimization insights</h3>
+    <div class="good"><p>Prefer <span class="ic">defaultdict(int)</span> over <span class="ic">d.get(k, 0)</span> — cleaner for frequency counting.</p></div>
+    <div class="good"><p>Use <span class="ic">Counter</span> for frequency — it has built-in <span class="ic">.most_common(k)</span>.</p></div>
+    <div class="good"><p>Convert a list to set for O(1) membership: <span class="ic">lookup = set(my_list)</span> then <span class="ic">x in lookup</span>.</p></div>
+    <div class="warn"><p>dict consumes ~8x more memory than a list of same size. Avoid for memory-critical applications.</p></div>
+    <div class="tip"><p>In interviews: always mention O(1) average lookup as the key reason for choosing dict/set. Interviewers love hearing this explicitly.</p></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Interview language bridge</h3>
+    <table>
+      <tr><th>CS / Java / C++</th><th>Python equivalent</th></tr>
+      <tr><td>HashMap</td><td><span class="ic">dict</span></td></tr>
+      <tr><td>HashSet</td><td><span class="ic">set</span></td></tr>
+      <tr><td>LinkedHashMap</td><td><span class="ic">dict</span> (ordered since 3.7)</td></tr>
+      <tr><td>TreeMap (sorted)</td><td><span class="ic">sortedcontainers.SortedDict</span></td></tr>
+      <tr><td>Map.getOrDefault(k, v)</td><td><span class="ic">d.get(k, v)</span></td></tr>
+      <tr><td>map.containsKey(k)</td><td><span class="ic">k in d</span></td></tr>
+      <tr><td>set.contains(x)</td><td><span class="ic">x in s</span></td></tr>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  btn.classList.add('on');
+  if (id==='hashing') initBuckets();
+  if (id==='patterns') doFreq();
+  if (id==='quiz') renderQ();
+  if (id==='ops') dictReset();
+}
+
+let buckets = Array(8).fill(null).map(()=>[]);
+function initBuckets() {
+  if (document.getElementById('hash-buckets').children.length) return;
+  renderBuckets();
+}
+function simHash(k) {
+  let h=0;
+  for (let i=0;i<k.length;i++) h=(h*31+k.charCodeAt(i))>>>0;
+  return h;
+}
+function doHash() {
+  const k = document.getElementById('hash-input').value;
+  if (!k) { document.getElementById('hv-raw').textContent='—'; document.getElementById('hv-bucket').textContent='—'; return; }
+  const h = simHash(k);
+  const b = h % 8;
+  document.getElementById('hv-raw').textContent = h.toLocaleString();
+  document.getElementById('hv-bucket').textContent = b;
+}
+function addToTable() {
+  const k = document.getElementById('hash-input').value.trim();
+  if (!k) return;
+  const h = simHash(k);
+  const b = h % 8;
+  buckets[b].push(k);
+  let total = 0; buckets.forEach(bk=>total+=bk.length);
+  document.getElementById('hv-count').textContent = total;
+  renderBuckets();
+}
+function clearTable() {
+  buckets = Array(8).fill(null).map(()=>[]);
+  document.getElementById('hv-count').textContent = '0';
+  renderBuckets();
+}
+function renderBuckets() {
+  const el = document.getElementById('hash-buckets');
+  el.innerHTML = '';
+  buckets.forEach((bk,i) => {
+    const div = document.createElement('div');
+    div.className = 'hash-bucket';
+    const lbl = document.createElement('span');
+    lbl.style.cssText='font-size:11px;color:var(--color-text-tertiary);min-width:54px';
+    lbl.textContent = 'Bucket '+i+':';
+    div.appendChild(lbl);
+    if (bk.length===0) {
+      const emp = document.createElement('span');
+      emp.style.cssText='font-size:11px;color:var(--color-text-tertiary)';
+      emp.textContent='(empty)';
+      div.appendChild(emp);
+    } else {
+      bk.forEach((item,j) => {
+        const chip = document.createElement('span');
+        chip.className = j===0 ? 'hash-item' : 'hash-chain';
+        chip.textContent = item;
+        div.appendChild(chip);
+        if (j>0 && j===bk.length-1) {
+          const note = document.createElement('span');
+          note.style.cssText='font-size:10px;color:var(--color-text-tertiary)';
+          note.textContent = '← collision';
+          div.appendChild(note);
+        }
+      });
+    }
+    el.appendChild(div);
+  });
+}
+
+function doFreq() {
+  const w = document.getElementById('freq-input').value || 'banana';
+  const freq = {};
+  for (const ch of w) freq[ch] = (freq[ch]||0)+1;
+  const max = Math.max(...Object.values(freq));
+  const el = document.getElementById('freq-bars');
+  el.innerHTML = '';
+  const colors = ['#378ADD','#1D9E75','#BA7517','#7F77DD','#D85A30','#D4537E'];
+  let ci = 0;
+  for (const [ch, cnt] of Object.entries(freq).sort((a,b)=>b[1]-a[1])) {
+    const pct = Math.round((cnt/max)*100);
+    el.innerHTML += `<div class="freq-bar">
+      <span class="fb-lbl">"${ch}"</span>
+      <div class="fb-trk"><div class="fb-fill" style="width:${pct}%;background:${colors[ci%colors.length]}"></div></div>
+      <span class="fb-val">${cnt}x</span>
+    </div>`;
+    ci++;
+  }
+}
+
+const dictSteps = [
+  {code:"d = {}", state:{}, msg:"Create empty dict d = {}"},
+  {code:'d["name"] = "Alice"', state:{"name":"Alice"}, msg:"Insert key 'name' with value 'Alice'. O(1)"},
+  {code:'d["age"] = 25', state:{"name":"Alice","age":25}, msg:"Insert 'age'. Dict grows — no re-ordering needed."},
+  {code:'d["age"] = 26  # update', state:{"name":"Alice","age":26}, msg:"Update: same key 'age' overwrites value. O(1)"},
+  {code:'d.get("name", "?") → "Alice"', state:{"name":"Alice","age":26}, msg:"get() returns value safely. No KeyError. O(1)"},
+  {code:'del d["age"]', state:{"name":"Alice"}, msg:"Delete 'age'. O(1) average."},
+  {code:'"name" in d → True', state:{"name":"Alice"}, msg:"Membership check O(1) — hashes the key directly."},
+  {code:'for k,v in d.items():', state:{"name":"Alice"}, msg:"Iterate key-value pairs. O(n). Done!"},
+];
+let dIdx=0;
+function dictStep() {
+  if (dIdx>=dictSteps.length) return;
+  const s=dictSteps[dIdx++];
+  document.getElementById('dict-ops-viz').textContent=s.code;
+  document.getElementById('dict-state').textContent='State: '+JSON.stringify(s.state)+'\n'+s.msg;
+}
+function dictReset() { dIdx=0; document.getElementById('dict-ops-viz').textContent='Press Next to begin'; document.getElementById('dict-state').textContent='Current dict: {}'; }
+
+const qs=[
+  {q:"What does {} create in Python?",opts:["An empty set","An empty dict","A frozenset","A tuple"],ans:1,exp:"Curly braces with no elements create an empty dict. Use set() for an empty set."},
+  {q:"Time complexity of 'x in my_dict'?",opts:["O(n)","O(log n)","O(1) average","O(n²)"],ans:2,exp:"Dictionary membership uses hashing — O(1) average. This is the key advantage over lists."},
+  {q:"Which is NOT hashable in Python?",opts:["tuple","frozenset","list","str"],ans:2,exp:"Lists are mutable and unhashable — they cannot be dict keys or set elements. Use tuples instead."},
+  {q:"Output: s={1,2,2,3}; print(len(s))",opts:["4","3","2","Error"],ans:1,exp:"Sets deduplicate automatically. {1,2,2,3} becomes {1,2,3} — length 3."},
+  {q:"Best way to count char frequencies in a string?",opts:["Loop + list","Loop + dict / Counter","Sort then scan","Try/except"],ans:1,exp:"Counter(s) or a dict loop both give O(n) frequency counting. Counter is most Pythonic."},
+  {q:"d = {'a':1}; print(d.get('b', 99))",opts:["KeyError","None","99","0"],ans:2,exp:"get() returns the default (99) when the key is missing. No exception raised."},
+  {q:"Which structure gives O(1) membership check?",opts:["list","tuple","set","sorted list"],ans:2,exp:"Sets use hashing for O(1) average membership. Lists and tuples require O(n) linear scan."},
+  {q:"How do you safely remove an element from a set without risking an error?",opts:["s.remove(x)","del s[x]","s.discard(x)","s.pop(x)"],ans:2,exp:"discard() silently does nothing if the element is missing. remove() raises KeyError."},
+];
+let qi=0,sc=0,ans=0;
+function renderQ() {
+  if (qi>=qs.length) {
+    document.getElementById('qcon').innerHTML=`<p style="font-size:15px;font-weight:500;color:var(--color-text-primary)">Complete! Score: ${sc}/${qs.length}</p><p style="font-size:13px;margin-top:.4rem;color:var(--color-text-secondary)">${sc>=7?'Excellent — you are hash-table ready!':sc>=5?'Good understanding. Review Hashing & API tabs.':'Revisit Definitions and Python API sections.'}</p>`;
+    document.getElementById('nxt-btn').style.display='none';
+    return;
+  }
+  const q=qs[qi];
+  document.getElementById('qcon').innerHTML=`<p class="quiz-q" style="font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:.6rem">Q${qi+1}/${qs.length}: ${q.q}</p><div class="qb">${q.opts.map((o,i)=>`<button onclick="ansQ(${i})">${o}</button>`).join('')}</div><div class="qfb" id="qfb2"></div>`;
+  document.getElementById('nxt-btn').style.display='none';
+}
+function ansQ(i) {
+  const q=qs[qi]; ans++;
+  const btns=document.querySelectorAll('.qb button');
+  btns.forEach(b=>b.disabled=true);
+  if (i===q.ans) { sc++; btns[i].classList.add('ok'); document.getElementById('qfb2').style.color='#27500A'; document.getElementById('qfb2').textContent='Correct — '+q.exp; }
+  else { btns[i].classList.add('no'); btns[q.ans].classList.add('ok'); document.getElementById('qfb2').style.color='#791F1F'; document.getElementById('qfb2').textContent='Incorrect — '+q.exp; }
+  document.getElementById('sc-txt').textContent=sc+' / '+ans;
+  document.getElementById('sc-fill').style.width=Math.round((sc/ans)*100)+'%';
+  document.getElementById('nxt-btn').style.display='block';
+}
+function nextQ() { qi++; renderQ(); }
+</script>

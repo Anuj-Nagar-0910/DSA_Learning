@@ -1,0 +1,585 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.page { max-width: 720px; margin: 0 auto; padding: 1rem 0.5rem 3rem; }
+.nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.nav button { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); cursor: pointer; transition: all .15s; }
+.nav button.active { background: var(--color-background-primary); color: var(--color-text-primary); border-color: var(--color-border-primary); font-weight: 500; }
+.section { display: none; }
+.section.active { display: block; }
+h2 { font-size: 18px; font-weight: 500; margin-bottom: 0.75rem; color: var(--color-text-primary); }
+h3 { font-size: 15px; font-weight: 500; margin: 1.25rem 0 0.5rem; color: var(--color-text-primary); }
+p, li { font-size: 14px; line-height: 1.7; color: var(--color-text-secondary); }
+ul { padding-left: 1.25rem; margin-bottom: 0.75rem; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+.tag { display: inline-block; font-size: 11px; padding: 2px 10px; border-radius: 20px; margin-right: 4px; margin-bottom: 4px; font-weight: 500; }
+.tag-blue { background: #E6F1FB; color: #0C447C; }
+.tag-green { background: #EAF3DE; color: #27500A; }
+.tag-amber { background: #FAEEDA; color: #633806; }
+.tag-red { background: #FCEBEB; color: #791F1F; }
+.tag-purple { background: #EEEDFE; color: #3C3489; }
+code, pre { font-family: var(--font-mono); }
+.code-block { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; font-size: 13px; overflow-x: auto; margin: 0.5rem 0 0.75rem; line-height: 1.6; white-space: pre; }
+.kw { color: #7F77DD; }
+.fn { color: #1D9E75; }
+.cm { color: #888780; font-style: italic; }
+.st { color: #D85A30; }
+.nm { color: #BA7517; }
+.inline-code { font-family: var(--font-mono); font-size: 12px; background: var(--color-background-secondary); padding: 1px 6px; border-radius: 4px; color: var(--color-text-primary); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 0.5rem 0 0.75rem; }
+th { background: var(--color-background-secondary); font-weight: 500; font-size: 12px; text-align: left; padding: 8px 12px; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+td { padding: 7px 12px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); }
+tr:last-child td { border-bottom: none; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0.75rem; }
+.metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; }
+.metric-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 2px; }
+.metric-val { font-size: 20px; font-weight: 500; color: var(--color-text-primary); font-family: var(--font-mono); }
+.heap-viz { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 1rem 0; }
+.heap-row { display: flex; gap: 8px; justify-content: center; }
+.node-circle { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; cursor: default; border: 1.5px solid; }
+.node-min { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+.node-max { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
+.node-hl { background: #EAF3DE; color: #27500A; border-color: #97C459; }
+.arr-svg { width: 100%; max-width: 500px; overflow: visible; }
+.quiz-q { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.5rem; }
+.quiz-opts button { display: block; width: 100%; text-align: left; padding: 8px 12px; margin-bottom: 6px; font-size: 13px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-secondary); cursor: pointer; transition: all .15s; }
+.quiz-opts button:hover { border-color: var(--color-border-primary); color: var(--color-text-primary); }
+.quiz-opts button.correct { background: #EAF3DE; border-color: #97C459; color: #27500A; }
+.quiz-opts button.wrong { background: #FCEBEB; border-color: #F09595; color: #791F1F; }
+.quiz-feedback { font-size: 13px; margin-top: 4px; min-height: 20px; color: var(--color-text-secondary); }
+.next-q { margin-top: 0.75rem; font-size: 13px; padding: 6px 14px; }
+.step-btns { display: flex; gap: 8px; margin-top: 0.75rem; }
+.step-btns button { font-size: 13px; padding: 5px 14px; }
+.step-display { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; font-size: 13px; color: var(--color-text-secondary); min-height: 44px; margin-top: 0.5rem; line-height: 1.6; }
+.arr-row { display: flex; gap: 0; margin: 0.75rem 0; }
+.arr-cell { width: 40px; height: 40px; border: 0.5px solid var(--color-border-secondary); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.arr-idx { font-size: 10px; font-weight: 400; color: var(--color-text-tertiary); margin-bottom: 1px; }
+.arr-cell:first-child { border-radius: var(--border-radius-md) 0 0 var(--border-radius-md); }
+.arr-cell:last-child { border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; }
+.arr-cell.hl-blue { background: #E6F1FB; }
+.arr-cell.hl-amber { background: #FAEEDA; }
+.arr-cell.hl-green { background: #EAF3DE; }
+.tip-box { border-left: 3px solid #7F77DD; background: #EEEDFE; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 0.6rem 0.9rem; margin: 0.5rem 0; }
+.tip-box p { color: #3C3489; font-size: 13px; }
+.warn-box { border-left: 3px solid #EF9F27; background: #FAEEDA; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 0.6rem 0.9rem; margin: 0.5rem 0; }
+.warn-box p { color: #633806; font-size: 13px; }
+.pattern-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 12px; border: 0.5px solid var(--color-border-tertiary); border-radius: 20px; margin: 3px; color: var(--color-text-secondary); background: var(--color-background-primary); }
+.score-bar { height: 8px; background: var(--color-background-secondary); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+.score-fill { height: 100%; background: #97C459; border-radius: 4px; transition: width .4s; }
+.sim-arr { display: flex; gap: 4px; flex-wrap: wrap; margin: 0.5rem 0; }
+.sim-cell { width: 36px; height: 36px; border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; border: 1.5px solid; transition: all .3s; }
+.sim-normal { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-secondary); }
+.sim-hl { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
+.sim-swap { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+</style>
+
+<div class="page">
+<h2 style="font-size:22px;margin-bottom:1rem">Heap Data Structure — Python Notes</h2>
+
+<nav class="nav">
+  <button class="active" onclick="show('intuition',this)">🔍 Intuition</button>
+  <button onclick="show('definition',this)">📘 Definition</button>
+  <button onclick="show('types',this)">📊 Min vs Max</button>
+  <button onclick="show('repr',this)">🧩 Representation</button>
+  <button onclick="show('heapq',this)">🐍 heapq</button>
+  <button onclick="show('ops',this)">⚙️ Operations</button>
+  <button onclick="show('maxheap',this)">🔄 Max Heap</button>
+  <button onclick="show('complexity',this)">⚡ Complexity</button>
+  <button onclick="show('quiz',this)">🧠 Quiz</button>
+  <button onclick="show('problems',this)">💻 Problems</button>
+  <button onclick="show('tips',this)">🚀 Tips</button>
+</nav>
+
+<!-- INTUITION -->
+<div id="intuition" class="section active">
+  <h2>🔍 Intuition</h2>
+  <div class="card">
+    <h3 style="margin-top:0">Hospital Emergency Room Analogy</h3>
+    <p>Think of a heap like an <strong style="color:var(--color-text-primary)">ER triage desk</strong>. Patients arrive in any order, but the <em>most critical patient always gets seen first</em> — regardless of who arrived when.</p>
+    <ul style="margin-top:0.5rem">
+      <li><strong style="color:var(--color-text-primary)">Min-Heap</strong> = Lowest priority number = highest urgency. Patient #1 (critical) goes before Patient #99 (minor cut).</li>
+      <li><strong style="color:var(--color-text-primary)">Max-Heap</strong> = Highest value = highest priority. Best score gets served first.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Key Insight</h3>
+    <p>A heap doesn't sort everything — it only guarantees the <span class="inline-code">min</span> (or <span class="inline-code">max</span>) is always accessible instantly. That's why it's <em>O(1) peek</em> and <em>O(log n) insert/delete</em>. You sacrifice full ordering for lightning-fast extremes.</p>
+  </div>
+  <div class="tip-box"><p>Use a heap when you repeatedly need the smallest or largest element from a dynamic dataset.</p></div>
+</div>
+
+<!-- DEFINITION -->
+<div id="definition" class="section">
+  <h2>📘 Definition</h2>
+  <div class="card">
+    <h3 style="margin-top:0">Complete Binary Tree</h3>
+    <p>All levels are fully filled except possibly the last, which is filled <em>left to right</em>.</p>
+    <div class="heap-viz" style="margin:1rem 0 0.5rem">
+      <div class="heap-row"><div class="node-circle node-min">1</div></div>
+      <div class="heap-row"><div class="node-circle node-min">3</div><div class="node-circle node-min">2</div></div>
+      <div class="heap-row"><div class="node-circle node-min">7</div><div class="node-circle node-min">5</div><div class="node-circle node-min">4</div><div class="node-circle node-min">6</div></div>
+    </div>
+    <p style="font-size:12px;text-align:center;color:var(--color-text-tertiary)">Min-heap: every node ≤ its children</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Heap Property</h3>
+    <table>
+      <tr><th>Property</th><th>Min-Heap</th><th>Max-Heap</th></tr>
+      <tr><td>Node vs children</td><td>parent ≤ children</td><td>parent ≥ children</td></tr>
+      <tr><td>Root value</td><td>Minimum element</td><td>Maximum element</td></tr>
+      <tr><td>Subtrees</td><td>Also min-heaps</td><td>Also max-heaps</td></tr>
+    </table>
+    <div class="warn-box"><p>A heap is NOT fully sorted. Siblings have no ordering relationship with each other.</p></div>
+  </div>
+</div>
+
+<!-- MIN VS MAX -->
+<div id="types" class="section">
+  <h2>📊 Min-Heap vs Max-Heap</h2>
+  <div class="grid2">
+    <div class="card">
+      <div style="margin-bottom:0.5rem"><span class="tag tag-blue">Min-Heap</span></div>
+      <div class="heap-viz" style="gap:6px">
+        <div class="heap-row"><div class="node-circle node-min" style="width:38px;height:38px;font-size:13px">1</div></div>
+        <div class="heap-row"><div class="node-circle node-min" style="width:38px;height:38px;font-size:13px">3</div><div class="node-circle node-min" style="width:38px;height:38px;font-size:13px">2</div></div>
+        <div class="heap-row"><div class="node-circle node-min" style="width:38px;height:38px;font-size:13px">7</div><div class="node-circle node-min" style="width:38px;height:38px;font-size:13px">5</div><div class="node-circle node-min" style="width:38px;height:38px;font-size:13px">4</div></div>
+      </div>
+      <p style="font-size:12px;margin-top:0.5rem">Root = <strong style="color:var(--color-text-primary)">1</strong> (minimum)<br>Python's default via <span class="inline-code">heapq</span></p>
+    </div>
+    <div class="card">
+      <div style="margin-bottom:0.5rem"><span class="tag tag-amber">Max-Heap</span></div>
+      <div class="heap-viz" style="gap:6px">
+        <div class="heap-row"><div class="node-circle node-max" style="width:38px;height:38px;font-size:13px">9</div></div>
+        <div class="heap-row"><div class="node-circle node-max" style="width:38px;height:38px;font-size:13px">7</div><div class="node-circle node-max" style="width:38px;height:38px;font-size:13px">8</div></div>
+        <div class="heap-row"><div class="node-circle node-max" style="width:38px;height:38px;font-size:13px">3</div><div class="node-circle node-max" style="width:38px;height:38px;font-size:13px">5</div><div class="node-circle node-max" style="width:38px;height:38px;font-size:13px">6</div></div>
+      </div>
+      <p style="font-size:12px;margin-top:0.5rem">Root = <strong style="color:var(--color-text-primary)">9</strong> (maximum)<br>Use negation trick in Python</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">When to use which?</h3>
+    <table>
+      <tr><th>Use Min-Heap for</th><th>Use Max-Heap for</th></tr>
+      <tr><td>Dijkstra's shortest path</td><td>Kth largest element</td></tr>
+      <tr><td>Task scheduling (low priority #)</td><td>Top K frequent elements</td></tr>
+      <tr><td>Merge K sorted lists</td><td>Sliding window maximum</td></tr>
+      <tr><td>Median maintenance</td><td>Priority queue (max first)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- REPRESENTATION -->
+<div id="repr" class="section">
+  <h2>🧩 Tree + Array Representation</h2>
+  <div class="card">
+    <h3 style="margin-top:0">Tree → Array mapping (0-indexed)</h3>
+    <div class="heap-viz" style="margin-bottom:0.75rem">
+      <div class="heap-row"><div class="node-circle node-min node-hl">1</div></div>
+      <div class="heap-row"><div class="node-circle node-min">3</div><div class="node-circle node-min">2</div></div>
+      <div class="heap-row"><div class="node-circle node-min">7</div><div class="node-circle node-min">5</div><div class="node-circle node-min">4</div><div class="node-circle node-min">6</div></div>
+    </div>
+    <div class="arr-row">
+      <div class="arr-cell hl-blue"><div class="arr-idx">0</div>1</div>
+      <div class="arr-cell"><div class="arr-idx">1</div>3</div>
+      <div class="arr-cell"><div class="arr-idx">2</div>2</div>
+      <div class="arr-cell"><div class="arr-idx">3</div>7</div>
+      <div class="arr-cell"><div class="arr-idx">4</div>5</div>
+      <div class="arr-cell"><div class="arr-idx">5</div>4</div>
+      <div class="arr-cell"><div class="arr-idx">6</div>6</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Index Formulas (0-indexed)</h3>
+    <table>
+      <tr><th>Relation</th><th>Formula</th><th>Example (node at i=1)</th></tr>
+      <tr><td>Left child</td><td><span class="inline-code">2*i + 1</span></td><td>2*1+1 = 3 → value 7</td></tr>
+      <tr><td>Right child</td><td><span class="inline-code">2*i + 2</span></td><td>2*1+2 = 4 → value 5</td></tr>
+      <tr><td>Parent</td><td><span class="inline-code">(i-1) // 2</span></td><td>(3-1)//2 = 1 → value 3</td></tr>
+    </table>
+    <div class="tip-box"><p>No pointers needed! The array IS the tree. This is why heaps use O(n) space with no overhead.</p></div>
+  </div>
+</div>
+
+<!-- HEAPQ -->
+<div id="heapq" class="section">
+  <h2>🐍 Python <span class="inline-code">heapq</span> Module</h2>
+  <div class="card">
+    <h3 style="margin-top:0">Key Functions</h3>
+    <table>
+      <tr><th>Function</th><th>What it does</th><th>Time</th></tr>
+      <tr><td><span class="inline-code">heapq.heappush(h, x)</span></td><td>Insert x into heap h</td><td>O(log n)</td></tr>
+      <tr><td><span class="inline-code">heapq.heappop(h)</span></td><td>Remove & return minimum</td><td>O(log n)</td></tr>
+      <tr><td><span class="inline-code">heapq.heapify(list)</span></td><td>Turn list into heap in-place</td><td>O(n)</td></tr>
+      <tr><td><span class="inline-code">heapq.nsmallest(k, it)</span></td><td>k smallest elements</td><td>O(n log k)</td></tr>
+      <tr><td><span class="inline-code">heapq.nlargest(k, it)</span></td><td>k largest elements</td><td>O(n log k)</td></tr>
+      <tr><td><span class="inline-code">heapq.heappushpop(h, x)</span></td><td>Push then pop (efficient)</td><td>O(log n)</td></tr>
+      <tr><td><span class="inline-code">h[0]</span></td><td>Peek at minimum</td><td>O(1)</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Usage Examples</h3>
+    <div class="code-block"><span class="kw">import</span> heapq
+
+<span class="cm"># ── Basic usage ──────────────────────────</span>
+h = []
+heapq.heappush(h, <span class="nm">5</span>)
+heapq.heappush(h, <span class="nm">1</span>)
+heapq.heappush(h, <span class="nm">3</span>)
+
+<span class="fn">print</span>(h[<span class="nm">0</span>])          <span class="cm"># 1  (peek min, O(1))</span>
+<span class="fn">print</span>(heapq.heappop(h)) <span class="cm"># 1  (pop min, O(log n))</span>
+
+<span class="cm"># ── heapify existing list ─────────────────</span>
+nums = [<span class="nm">9</span>, <span class="nm">4</span>, <span class="nm">7</span>, <span class="nm">1</span>, <span class="nm">6</span>]
+heapq.heapify(nums)     <span class="cm"># in-place, O(n)</span>
+<span class="fn">print</span>(nums)             <span class="cm"># [1, 4, 7, 9, 6]</span>
+
+<span class="cm"># ── nsmallest / nlargest ─────────────────</span>
+heapq.nsmallest(<span class="nm">3</span>, nums) <span class="cm"># [1, 4, 6]</span>
+heapq.nlargest(<span class="nm">2</span>, nums)  <span class="cm"># [9, 7]</span></div>
+  </div>
+  <div class="warn-box"><p>Python's heapq only supports min-heap. For max-heap, negate values (see Max Heap tab).</p></div>
+</div>
+
+<!-- OPERATIONS -->
+<div id="ops" class="section">
+  <h2>⚙️ Operations (Interactive)</h2>
+  <div class="card">
+    <h3 style="margin-top:0">Step through: Insert (Bubble Up)</h3>
+    <p style="font-size:13px;color:var(--color-text-tertiary)">Inserting <strong style="color:var(--color-text-primary)">2</strong> into heap [1, 4, 3, 7, 9]</p>
+    <div id="insert-viz" class="sim-arr"></div>
+    <div id="insert-info" class="step-display">Press "Next Step" to begin.</div>
+    <div class="step-btns">
+      <button onclick="insertStep()" style="font-size:13px;padding:5px 14px">Next step →</button>
+      <button onclick="resetInsert()" style="font-size:13px;padding:5px 14px">Reset</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Insert Algorithm</h3>
+    <div class="code-block"><span class="cm"># 1. Add to end of array</span>
+<span class="cm"># 2. Bubble Up: compare with parent</span>
+<span class="cm">#    while node < parent: swap, go up</span>
+<span class="cm"># Time: O(log n) — height of tree</span>
+
+<span class="kw">def</span> <span class="fn">heappush</span>(heap, val):
+    heap.append(val)           <span class="cm"># add to end</span>
+    i = <span class="fn">len</span>(heap) - <span class="nm">1</span>
+    <span class="kw">while</span> i > <span class="nm">0</span>:
+        parent = (i - <span class="nm">1</span>) // <span class="nm">2</span>
+        <span class="kw">if</span> heap[i] < heap[parent]:
+            heap[i], heap[parent] = heap[parent], heap[i]
+            i = parent
+        <span class="kw">else</span>:
+            <span class="kw">break</span></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Heapify — O(n) explained</h3>
+    <p style="font-size:13px">Why O(n) and not O(n log n)? Most nodes are near the bottom (short travel distance). Mathematically, the sum of all bubble-down distances converges to O(n).</p>
+    <div class="code-block"><span class="cm"># Start from last non-leaf → index n//2 - 1</span>
+<span class="cm"># Sift-down each node toward root</span>
+<span class="kw">def</span> <span class="fn">heapify</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n // <span class="nm">2</span> - <span class="nm">1</span>, -<span class="nm">1</span>, -<span class="nm">1</span>):
+        sift_down(arr, i, n)</div>
+  </div>
+</div>
+
+<!-- MAX HEAP -->
+<div id="maxheap" class="section">
+  <h2>🔄 Max-Heap via Negation</h2>
+  <div class="card">
+    <h3 style="margin-top:0">The Trick</h3>
+    <p>Python's heapq is always a min-heap. To simulate max-heap, <strong style="color:var(--color-text-primary)">negate all values</strong> on push and un-negate on pop.</p>
+    <p style="font-size:13px;margin-top:0.5rem">Min-heap of <span class="inline-code">[-9, -7, -5]</span> = Max-heap of <span class="inline-code">[9, 7, 5]</span></p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Pattern</h3>
+    <div class="code-block"><span class="kw">import</span> heapq
+
+max_heap = []
+<span class="cm"># Push: negate the value</span>
+heapq.heappush(max_heap, -<span class="nm">5</span>)
+heapq.heappush(max_heap, -<span class="nm">9</span>)
+heapq.heappush(max_heap, -<span class="nm">3</span>)
+
+<span class="cm"># Peek max: negate h[0]</span>
+<span class="fn">print</span>(-max_heap[<span class="nm">0</span>])        <span class="cm"># 9</span>
+
+<span class="cm"># Pop max: negate the result</span>
+<span class="fn">print</span>(-heapq.heappop(max_heap)) <span class="cm"># 9</span>
+
+<span class="cm"># ── With tuples (e.g., (freq, word)) ─────</span>
+freq_heap = []
+<span class="kw">for</span> word, freq <span class="kw">in</span> {<span class="st">"a"</span>:<span class="nm">3</span>, <span class="st">"b"</span>:<span class="nm">1</span>, <span class="st">"c"</span>:<span class="nm">5</span>}.items():
+    heapq.heappush(freq_heap, (-freq, word))
+
+<span class="fn">print</span>(heapq.heappop(freq_heap))  <span class="cm"># (-5, 'c') → freq=5</span></div>
+  </div>
+  <div class="tip-box"><p>For tuples: only negate the comparison key (first element). The rest stays unchanged.</p></div>
+</div>
+
+<!-- COMPLEXITY -->
+<div id="complexity" class="section">
+  <h2>⚡ Complexity Table</h2>
+  <div class="card">
+    <table>
+      <tr><th>Operation</th><th>Time</th><th>Why</th></tr>
+      <tr><td>Peek (min/max)</td><td><span class="tag tag-green">O(1)</span></td><td>Root is always at index 0</td></tr>
+      <tr><td>Insert (push)</td><td><span class="tag tag-blue">O(log n)</span></td><td>Bubble up ≤ tree height</td></tr>
+      <tr><td>Delete min/max</td><td><span class="tag tag-blue">O(log n)</span></td><td>Sift down from root</td></tr>
+      <tr><td>Build heap (heapify)</td><td><span class="tag tag-green">O(n)</span></td><td>Most nodes near leaves</td></tr>
+      <tr><td>Delete arbitrary</td><td><span class="tag tag-amber">O(n)</span></td><td>Search O(n) + fix O(log n)</td></tr>
+      <tr><td>Search</td><td><span class="tag tag-amber">O(n)</span></td><td>No ordering between siblings</td></tr>
+      <tr><td>Merge two heaps</td><td><span class="tag tag-amber">O(n)</span></td><td>Concat + heapify</td></tr>
+      <tr><td>nsmallest(k, n)</td><td><span class="tag tag-blue">O(n log k)</span></td><td>Maintain size-k heap</td></tr>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="metric"><div class="metric-label">Space complexity</div><div class="metric-val">O(n)</div></div>
+    <div class="metric"><div class="metric-label">Heap sort time</div><div class="metric-val">O(n log n)</div></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Heap vs alternatives</h3>
+    <table>
+      <tr><th>Structure</th><th>Insert</th><th>Get Min</th><th>Delete Min</th></tr>
+      <tr><td>Sorted array</td><td>O(n)</td><td>O(1)</td><td>O(n)</td></tr>
+      <tr><td>Unsorted array</td><td>O(1)</td><td>O(n)</td><td>O(n)</td></tr>
+      <tr><td>BST (balanced)</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td></tr>
+      <tr><td><strong style="color:var(--color-text-primary)">Heap ✓</strong></td><td><strong style="color:var(--color-text-primary)">O(log n)</strong></td><td><strong style="color:var(--color-text-primary)">O(1)</strong></td><td><strong style="color:var(--color-text-primary)">O(log n)</strong></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="section">
+  <h2>🧠 Concept Check</h2>
+  <div id="quiz-score-bar" style="margin-bottom:1rem">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-tertiary)">
+      <span>Score</span><span id="score-text">0 / 0</span>
+    </div>
+    <div class="score-bar"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+  </div>
+  <div class="card" id="quiz-container"></div>
+  <button class="next-q" onclick="nextQ()" id="next-btn" style="display:none">Next question →</button>
+</div>
+
+<!-- PROBLEMS -->
+<div id="problems" class="section">
+  <h2>💻 Practice Problems</h2>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+      <h3 style="margin:0">Kth Largest Element</h3>
+      <span class="tag tag-blue">Medium</span>
+    </div>
+    <p style="font-size:13px">Find the kth largest element in an unsorted array. Strategy: maintain a <strong style="color:var(--color-text-primary)">min-heap of size k</strong>. If heap size exceeds k, pop the minimum. The root is your answer.</p>
+    <div class="code-block"><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">findKthLargest</span>(nums, k):
+    heap = []                      <span class="cm"># min-heap of size k</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        heapq.heappush(heap, n)
+        <span class="kw">if</span> <span class="fn">len</span>(heap) > k:
+            heapq.heappop(heap)    <span class="cm"># remove smallest</span>
+    <span class="kw">return</span> heap[<span class="nm">0</span>]               <span class="cm"># root = kth largest</span>
+
+<span class="cm"># Dry run: nums=[3,2,1,5,6,4], k=2</span>
+<span class="cm"># After: heap=[5,6] → return 5 ✓</span>
+<span class="cm"># Time: O(n log k)  Space: O(k)</span></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+      <h3 style="margin:0">Top K Frequent Elements</h3>
+      <span class="tag tag-blue">Medium</span>
+    </div>
+    <p style="font-size:13px">Count frequencies, then use a min-heap of size k sorted by frequency.</p>
+    <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> Counter
+<span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">topKFrequent</span>(nums, k):
+    freq = Counter(nums)            <span class="cm"># {num: count}</span>
+    <span class="cm"># min-heap: (freq, num)</span>
+    heap = []
+    <span class="kw">for</span> num, cnt <span class="kw">in</span> freq.items():
+        heapq.heappush(heap, (cnt, num))
+        <span class="kw">if</span> <span class="fn">len</span>(heap) > k:
+            heapq.heappop(heap)
+    <span class="kw">return</span> [num <span class="kw">for</span> _, num <span class="kw">in</span> heap]
+
+<span class="cm"># nums=[1,1,1,2,2,3], k=2</span>
+<span class="cm"># freq={1:3, 2:2, 3:1}</span>
+<span class="cm"># heap=[(2,2),(3,1)] → return [2,1] ✓</span>
+<span class="cm"># Time: O(n log k)  Space: O(n)</span></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+      <h3 style="margin:0">Merge K Sorted Lists</h3>
+      <span class="tag tag-red">Hard</span>
+    </div>
+    <p style="font-size:13px">Use a min-heap to always pick the smallest node across all k lists.</p>
+    <div class="code-block"><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">mergeKLists</span>(lists):
+    heap = []
+    <span class="cm"># Seed heap with head of each list</span>
+    <span class="kw">for</span> i, node <span class="kw">in</span> <span class="fn">enumerate</span>(lists):
+        <span class="kw">if</span> node:
+            heapq.heappush(heap, (node.val, i, node))
+
+    dummy = ListNode(<span class="nm">0</span>)
+    curr  = dummy
+    <span class="kw">while</span> heap:
+        val, i, node = heapq.heappop(heap)
+        curr.next = node
+        curr = curr.next
+        <span class="kw">if</span> node.next:
+            heapq.heappush(heap, (node.next.val, i, node.next))
+    <span class="kw">return</span> dummy.next
+
+<span class="cm"># Time: O(N log k)  where N = total nodes</span>
+<span class="cm"># Space: O(k)  — heap holds at most k nodes</span></div>
+    <div class="tip-box"><p>Include <span class="inline-code">i</span> (list index) as tiebreaker to avoid comparing ListNode objects.</p></div>
+  </div>
+</div>
+
+<!-- TIPS -->
+<div id="tips" class="section">
+  <h2>🚀 Interview Tips & Patterns</h2>
+
+  <div class="card">
+    <h3 style="margin-top:0">Pattern Recognition</h3>
+    <p style="font-size:13px;margin-bottom:0.5rem">Reach for a heap when you see:</p>
+    <div>
+      <span class="pattern-chip">🔢 Top K / Kth smallest/largest</span>
+      <span class="pattern-chip">🔗 Merge K sorted structures</span>
+      <span class="pattern-chip">📊 Median from data stream</span>
+      <span class="pattern-chip">🗺 Shortest path (Dijkstra)</span>
+      <span class="pattern-chip">🔄 Running min/max</span>
+      <span class="pattern-chip">📅 Meeting rooms / scheduling</span>
+      <span class="pattern-chip">🪟 Sliding window extremes</span>
+      <span class="pattern-chip">⚖️ Balance two halves</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Common Heap Templates</h3>
+    <table>
+      <tr><th>Pattern</th><th>Heap type</th><th>Size</th></tr>
+      <tr><td>Kth largest</td><td>Min-heap</td><td>k</td></tr>
+      <tr><td>Kth smallest</td><td>Max-heap</td><td>k</td></tr>
+      <tr><td>All K largest</td><td>Min-heap</td><td>k (root = kth)</td></tr>
+      <tr><td>Merge K lists</td><td>Min-heap</td><td>k heads</td></tr>
+      <tr><td>Median stream</td><td>2 heaps (max+min)</td><td>balanced</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Gotchas to mention in interviews</h3>
+    <ul>
+      <li>Python's heapq is <strong style="color:var(--color-text-primary)">min-heap only</strong> — always mention negation for max-heap</li>
+      <li>Heap is NOT fully sorted — siblings have no order guarantee</li>
+      <li><span class="inline-code">heapify</span> is O(n), NOT O(n log n)</li>
+      <li>Use tuples <span class="inline-code">(priority, item)</span> for custom ordering</li>
+      <li>For Dijkstra, lazy deletion is fine — just skip stale entries</li>
+      <li><span class="inline-code">heappushpop</span> is faster than separate push + pop</li>
+    </ul>
+  </div>
+
+  <div class="tip-box"><p>Two-heap pattern for median: max-heap for lower half, min-heap for upper half. Keep sizes equal (or differ by 1). Median is the root(s).</p></div>
+  <div class="warn-box"><p>Avoid using <span class="inline-code">nsmallest/nlargest</span> in interviews if k is large — prefer building and maintaining your own heap for clarity.</p></div>
+</div>
+
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'quiz') renderQuiz();
+  if (id === 'ops') { resetInsert(); }
+}
+
+const insertSteps = [
+  { arr: [1,4,3,7,9], hl: [], msg: "Initial heap: [1, 4, 3, 7, 9]. Inserting 2..." },
+  { arr: [1,4,3,7,9,2], hl: [5], msg: "Step 1: Append 2 at end → index 5. Compare with parent at (5-1)//2 = 2, value 3." },
+  { arr: [1,4,2,7,9,3], hl: [2,5], msg: "Step 2: 2 < 3 → SWAP! Heap: [1,4,2,7,9,3]. Now at index 2, parent at (2-1)//2 = 0, value 1." },
+  { arr: [1,4,2,7,9,3], hl: [0,2], msg: "Step 3: 2 ≥ 1 → STOP. Heap property satisfied! Final: [1,4,2,7,9,3]. ✓" },
+];
+let insertIdx = 0;
+function renderInsert(step) {
+  const viz = document.getElementById('insert-viz');
+  const info = document.getElementById('insert-info');
+  viz.innerHTML = step.arr.map((v,i) => {
+    let cls = 'sim-cell sim-normal';
+    if (step.hl.length === 2 && step.hl.includes(i)) {
+      if (i === step.hl[0]) cls = 'sim-cell sim-hl';
+      else cls = 'sim-cell sim-swap';
+    } else if (step.hl.includes(i)) cls = 'sim-cell sim-swap';
+    return `<div class="${cls}">${v}</div>`;
+  }).join('');
+  info.textContent = step.msg;
+}
+function insertStep() {
+  if (insertIdx < insertSteps.length) {
+    renderInsert(insertSteps[insertIdx++]);
+  }
+}
+function resetInsert() {
+  insertIdx = 0;
+  renderInsert(insertSteps[0]);
+}
+resetInsert();
+
+const questions = [
+  { q: "What is the time complexity of peeking (not removing) the minimum from a min-heap?", opts: ["O(n)", "O(log n)", "O(1)", "O(n log n)"], ans: 2, exp: "The minimum is always at index 0 (the root), so peeking is O(1)." },
+  { q: "Given array [5, 3, 8, 1, 2], after heapify, what is the root?", opts: ["5", "1", "8", "3"], ans: 1, exp: "heapify builds a min-heap. The minimum element (1) becomes the root." },
+  { q: "For node at index i, what is the index of its left child (0-indexed)?", opts: ["2*i", "2*i + 1", "2*i + 2", "(i-1)//2"], ans: 1, exp: "Left child index = 2*i + 1. Right child = 2*i + 2. Parent = (i-1)//2." },
+  { q: "Which statement about heaps is FALSE?", opts: ["Root contains the min (min-heap)", "Siblings are sorted left to right", "A heap is a complete binary tree", "Height is O(log n)"], ans: 1, exp: "Siblings have NO guaranteed order in a heap. Only parent-child relationships are ordered." },
+  { q: "To find the Kth largest element efficiently, use a min-heap of size:", opts: ["n (all elements)", "n-k", "k", "k+1"], ans: 2, exp: "Maintain a min-heap of size exactly k. The root (minimum of the heap) is the Kth largest." },
+  { q: "Why is heapify O(n) and not O(n log n)?", opts: ["It skips leaf nodes", "Most nodes are near leaves with short sift-down paths", "It uses binary search", "Python is optimized"], ans: 1, exp: "The mathematical sum of sift-down costs across all levels converges to O(n). Leaves (half the nodes) sift down 0 steps!" },
+];
+let qIdx = 0, score = 0, answered = 0;
+function renderQuiz() {
+  if (qIdx >= questions.length) {
+    document.getElementById('quiz-container').innerHTML = `<p style="font-size:15px;font-weight:500;color:var(--color-text-primary)">Quiz complete! Score: ${score}/${questions.length}</p><p style="font-size:13px;margin-top:0.5rem;color:var(--color-text-secondary)">${score === questions.length ? '🎉 Perfect! You are heap-ready.' : score >= 4 ? '🟢 Strong understanding.' : '🔄 Review the Definition and Complexity tabs.'}</p>`;
+    document.getElementById('next-btn').style.display = 'none';
+    return;
+  }
+  const q = questions[qIdx];
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="quiz-q">Q${qIdx+1}/${questions.length}: ${q.q}</div>
+    <div class="quiz-opts">${q.opts.map((o,i)=>`<button onclick="answerQ(${i})">${o}</button>`).join('')}</div>
+    <div class="quiz-feedback" id="qfb"></div>`;
+  document.getElementById('next-btn').style.display = 'none';
+}
+function answerQ(i) {
+  const q = questions[qIdx];
+  answered++;
+  const btns = document.querySelectorAll('.quiz-opts button');
+  btns.forEach(b => b.disabled = true);
+  if (i === q.ans) {
+    score++;
+    btns[i].classList.add('correct');
+    document.getElementById('qfb').textContent = '✓ ' + q.exp;
+    document.getElementById('qfb').style.color = '#27500A';
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    document.getElementById('qfb').textContent = '✗ ' + q.exp;
+    document.getElementById('qfb').style.color = '#791F1F';
+  }
+  const pct = answered > 0 ? Math.round((score / answered) * 100) : 0;
+  document.getElementById('score-text').textContent = `${score} / ${answered}`;
+  document.getElementById('score-fill').style.width = pct + '%';
+  document.getElementById('next-btn').style.display = 'block';
+}
+function nextQ() {
+  qIdx++;
+  renderQuiz();
+}
+</script>

@@ -1,0 +1,714 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-mono); }
+  .wrap { padding: 1rem 0; }
+  .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+  .nav-btn {
+    font-size: 12px; padding: 5px 10px; border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary);
+    color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-sans);
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { background: var(--color-background-secondary); }
+  .nav-btn.active {
+    background: #EEEDFE; border-color: #AFA9EC; color: #3C3489;
+  }
+  @media (prefers-color-scheme: dark) {
+    .nav-btn.active { background: #3C3489; border-color: #534AB7; color: #CECBF6; }
+  }
+  .lesson { display: none; }
+  .lesson.active { display: block; }
+  .section-title {
+    font-size: 18px; font-weight: 500; color: var(--color-text-primary);
+    margin-bottom: 4px; font-family: var(--font-sans);
+  }
+  .section-sub {
+    font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1.25rem;
+    font-family: var(--font-sans);
+  }
+  .concept-block {
+    background: var(--color-background-secondary); border-radius: var(--border-radius-lg);
+    padding: 1rem 1.25rem; margin-bottom: 1rem;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .concept-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.05em;
+    color: var(--color-text-tertiary); text-transform: uppercase;
+    margin-bottom: 6px; font-family: var(--font-sans);
+  }
+  .analogy {
+    font-size: 14px; color: var(--color-text-secondary);
+    font-family: var(--font-sans); line-height: 1.6; margin-bottom: 8px;
+  }
+  .code-block {
+    background: var(--color-background-primary); border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-tertiary);
+    padding: 12px 14px; font-size: 13px; color: var(--color-text-primary);
+    line-height: 1.8; white-space: pre-wrap; word-break: break-word;
+  }
+  .kw { color: #534AB7; } 
+  .str { color: #0F6E56; }
+  .cm { color: var(--color-text-tertiary); }
+  .fn { color: #185FA5; }
+  .num { color: #854F0B; }
+  .out-label {
+    font-size: 11px; font-weight: 500; color: var(--color-text-tertiary);
+    margin: 8px 0 4px; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .output {
+    background: #EAF3DE; border-radius: var(--border-radius-md);
+    border: 0.5px solid #C0DD97; padding: 10px 14px; font-size: 13px;
+    color: #27500A; line-height: 1.7;
+  }
+  @media (prefers-color-scheme: dark) {
+    .output { background: #173404; border-color: #3B6D11; color: #C0DD97; }
+  }
+  .playground {
+    border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg);
+    padding: 1rem 1.25rem; margin-top: 1rem;
+  }
+  .play-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 8px; font-family: var(--font-sans); }
+  .input-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  input[type=text], input[type=number] {
+    flex: 1; min-width: 100px; font-family: var(--font-mono); font-size: 13px;
+  }
+  .run-btn {
+    padding: 6px 14px; font-size: 13px; cursor: pointer; font-family: var(--font-sans);
+    border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary);
+    background: var(--color-background-primary); color: var(--color-text-primary);
+  }
+  .run-btn:hover { background: var(--color-background-secondary); }
+  .pill {
+    display: inline-block; font-size: 11px; padding: 2px 8px;
+    border-radius: var(--border-radius-md); font-family: var(--font-sans);
+    background: #EEEDFE; color: #3C3489; border: 0.5px solid #AFA9EC;
+    margin-right: 4px; margin-bottom: 4px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .pill { background: #26215C; color: #CECBF6; border-color: #534AB7; }
+    .kw { color: #AFA9EC; }
+    .str { color: #5DCAA5; }
+    .fn { color: #85B7EB; }
+    .num { color: #FAC775; }
+  }
+  .index-vis {
+    display: flex; gap: 4px; margin: 8px 0; flex-wrap: wrap;
+  }
+  .idx-cell {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .idx-char {
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    background: #EEEDFE; border: 0.5px solid #AFA9EC; border-radius: 4px;
+    font-size: 15px; color: #3C3489; font-family: var(--font-mono);
+  }
+  @media (prefers-color-scheme: dark) {
+    .idx-char { background: #26215C; border-color: #534AB7; color: #CECBF6; }
+  }
+  .idx-num { font-size: 10px; color: var(--color-text-tertiary); font-family: var(--font-mono); }
+  .idx-neg { font-size: 10px; color: #185FA5; font-family: var(--font-mono); }
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1rem 0; }
+  .tip {
+    background: #FAEEDA; border: 0.5px solid #FAC775; border-radius: var(--border-radius-md);
+    padding: 10px 14px; font-size: 13px; color: #633806; font-family: var(--font-sans); line-height: 1.6;
+    margin-top: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .tip { background: #412402; border-color: #854F0B; color: #FAC775; }
+  }
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">Python Strings Interactive Masterclass</h2>
+
+<div class="nav" id="nav"></div>
+<div id="lessons"></div>
+</div>
+
+<script>
+const lessons = [
+  {
+    id: "what",
+    label: "0. What is a string?",
+    render() {
+      return `
+      <div class="section-title">What is a string?</div>
+      <div class="section-sub">Before you do anything with strings, you must understand what they actually are.</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">Imagine a string as a <strong>train</strong>. Each <strong>compartment (character)</strong> sits at a numbered seat starting from seat 0. Python remembers each character's exact seat number — called an <strong>index</strong>.</div>
+        <div class="index-vis" id="vis1"></div>
+      </div>
+      <div class="concept-block">
+        <div class="concept-label">Code</div>
+        <div class="code-block"><span class="kw">name</span> = <span class="str">"PYTHON"</span>
+
+<span class="cm"># Accessing individual characters by index</span>
+<span class="kw">print</span>(<span class="kw">name</span>[<span class="num">0</span>])   <span class="cm"># → P  (first seat)</span>
+<span class="kw">print</span>(<span class="kw">name</span>[<span class="num">3</span>])   <span class="cm"># → H</span>
+<span class="kw">print</span>(<span class="kw">name</span>[<span class="num">-1</span>])  <span class="cm"># → N  (last seat, counting from back)</span>
+<span class="kw">print</span>(<span class="fn">len</span>(<span class="kw">name</span>)) <span class="cm"># → 6  (total compartments)</span></div>
+        <div class="out-label">output</div>
+        <div class="output">P
+H
+N
+6</div>
+      </div>
+      <div class="tip">Strings are <strong>immutable</strong> — once created, you cannot change a character in-place. You always create a new string. Think of it like a printed ticket: you can't erase a letter, but you can print a new ticket.</div>
+      `;
+    },
+    after() {
+      const word = "PYTHON";
+      const vis = document.getElementById("vis1");
+      if (!vis) return;
+      vis.innerHTML = word.split("").map((c,i) =>
+        `<div class="idx-cell"><div class="idx-char">${c}</div><div class="idx-num">${i}</div><div class="idx-neg">${i - word.length}</div></div>`
+      ).join("");
+    }
+  },
+  {
+    id: "reverse",
+    label: "1. Reversing",
+    render() {
+      return `
+      <div class="section-title">Reversing a string</div>
+      <div class="section-sub">Read a string backwards — letter by letter.</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">Imagine reading a word in a mirror. "PYTHON" becomes "NOHTYP". Python's <strong>slice notation</strong> lets you do this in one elegant line.</div>
+      </div>
+      <div class="concept-block">
+        <div class="concept-label">Slicing syntax: string[start : stop : step]</div>
+        <div class="analogy">When <code>step = -1</code>, Python walks <em>backwards</em> through every character. Leaving start and stop empty means "the whole string".</div>
+        <div class="code-block"><span class="kw">word</span> = <span class="str">"PYTHON"</span>
+
+<span class="cm"># Method 1: Slicing (most Pythonic)</span>
+<span class="kw">reversed_word</span> = <span class="kw">word</span>[<span class="num">::-1</span>]
+<span class="kw">print</span>(<span class="kw">reversed_word</span>)   <span class="cm"># → NOHTYP</span>
+
+<span class="cm"># Method 2: Using reversed() + join()</span>
+<span class="kw">reversed_word2</span> = <span class="str">""</span>.<span class="fn">join</span>(<span class="fn">reversed</span>(<span class="kw">word</span>))
+<span class="kw">print</span>(<span class="kw">reversed_word2</span>)  <span class="cm"># → NOHTYP</span>
+
+<span class="cm"># Real world: Check if a sentence is a palindrome</span>
+<span class="kw">sentence</span> = <span class="str">"racecar"</span>
+<span class="kw">print</span>(<span class="kw">sentence</span> == <span class="kw">sentence</span>[<span class="num">::-1</span>])  <span class="cm"># → True</span></div>
+        <div class="out-label">output</div>
+        <div class="output">NOHTYP
+NOHTYP
+True</div>
+      </div>
+      <div class="playground">
+        <div class="play-title">Try it — type any word:</div>
+        <div class="input-row">
+          <input type="text" id="rev-in" value="MASTERCLASS" placeholder="Enter a word" />
+          <button class="run-btn" onclick="doReverse()">Reverse ↗</button>
+        </div>
+        <div id="rev-out" class="output" style="display:none"></div>
+      </div>`;
+    },
+    after() {}
+  },
+  {
+    id: "identical",
+    label: "2. Comparing",
+    render() {
+      return `
+      <div class="section-title">Checking if strings are identical</div>
+      <div class="section-sub">Are two strings exactly the same?</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">Like comparing two passport numbers — even one character different means they don't match. Python's <code>==</code> compares every single character, position by position.</div>
+        <div class="code-block"><span class="kw">a</span> = <span class="str">"Mumbai"</span>
+<span class="kw">b</span> = <span class="str">"Mumbai"</span>
+<span class="kw">c</span> = <span class="str">"mumbai"</span>   <span class="cm"># lowercase m — different!</span>
+
+<span class="kw">print</span>(<span class="kw">a</span> == <span class="kw">b</span>)             <span class="cm"># → True</span>
+<span class="kw">print</span>(<span class="kw">a</span> == <span class="kw">c</span>)             <span class="cm"># → False (case matters!)</span>
+
+<span class="cm"># Case-insensitive comparison</span>
+<span class="kw">print</span>(<span class="kw">a</span>.<span class="fn">lower</span>() == <span class="kw">c</span>.<span class="fn">lower</span>())  <span class="cm"># → True</span>
+
+<span class="cm"># Real world: Login password check</span>
+<span class="kw">entered</span>   = <span class="str">"MySecret@123"</span>
+<span class="kw">stored</span>    = <span class="str">"MySecret@123"</span>
+<span class="kw">print</span>(<span class="str">"Access granted"</span> <span class="kw">if</span> <span class="kw">entered</span> == <span class="kw">stored</span> <span class="kw">else</span> <span class="str">"Wrong password"</span>)</div>
+        <div class="out-label">output</div>
+        <div class="output">True
+False
+True
+Access granted</div>
+      </div>
+      <div class="playground">
+        <div class="play-title">Compare two strings:</div>
+        <div class="input-row">
+          <input type="text" id="cmp-a" value="Python" placeholder="String A" />
+          <input type="text" id="cmp-b" value="python" placeholder="String B" />
+          <button class="run-btn" onclick="doCmp()">Compare ↗</button>
+        </div>
+        <div id="cmp-out" class="output" style="display:none"></div>
+      </div>`;
+    },
+    after() {}
+  },
+  {
+    id: "sort",
+    label: "3. Sorting",
+    render() {
+      return `
+      <div class="section-title">Sorting strings</div>
+      <div class="section-sub">Arrange characters or a list of words alphabetically.</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">A librarian arranging books alphabetically on a shelf. Python's <code>sorted()</code> does this for both characters inside a word, and words inside a list.</div>
+        <div class="code-block"><span class="cm"># Sort characters in a word</span>
+<span class="kw">word</span> = <span class="str">"TORNADO"</span>
+<span class="kw">sorted_chars</span> = <span class="str">""</span>.<span class="fn">join</span>(<span class="fn">sorted</span>(<span class="kw">word</span>))
+<span class="kw">print</span>(<span class="kw">sorted_chars</span>)   <span class="cm"># → ADNORTO</span>
+
+<span class="cm"># Sort in reverse (Z → A)</span>
+<span class="kw">print</span>(<span class="str">""</span>.<span class="fn">join</span>(<span class="fn">sorted</span>(<span class="kw">word</span>, reverse=<span class="kw">True</span>)))  <span class="cm"># → TORNOAD</span>
+
+<span class="cm"># Real world: Sort a list of city names</span>
+<span class="kw">cities</span> = [<span class="str">"Pune"</span>, <span class="str">"Mumbai"</span>, <span class="str">"Delhi"</span>, <span class="str">"Nagpur"</span>]
+<span class="kw">print</span>(<span class="fn">sorted</span>(<span class="kw">cities</span>))
+<span class="cm"># → ['Delhi', 'Mumbai', 'Nagpur', 'Pune']</span>
+
+<span class="cm"># Case-insensitive sort</span>
+<span class="kw">print</span>(<span class="fn">sorted</span>(<span class="kw">cities</span>, key=<span class="fn">str.lower</span>))</div>
+        <div class="out-label">output</div>
+        <div class="output">ADNORTO
+TORNOAD
+['Delhi', 'Mumbai', 'Nagpur', 'Pune']
+['Delhi', 'Mumbai', 'Nagpur', 'Pune']</div>
+      </div>
+      <div class="playground">
+        <div class="play-title">Sort characters in a word:</div>
+        <div class="input-row">
+          <input type="text" id="sort-in" value="MASTERCLASS" placeholder="Enter a word" />
+          <button class="run-btn" onclick="doSort()">Sort ↗</button>
+        </div>
+        <div id="sort-out" class="output" style="display:none"></div>
+      </div>`;
+    },
+    after() {}
+  },
+  {
+    id: "rotate",
+    label: "4. Rotation",
+    render() {
+      return `
+      <div class="section-title">Left and right rotation</div>
+      <div class="section-sub">Shift characters around as if the string were a circular belt.</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">A conveyor belt in a factory. Characters fall off one end and reappear at the other. Left rotation moves characters from the front to the back. Right rotation is the opposite.</div>
+        <div class="code-block"><span class="kw">word</span> = <span class="str">"PYTHON"</span>
+<span class="kw">n</span> = <span class="num">2</span>   <span class="cm"># rotate by 2 positions</span>
+
+<span class="cm"># LEFT rotation: chop n chars from front, append to back</span>
+<span class="kw">left</span> = <span class="kw">word</span>[<span class="kw">n</span>:] + <span class="kw">word</span>[:<span class="kw">n</span>]
+<span class="kw">print</span>(<span class="kw">left</span>)   <span class="cm"># → THONPY</span>
+<span class="cm">#              P Y [T H O N] + [P Y]</span>
+
+<span class="cm"># RIGHT rotation: chop n chars from back, prepend</span>
+<span class="kw">right</span> = <span class="kw">word</span>[-<span class="kw">n</span>:] + <span class="kw">word</span>[:-<span class="kw">n</span>]
+<span class="kw">print</span>(<span class="kw">right</span>)  <span class="cm"># → ONPYTH</span>
+<span class="cm">#              [O N] + [P Y T H]</span></div>
+        <div class="out-label">output</div>
+        <div class="output">THONPY
+ONPYTH</div>
+      </div>
+      <div class="playground">
+        <div class="play-title">Try rotation:</div>
+        <div class="input-row">
+          <input type="text" id="rot-word" value="PYTHON" placeholder="Word" style="max-width:140px" />
+          <input type="number" id="rot-n" value="2" min="1" max="20" style="max-width:60px" />
+          <button class="run-btn" onclick="doRotate()">Rotate ↗</button>
+        </div>
+        <div id="rot-out" class="output" style="display:none"></div>
+      </div>`;
+    },
+    after() {}
+  },
+  {
+    id: "concat",
+    label: "5. Concatenation",
+    render() {
+      return `
+      <div class="section-title">Concatenation</div>
+      <div class="section-sub">Joining two or more strings together into one.</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">Like snapping LEGO bricks together. Each string is a brick; concatenation snaps them into a longer chain.</div>
+        <div class="code-block"><span class="kw">first</span> = <span class="str">"Sachin"</span>
+<span class="kw">last</span>  = <span class="str">"Tendulkar"</span>
+
+<span class="cm"># Method 1: + operator (simple, clear)</span>
+<span class="kw">full</span> = <span class="kw">first</span> + <span class="str">" "</span> + <span class="kw">last</span>
+<span class="kw">print</span>(<span class="kw">full</span>)         <span class="cm"># → Sachin Tendulkar</span>
+
+<span class="cm"># Method 2: f-string (modern, recommended)</span>
+<span class="kw">print</span>(<span class="str">f"Welcome, {<span class="kw">first</span>} {<span class="kw">last</span>}!"</span>)
+
+<span class="cm"># Method 3: join() — best for many strings</span>
+<span class="kw">words</span> = [<span class="str">"chai"</span>, <span class="str">"is"</span>, <span class="str">"life"</span>]
+<span class="kw">print</span>(<span class="str">" "</span>.<span class="fn">join</span>(<span class="kw">words</span>))   <span class="cm"># → chai is life</span>
+
+<span class="cm"># Method 4: Repetition with *</span>
+<span class="kw">print</span>(<span class="str">"Ha"</span> * <span class="num">3</span>)           <span class="cm"># → HaHaHa</span></div>
+        <div class="out-label">output</div>
+        <div class="output">Sachin Tendulkar
+Welcome, Sachin Tendulkar!
+chai is life
+HaHaHa</div>
+      </div>
+      <div class="playground">
+        <div class="play-title">Join two strings:</div>
+        <div class="input-row">
+          <input type="text" id="cat-a" value="Jai " placeholder="String A" />
+          <input type="text" id="cat-b" value="Hind" placeholder="String B" />
+          <button class="run-btn" onclick="doConcat()">Join ↗</button>
+        </div>
+        <div id="cat-out" class="output" style="display:none"></div>
+      </div>`;
+    },
+    after() {}
+  },
+  {
+    id: "freq",
+    label: "6. Char frequency",
+    render() {
+      return `
+      <div class="section-title">Count occurrences of a character</div>
+      <div class="section-sub">How many times does a specific character appear?</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">Like a quality inspector on an assembly line counting how many defective screws appear in a batch. You pass through every item once and tally.</div>
+        <div class="code-block"><span class="kw">sentence</span> = <span class="str">"banana is a fantastic fruit"</span>
+
+<span class="cm"># Method 1: .count() — easiest</span>
+<span class="kw">print</span>(<span class="kw">sentence</span>.<span class="fn">count</span>(<span class="str">"a"</span>))   <span class="cm"># → 6</span>
+
+<span class="cm"># Method 2: Manual loop (teaches the logic)</span>
+<span class="kw">count</span> = <span class="num">0</span>
+<span class="kw">for</span> <span class="kw">ch</span> <span class="kw">in</span> <span class="kw">sentence</span>:
+    <span class="kw">if</span> <span class="kw">ch</span> == <span class="str">"a"</span>:
+        <span class="kw">count</span> += <span class="num">1</span>
+<span class="kw">print</span>(<span class="kw">count</span>)   <span class="cm"># → 6</span>
+
+<span class="cm"># Method 3: Full frequency map of ALL characters</span>
+<span class="kw">freq</span> = {}
+<span class="kw">for</span> <span class="kw">ch</span> <span class="kw">in</span> <span class="str">"banana"</span>:
+    <span class="kw">freq</span>[<span class="kw">ch</span>] = <span class="kw">freq</span>.<span class="fn">get</span>(<span class="kw">ch</span>, <span class="num">0</span>) + <span class="num">1</span>
+<span class="kw">print</span>(<span class="kw">freq</span>)
+<span class="cm"># → {'b': 1, 'a': 3, 'n': 2}</span></div>
+        <div class="out-label">output</div>
+        <div class="output">6
+6
+{'b': 1, 'a': 3, 'n': 2}</div>
+      </div>
+      <div class="playground">
+        <div class="play-title">Count a character in a string:</div>
+        <div class="input-row">
+          <input type="text" id="freq-str" value="mississippi" placeholder="String" />
+          <input type="text" id="freq-ch" value="s" placeholder="Char" style="max-width:60px" maxlength="1" />
+          <button class="run-btn" onclick="doFreq()">Count ↗</button>
+        </div>
+        <div id="freq-out" class="output" style="display:none"></div>
+      </div>`;
+    },
+    after() {}
+  },
+  {
+    id: "remove",
+    label: "7. Remove char",
+    render() {
+      return `
+      <div class="section-title">Remove occurrences of a character</div>
+      <div class="section-sub">Delete every instance of a specific character from a string.</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">Like a text censor blacking out every occurrence of a forbidden word. Or a data cleaning step: removing all spaces from a phone number input like "98 765 43 210" → "9876543210".</div>
+        <div class="code-block"><span class="kw">phone</span> = <span class="str">"98 765 43 210"</span>
+
+<span class="cm"># Method 1: .replace() — replaces char with nothing</span>
+<span class="kw">clean</span> = <span class="kw">phone</span>.<span class="fn">replace</span>(<span class="str">" "</span>, <span class="str">""</span>)
+<span class="kw">print</span>(<span class="kw">clean</span>)   <span class="cm"># → 9876543210</span>
+
+<span class="cm"># Method 2: Loop + rebuild (understand the mechanics)</span>
+<span class="kw">result</span> = <span class="str">""</span>
+<span class="kw">for</span> <span class="kw">ch</span> <span class="kw">in</span> <span class="kw">phone</span>:
+    <span class="kw">if</span> <span class="kw">ch</span> != <span class="str">" "</span>:
+        <span class="kw">result</span> += <span class="kw">ch</span>
+<span class="kw">print</span>(<span class="kw">result</span>)   <span class="cm"># → 9876543210</span>
+
+<span class="cm"># Method 3: Pythonic one-liner with join + comprehension</span>
+<span class="kw">result2</span> = <span class="str">""</span>.<span class="fn">join</span>(<span class="kw">ch</span> <span class="kw">for</span> <span class="kw">ch</span> <span class="kw">in</span> <span class="kw">phone</span> <span class="kw">if</span> <span class="kw">ch</span> != <span class="str">" "</span>)
+<span class="kw">print</span>(<span class="kw">result2</span>)  <span class="cm"># → 9876543210</span></div>
+        <div class="out-label">output</div>
+        <div class="output">9876543210
+9876543210
+9876543210</div>
+      </div>
+      <div class="playground">
+        <div class="play-title">Remove a character from a string:</div>
+        <div class="input-row">
+          <input type="text" id="rem-str" value="hello world" placeholder="String" />
+          <input type="text" id="rem-ch" value="l" placeholder="Char" style="max-width:60px" maxlength="1" />
+          <button class="run-btn" onclick="doRemove()">Remove ↗</button>
+        </div>
+        <div id="rem-out" class="output" style="display:none"></div>
+      </div>`;
+    },
+    after() {}
+  },
+  {
+    id: "slice",
+    label: "8. Slicing",
+    render() {
+      return `
+      <div class="section-title">Slicing — extracting a part of a string</div>
+      <div class="section-sub">Cut out a portion of a string using start, stop, and step.</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">Like a butcher cutting a specific portion of a loaf of bread. You say "from slice 2 to slice 5" — Python cuts exactly that portion. The original loaf is untouched.</div>
+        <div class="code-block"><span class="kw">s</span> = <span class="str">"ABCDEFGHIJ"</span>
+<span class="cm">#    0123456789</span>
+
+<span class="kw">print</span>(<span class="kw">s</span>[<span class="num">2</span>:<span class="num">6</span>])    <span class="cm"># → CDEF  (index 2 up to but NOT including 6)</span>
+<span class="kw">print</span>(<span class="kw">s</span>[:<span class="num">4</span>])     <span class="cm"># → ABCD  (from start to index 4)</span>
+<span class="kw">print</span>(<span class="kw">s</span>[<span class="num">6</span>:])     <span class="cm"># → GHIJ  (from index 6 to end)</span>
+<span class="kw">print</span>(<span class="kw">s</span>[<span class="num">::2</span>])   <span class="cm"># → ACEGI (every 2nd character)</span>
+<span class="kw">print</span>(<span class="kw">s</span>[<span class="num">::-1</span>])  <span class="cm"># → JIHGFEDCBA (reversed)</span>
+
+<span class="cm"># Real world: extract area code from phone</span>
+<span class="kw">phone</span> = <span class="str">"022-12345678"</span>
+<span class="kw">area_code</span> = <span class="kw">phone</span>[:<span class="num">3</span>]
+<span class="kw">print</span>(<span class="kw">area_code</span>)   <span class="cm"># → 022</span></div>
+        <div class="out-label">output</div>
+        <div class="output">CDEF
+ABCD
+GHIJ
+ACEGI
+JIHGFEDCBA
+022</div>
+      </div>
+      <div class="playground">
+        <div class="play-title">Slice a string [start:stop:step]:</div>
+        <div class="input-row">
+          <input type="text" id="sl-str" value="ABCDEFGHIJ" placeholder="String" />
+          <input type="number" id="sl-a" placeholder="start" style="max-width:60px" />
+          <input type="number" id="sl-b" placeholder="stop" style="max-width:60px" />
+          <input type="number" id="sl-c" value="1" placeholder="step" style="max-width:60px" />
+          <button class="run-btn" onclick="doSlice()">Slice ↗</button>
+        </div>
+        <div id="sl-out" class="output" style="display:none"></div>
+      </div>`;
+    },
+    after() {}
+  },
+  {
+    id: "methods",
+    label: "9. Case & Strip",
+    render() {
+      return `
+      <div class="section-title">Case conversion and stripping whitespace</div>
+      <div class="section-sub">Essential tools for cleaning and normalizing user input in real applications.</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">A hotel receptionist standardizing guest names before entering into the database — trimming extra spaces and capitalizing correctly, no matter how the guest wrote it on the form.</div>
+        <div class="code-block"><span class="kw">raw</span> = <span class="str">"  hello World  "</span>
+
+<span class="kw">print</span>(<span class="kw">raw</span>.<span class="fn">strip</span>())      <span class="cm"># → "hello World"   (remove surrounding spaces)</span>
+<span class="kw">print</span>(<span class="kw">raw</span>.<span class="fn">lstrip</span>())     <span class="cm"># → "hello World  " (left only)</span>
+<span class="kw">print</span>(<span class="kw">raw</span>.<span class="fn">rstrip</span>())     <span class="cm"># → "  hello World" (right only)</span>
+<span class="kw">print</span>(<span class="kw">raw</span>.<span class="fn">upper</span>())      <span class="cm"># → "  HELLO WORLD  "</span>
+<span class="kw">print</span>(<span class="kw">raw</span>.<span class="fn">lower</span>())      <span class="cm"># → "  hello world  "</span>
+<span class="kw">print</span>(<span class="kw">raw</span>.<span class="fn">title</span>())      <span class="cm"># → "  Hello World  " (each word capitalized)</span>
+<span class="kw">print</span>(<span class="kw">raw</span>.<span class="fn">swapcase</span>())   <span class="cm"># → "  HELLO wORLD  "</span>
+
+<span class="cm"># Real world: normalize user email input</span>
+<span class="kw">email</span> = <span class="str">"  User@Gmail.COM  "</span>
+<span class="kw">clean_email</span> = <span class="kw">email</span>.<span class="fn">strip</span>().<span class="fn">lower</span>()
+<span class="kw">print</span>(<span class="kw">clean_email</span>)   <span class="cm"># → user@gmail.com</span></div>
+        <div class="out-label">output</div>
+        <div class="output">hello World
+hello World  
+  hello World
+  HELLO WORLD  
+  hello world  
+  Hello World  
+  HELLO wORLD  
+user@gmail.com</div>
+      </div>`;
+    },
+    after() {}
+  },
+  {
+    id: "find",
+    label: "10. Find & Replace",
+    render() {
+      return `
+      <div class="section-title">Find, check substring, and replace</div>
+      <div class="section-sub">Search inside a string and substitute parts of it.</div>
+      <div class="concept-block">
+        <div class="concept-label">Real-world analogy</div>
+        <div class="analogy">Like using "Find & Replace" in Microsoft Word — locate every instance of a word and swap it with something else.</div>
+        <div class="code-block"><span class="kw">text</span> = <span class="str">"The price is 100 rupees. 100 rupees is the price."</span>
+
+<span class="cm"># Check if substring exists</span>
+<span class="kw">print</span>(<span class="str">"rupees"</span> <span class="kw">in</span> <span class="kw">text</span>)          <span class="cm"># → True</span>
+<span class="kw">print</span>(<span class="kw">text</span>.<span class="fn">startswith</span>(<span class="str">"The"</span>))    <span class="cm"># → True</span>
+<span class="kw">print</span>(<span class="kw">text</span>.<span class="fn">endswith</span>(<span class="str">"price."</span>))   <span class="cm"># → True</span>
+
+<span class="cm"># Find position of first occurrence</span>
+<span class="kw">print</span>(<span class="kw">text</span>.<span class="fn">find</span>(<span class="str">"100"</span>))    <span class="cm"># → 13 (index where it starts)</span>
+<span class="kw">print</span>(<span class="kw">text</span>.<span class="fn">find</span>(<span class="str">"xyz"</span>))    <span class="cm"># → -1 (not found)</span>
+
+<span class="cm"># Replace — returns NEW string, does NOT modify original</span>
+<span class="kw">updated</span> = <span class="kw">text</span>.<span class="fn">replace</span>(<span class="str">"100"</span>, <span class="str">"200"</span>)
+<span class="kw">print</span>(<span class="kw">updated</span>)</div>
+        <div class="out-label">output</div>
+        <div class="output">True
+True
+True
+13
+-1
+The price is 200 rupees. 200 rupees is the price.</div>
+      </div>
+      <div class="playground">
+        <div class="play-title">Find and replace in a string:</div>
+        <div class="input-row">
+          <input type="text" id="fr-str" value="I love Python and Python is great" placeholder="String" />
+        </div>
+        <div class="input-row">
+          <input type="text" id="fr-find" value="Python" placeholder="Find" />
+          <input type="text" id="fr-rep" value="Java" placeholder="Replace with" />
+          <button class="run-btn" onclick="doFindReplace()">Replace ↗</button>
+        </div>
+        <div id="fr-out" class="output" style="display:none"></div>
+      </div>`;
+    },
+    after() {}
+  }
+];
+
+function doReverse() {
+  const v = document.getElementById("rev-in").value;
+  const r = v.split("").reverse().join("");
+  const o = document.getElementById("rev-out");
+  o.style.display = "block";
+  o.textContent = `Original : "${v}"\nReversed : "${r}"\nPalindrome: ${v === r}`;
+}
+function doCmp() {
+  const a = document.getElementById("cmp-a").value;
+  const b = document.getElementById("cmp-b").value;
+  const o = document.getElementById("cmp-out");
+  o.style.display = "block";
+  o.textContent = `"${a}" == "${b}" → ${a === b}\nCase-insensitive → ${a.toLowerCase() === b.toLowerCase()}`;
+}
+function doSort() {
+  const v = document.getElementById("sort-in").value;
+  const asc = v.split("").sort().join("");
+  const desc = v.split("").sort().reverse().join("");
+  const o = document.getElementById("sort-out");
+  o.style.display = "block";
+  o.textContent = `Original    : "${v}"\nSorted A→Z  : "${asc}"\nSorted Z→A  : "${desc}"`;
+}
+function doRotate() {
+  const w = document.getElementById("rot-word").value;
+  const n = parseInt(document.getElementById("rot-n").value) || 1;
+  const safe = ((n % w.length) + w.length) % w.length;
+  const left = w.slice(safe) + w.slice(0, safe);
+  const right = w.slice(-safe) + w.slice(0, -safe);
+  const o = document.getElementById("rot-out");
+  o.style.display = "block";
+  o.textContent = `Original     : "${w}"\nLeft by ${n}  : "${left}"\nRight by ${n} : "${safe > 0 ? right : w}"`;
+}
+function doConcat() {
+  const a = document.getElementById("cat-a").value;
+  const b = document.getElementById("cat-b").value;
+  const o = document.getElementById("cat-out");
+  o.style.display = "block";
+  o.textContent = `"${a}" + "${b}" → "${a + b}"\nf-string      → "Hello, ${a}${b}!"`;
+}
+function doFreq() {
+  const s = document.getElementById("freq-str").value;
+  const c = document.getElementById("freq-ch").value[0] || "";
+  if (!c) return;
+  const cnt = s.split("").filter(x => x === c).length;
+  const freq = {};
+  s.split("").forEach(ch => { freq[ch] = (freq[ch] || 0) + 1; });
+  const o = document.getElementById("freq-out");
+  o.style.display = "block";
+  o.textContent = `Count of "${c}" in "${s}" → ${cnt}\n\nFull frequency map:\n${Object.entries(freq).map(([k,v]) => `  "${k}": ${v}`).join("\n")}`;
+}
+function doRemove() {
+  const s = document.getElementById("rem-str").value;
+  const c = document.getElementById("rem-ch").value[0] || "";
+  if (!c) return;
+  const result = s.split("").filter(x => x !== c).join("");
+  const removed = s.length - result.length;
+  const o = document.getElementById("rem-out");
+  o.style.display = "block";
+  o.textContent = `Original  : "${s}"\nRemoved "${c}" (×${removed})\nResult    : "${result}"`;
+}
+function doSlice() {
+  const s = document.getElementById("sl-str").value;
+  const a = document.getElementById("sl-a").value;
+  const b = document.getElementById("sl-b").value;
+  const c = parseInt(document.getElementById("sl-c").value) || 1;
+  let result = "";
+  const start = a === "" ? undefined : parseInt(a);
+  const stop  = b === "" ? undefined : parseInt(b);
+  const arr = s.split("");
+  const sliced = [];
+  let i = start === undefined ? (c > 0 ? 0 : arr.length - 1) : start;
+  if (c > 0) {
+    const end = stop === undefined ? arr.length : stop;
+    for (let x = i; x < end; x += c) if (arr[x] !== undefined) sliced.push(arr[x]);
+  } else {
+    const end = stop === undefined ? -1 : stop;
+    for (let x = i; x > end; x += c) if (arr[x] !== undefined) sliced.push(arr[x]);
+  }
+  result = sliced.join("");
+  const o = document.getElementById("sl-out");
+  o.style.display = "block";
+  o.textContent = `s[${a !== "" ? a : ""}:${b !== "" ? b : ""}:${c}] → "${result}"`;
+}
+function doFindReplace() {
+  const s = document.getElementById("fr-str").value;
+  const f = document.getElementById("fr-find").value;
+  const r = document.getElementById("fr-rep").value;
+  if (!f) return;
+  const result = s.split(f).join(r);
+  const count = s.split(f).length - 1;
+  const o = document.getElementById("fr-out");
+  o.style.display = "block";
+  o.textContent = `Found "${f}" ${count} time(s)\nResult: "${result}"`;
+}
+
+const nav = document.getElementById("nav");
+const container = document.getElementById("lessons");
+let current = 0;
+
+function show(idx) {
+  current = idx;
+  const lesson = lessons[idx];
+  container.innerHTML = `<div class="lesson active">${lesson.render()}</div>`;
+  nav.querySelectorAll(".nav-btn").forEach((b, i) => b.classList.toggle("active", i === idx));
+  if (lesson.after) setTimeout(lesson.after, 50);
+}
+
+lessons.forEach((l, i) => {
+  const btn = document.createElement("button");
+  btn.className = "nav-btn";
+  btn.textContent = l.label;
+  btn.onclick = () => show(i);
+  nav.appendChild(btn);
+});
+
+show(0);
+</script>

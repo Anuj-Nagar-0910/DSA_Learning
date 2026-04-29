@@ -1,0 +1,300 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{font-family:var(--font-sans);padding:1rem 0.5rem 2rem;max-width:720px;margin:0 auto}
+h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.5rem}
+h3{font-size:15px;font-weight:500;color:var(--color-text-primary);margin:1.25rem 0 0.4rem}
+p,li{font-size:13px;line-height:1.7;color:var(--color-text-secondary)}
+ul{padding-left:1.1rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
+.section{margin-bottom:2rem}
+.label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:2px}
+.mono{font-family:var(--font-mono);font-size:13px;color:var(--color-text-primary)}
+.chip{display:inline-block;font-size:11px;padding:2px 10px;border-radius:20px;font-weight:500}
+.chip-blue{background:#E6F1FB;color:#0C447C}
+.chip-amber{background:#FAEEDA;color:#633806}
+.chip-purple{background:#EEEDFE;color:#3C3489}
+.chip-green{background:#EAF3DE;color:#27500A}
+.tip{border-left:3px solid #7F77DD;background:#EEEDFE;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:0.6rem 0.9rem;margin:0.5rem 0}
+.tip p{color:#3C3489;font-size:13px}
+.row{display:flex;gap:10px;margin-bottom:0.75rem}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.75rem 1rem;flex:1;text-align:center}
+.metric .lbl{font-size:11px;color:var(--color-text-tertiary);margin-bottom:4px}
+.metric .val{font-size:22px;font-weight:500;color:var(--color-text-primary);font-family:var(--font-mono)}
+.tree-row{display:flex;justify-content:center;align-items:center;gap:6px;margin:4px 0;position:relative}
+.node{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;border:1.5px solid}
+.node-blue{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.node-amber{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.node-green{background:#EAF3DE;color:#27500A;border-color:#97C459}
+.node-gray{background:var(--color-background-secondary);color:var(--color-text-secondary);border-color:var(--color-border-secondary)}
+.level-label{font-size:11px;color:var(--color-text-tertiary);width:52px;text-align:right;padding-right:8px;flex-shrink:0;line-height:36px}
+.level-count{font-size:11px;color:var(--color-text-tertiary);width:52px;text-align:left;padding-left:8px;flex-shrink:0;line-height:36px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:0.5rem 0}
+th{background:var(--color-background-secondary);font-weight:500;font-size:12px;text-align:left;padding:7px 10px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+td{padding:7px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+tr:last-child td{border-bottom:none}
+td:nth-child(2),td:nth-child(3),td:nth-child(4){font-family:var(--font-mono);font-size:12px}
+.slider-row{display:flex;align-items:center;gap:12px;margin:0.75rem 0}
+.slider-row label{font-size:13px;color:var(--color-text-secondary);min-width:80px}
+.slider-row input{flex:1}
+.slider-row span{font-size:14px;font-weight:500;color:var(--color-text-primary);font-family:var(--font-mono);min-width:44px}
+.bar-row{display:flex;align-items:center;gap:8px;margin:4px 0}
+.bar-label{font-size:12px;color:var(--color-text-secondary);width:80px;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:20px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.4s}
+.bar-val{font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);min-width:56px}
+.steps-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.75rem 1rem;font-size:13px;min-height:48px;color:var(--color-text-secondary);line-height:1.7}
+.path-node{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-size:12px;font-weight:500;border:1.5px solid;margin:2px}
+</style>
+
+<div class="wrap">
+
+<div class="section">
+  <h2>Part 1 — what does log n actually mean?</h2>
+  <div class="card">
+    <p style="margin-bottom:0.5rem">log₂(n) answers one question: <strong style="color:var(--color-text-primary)">how many times can you halve n before reaching 1?</strong></p>
+    <div class="slider-row">
+      <label>n =</label>
+      <input type="range" min="1" max="1048576" step="1" value="16" id="log-slider" oninput="updateLog(this.value)">
+      <span id="log-n">16</span>
+    </div>
+    <div id="log-halving" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0.5rem 0 0.75rem"></div>
+    <div class="row">
+      <div class="metric"><div class="lbl">n</div><div class="val" id="lv-n">16</div></div>
+      <div class="metric"><div class="lbl">log₂(n)</div><div class="val" id="lv-log">4</div></div>
+      <div class="metric"><div class="lbl">halvings to reach 1</div><div class="val" id="lv-halvings">4</div></div>
+    </div>
+    <div class="tip"><p>This is exactly the height of a binary tree with n nodes. A tree of 1 million nodes is only 20 levels tall.</p></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Part 2 — the tree height IS log n</h2>
+  <div class="card">
+    <p style="margin-bottom:0.75rem">Each level of the tree doubles the number of nodes. So the height grows as the <em>inverse</em> of doubling — which is log₂.</p>
+    <div id="tree-viz"></div>
+    <div style="margin-top:0.5rem">
+      <table>
+        <tr><th>Level</th><th>Nodes at level</th><th>Total nodes so far</th><th>Height = log₂(total)</th></tr>
+        <tr><td>0 (root)</td><td>1</td><td>1</td><td>0</td></tr>
+        <tr><td>1</td><td>2</td><td>3</td><td>≈ 1.6</td></tr>
+        <tr><td>2</td><td>4</td><td>7</td><td>≈ 2.8</td></tr>
+        <tr><td>3</td><td>8</td><td>15</td><td>≈ 3.9</td></tr>
+        <tr><td>k</td><td>2ᵏ</td><td>2ᵏ⁺¹ − 1</td><td>k</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Part 3 — why insert is O(log n)</h2>
+  <div class="card">
+    <p style="margin-bottom:0.75rem">When you insert into a heap, the new element <em>bubbles up</em> from the bottom to its correct position. The maximum distance it can travel = the height of the tree = log₂(n).</p>
+    <div class="slider-row">
+      <label>n nodes</label>
+      <input type="range" min="1" max="1000000" step="1" value="16" id="insert-slider" oninput="updateInsert(this.value)">
+      <span id="ins-n">16</span>
+    </div>
+    <div class="row" style="margin-top:0.5rem">
+      <div class="metric"><div class="lbl">tree height</div><div class="val" id="ins-h">4</div></div>
+      <div class="metric"><div class="lbl">max swaps (insert)</div><div class="val" id="ins-swaps">4</div></div>
+    </div>
+    <h3 style="margin-top:0.75rem">Bubble-up path for n = 15</h3>
+    <p style="margin-bottom:0.5rem">Inserting a very small value (like 0) — worst case, it travels all the way to the root. Each arrow = one swap = one comparison.</p>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;margin:0.75rem 0">
+      <div class="tree-row">
+        <span class="level-label">Level 0</span>
+        <div class="node node-green" title="root">5</div>
+        <span class="level-count">← 3 swaps up</span>
+      </div>
+      <div style="font-size:18px;color:var(--color-text-tertiary)">↑</div>
+      <div class="tree-row">
+        <span class="level-label">Level 1</span>
+        <div class="node node-amber">8</div>
+        <div class="node node-gray">12</div>
+        <span class="level-count">← 2 swaps up</span>
+      </div>
+      <div style="font-size:18px;color:var(--color-text-tertiary)">↑</div>
+      <div class="tree-row">
+        <span class="level-label">Level 2</span>
+        <div class="node node-amber">9</div>
+        <div class="node node-gray">15</div>
+        <div class="node node-gray">14</div>
+        <div class="node node-gray">20</div>
+        <span class="level-count">← 1 swap up</span>
+      </div>
+      <div style="font-size:18px;color:var(--color-text-tertiary)">↑</div>
+      <div class="tree-row">
+        <span class="level-label">Level 3</span>
+        <div class="node node-blue" style="border-color:#378ADD;background:#B5D4F4;color:#042C53">0*</div>
+        <div class="node node-gray">22</div>
+        <div class="node node-gray">25</div>
+        <div class="node node-gray">30</div>
+        <div class="node node-gray">18</div>
+        <div class="node node-gray">16</div>
+        <div class="node node-gray">11</div>
+        <div class="node node-gray">13</div>
+        <span class="level-count">← inserted here</span>
+      </div>
+    </div>
+    <div class="tip"><p>0* was inserted at the leaf. It swapped upward 3 times = log₂(15) ≈ 3.9 → rounded to 4. That's O(log n).</p></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Part 4 — why n inserts = O(n log n)</h2>
+  <div class="card">
+    <p style="margin-bottom:0.75rem">If one insert costs O(log n), and you do n inserts (building a heap by pushing one element at a time), the total cost is:</p>
+    <div style="text-align:center;font-size:20px;font-family:var(--font-mono);color:var(--color-text-primary);padding:0.75rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin:0.5rem 0 0.75rem">
+      n × log n
+    </div>
+    <div class="slider-row">
+      <label>n =</label>
+      <input type="range" min="2" max="256" step="1" value="8" id="nlogn-slider" oninput="updateNlogn(this.value)">
+      <span id="nl-n">8</span>
+    </div>
+    <div style="margin:0.75rem 0" id="cost-bars"></div>
+    <div class="row">
+      <div class="metric"><div class="lbl">total inserts</div><div class="val" id="nl-n2">8</div></div>
+      <div class="metric"><div class="lbl">cost per insert (avg)</div><div class="val" id="nl-logn">3</div></div>
+      <div class="metric"><div class="lbl">total ops ≈</div><div class="val" id="nl-total">24</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Part 5 — graphical comparison</h2>
+  <div class="card">
+    <p style="margin-bottom:0.75rem">See how slowly log n grows vs n and n². Drag the slider to feel the difference.</p>
+    <div class="slider-row">
+      <label>n =</label>
+      <input type="range" min="2" max="1024" step="1" value="32" id="graph-slider" oninput="updateGraph(this.value)">
+      <span id="gr-n">32</span>
+    </div>
+    <div id="graph-bars" style="margin-top:0.5rem"></div>
+    <div class="tip"><p>At n = 1024: n² = 1,048,576 operations. n log n = 10,240. log n = just 10. That gap is why we care about complexity.</p></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Part 6 — the full picture</h2>
+  <div class="card">
+    <table>
+      <tr><th>Operation</th><th>Why log n?</th><th>Total for n elements</th></tr>
+      <tr><td>Insert (push)</td><td>bubble up ≤ tree height</td><td>O(n log n)</td></tr>
+      <tr><td>Delete min (pop)</td><td>sift down ≤ tree height</td><td>O(n log n)</td></tr>
+      <tr><td>heapify</td><td>most nodes near leaves (short trips)</td><td><strong style="color:var(--color-text-primary)">O(n) — better!</strong></td></tr>
+      <tr><td>Heap sort</td><td>n pops, each O(log n)</td><td>O(n log n)</td></tr>
+    </table>
+    <div class="tip" style="margin-top:0.75rem"><p>heapify is O(n) not O(n log n) because it builds bottom-up — lower nodes (majority) sift down only 1–2 levels, not log n levels. The math sums to O(n).</p></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function updateLog(v) {
+  v = parseInt(v);
+  document.getElementById('log-n').textContent = v.toLocaleString();
+  document.getElementById('lv-n').textContent = v.toLocaleString();
+  const lg = v === 1 ? 0 : Math.log2(v);
+  document.getElementById('lv-log').textContent = lg.toFixed(1);
+  document.getElementById('lv-halvings').textContent = Math.ceil(lg);
+  const box = document.getElementById('log-halving');
+  let html = '';
+  let cur = v, steps = 0;
+  const colors = ['#E6F1FB','#EAF3DE','#FAEEDA','#EEEDFE','#FAECE7','#E1F5EE'];
+  const texts = ['#0C447C','#27500A','#633806','#3C3489','#712B13','#085041'];
+  while (cur >= 1 && steps <= 22) {
+    const ci = steps % colors.length;
+    html += `<div style="display:inline-flex;align-items:center;justify-content:center;min-width:40px;height:28px;border-radius:6px;background:${colors[ci]};color:${texts[ci]};font-size:12px;font-weight:500;font-family:var(--font-mono);padding:0 8px">${Math.round(cur)}</div>`;
+    if (cur > 1) html += `<span style="font-size:11px;color:var(--color-text-tertiary)">÷2</span>`;
+    cur /= 2;
+    steps++;
+  }
+  box.innerHTML = html;
+}
+updateLog(16);
+
+function buildTree() {
+  const viz = document.getElementById('tree-viz');
+  const levels = [[1],[2],[4],[8]];
+  const colors = ['node-amber','node-blue','node-green','node-gray'];
+  const labels = [['1'],['2','3'],['4','5','6','7'],['8','9','10','11','12','13','14','15']];
+  let html = '';
+  levels.forEach((row, li) => {
+    const count = row[0];
+    html += `<div class="tree-row">`;
+    html += `<span class="level-label">Level ${li}</span>`;
+    for (let i = 0; i < count; i++) {
+      html += `<div class="node ${colors[li]}" title="node">${labels[li][i]}</div>`;
+    }
+    html += `<span class="level-count">${count} node${count>1?'s':''}</span>`;
+    html += `</div>`;
+    if (li < levels.length-1) html += `<div style="font-size:11px;color:var(--color-text-tertiary);text-align:center;margin:1px 0">↓ each node has 2 children</div>`;
+  });
+  viz.innerHTML = html;
+}
+buildTree();
+
+function updateInsert(v) {
+  v = parseInt(v);
+  document.getElementById('ins-n').textContent = v.toLocaleString();
+  const h = Math.ceil(Math.log2(v + 1));
+  document.getElementById('ins-h').textContent = h;
+  document.getElementById('ins-swaps').textContent = h;
+}
+updateInsert(16);
+
+function updateNlogn(v) {
+  v = parseInt(v);
+  document.getElementById('nl-n').textContent = v;
+  document.getElementById('nl-n2').textContent = v;
+  const logn = v === 1 ? 0 : Math.log2(v);
+  document.getElementById('nl-logn').textContent = logn.toFixed(1);
+  const total = Math.round(v * logn);
+  document.getElementById('nl-total').textContent = total.toLocaleString();
+  const box = document.getElementById('cost-bars');
+  let html = '<div class="label" style="margin-bottom:6px">Cost per insert (bubbles up at most log₂(i) levels):</div>';
+  const maxCost = logn;
+  for (let i = 1; i <= Math.min(v, 16); i++) {
+    const cost = i === 1 ? 0 : Math.log2(i);
+    const pct = maxCost > 0 ? Math.min((cost / maxCost) * 100, 100) : 0;
+    html += `<div class="bar-row">
+      <span class="bar-label">insert #${i}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct.toFixed(1)}%;background:#378ADD"></div></div>
+      <span class="bar-val">≤ ${cost.toFixed(1)} ops</span>
+    </div>`;
+  }
+  if (v > 16) html += `<p style="font-size:11px;color:var(--color-text-tertiary);margin-top:4px">... showing first 16 of ${v} inserts</p>`;
+  box.innerHTML = html;
+}
+updateNlogn(8);
+
+function updateGraph(v) {
+  v = parseInt(v);
+  document.getElementById('gr-n').textContent = v.toLocaleString();
+  const logn = Math.log2(v);
+  const nlogn = v * logn;
+  const n2 = v * v;
+  const maxVal = n2;
+  const bars = [
+    { label: 'log n', val: logn, color: '#97C459', textColor: '#27500A' },
+    { label: 'n log n', val: nlogn, color: '#378ADD', textColor: '#0C447C' },
+    { label: 'n²', val: n2, color: '#E24B4A', textColor: '#791F1F' },
+  ];
+  const box = document.getElementById('graph-bars');
+  let html = '';
+  bars.forEach(b => {
+    const pct = maxVal > 0 ? Math.min((b.val / maxVal) * 100, 100) : 0;
+    const displayVal = b.val >= 1000 ? b.val.toLocaleString(undefined,{maximumFractionDigits:0}) : b.val.toFixed(1);
+    html += `<div class="bar-row">
+      <span class="bar-label" style="font-weight:500;color:${b.textColor}">${b.label}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct.toFixed(2)}%;background:${b.color}"></div></div>
+      <span class="bar-val">${displayVal}</span>
+    </div>`;
+  });
+  box.innerHTML = html;
+}
+updateGraph(32);
+</script>
