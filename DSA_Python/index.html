@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DSA Python Summary Report</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172026;
+      --muted: #66717a;
+      --line: #d9e1e8;
+      --panel: #ffffff;
+      --soft: #f5f8fb;
+      --blue: #1f6feb;
+      --green: #188753;
+      --amber: #b7791f;
+      --red: #b42318;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--soft);
+      line-height: 1.55;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    header {
+      background: #0f1720;
+      color: #f8fbff;
+      padding: 56px 24px 36px;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: #9fd3ff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(2rem, 6vw, 4.5rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .intro {
+      max-width: 760px;
+      margin: 18px 0 0;
+      color: #d8e2eb;
+      font-size: 1.08rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .stat {
+      min-height: 112px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: #c8d4df;
+      font-size: 0.92rem;
+    }
+
+    main {
+      padding: 28px 0 56px;
+    }
+
+    section {
+      margin-top: 24px;
+      padding: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.28rem;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .topic {
+      min-height: 146px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+
+    .topic p,
+    .insight p,
+    .note-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .bars {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 130px 1fr 44px;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+
+    .bar-track {
+      height: 12px;
+      overflow: hidden;
+      background: #e8eef4;
+      border-radius: 999px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .file-card,
+    .insight,
+    .note-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+    }
+
+    .file-card header {
+      padding: 0;
+      background: transparent;
+      color: inherit;
+    }
+
+    .file-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .file-title a {
+      font-weight: 700;
+    }
+
+    .tag {
+      flex: 0 0 auto;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #123;
+      background: #e8eef4;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .tag.good {
+      color: #0f5132;
+      background: #d8f3e6;
+    }
+
+    .tag.warn {
+      color: #6b3f00;
+      background: #ffe7bd;
+    }
+
+    .tag.review {
+      color: #7a271a;
+      background: #ffe0dc;
+    }
+
+    .meta {
+      margin: 8px 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .file-card p {
+      margin-bottom: 8px;
+      color: #40505c;
+    }
+
+    .file-card ul,
+    .insight ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    footer {
+      padding: 22px 0 36px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 860px) {
+      .stats,
+      .grid,
+      .cards,
+      .notes {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 92px 1fr 36px;
+      }
+
+      section {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <p class="eyebrow">DSA_Python learning portfolio</p>
+      <h1>Python DSA Summary Report</h1>
+      <p class="intro">
+        A static overview of the Python practice files in this repository, grouped by topic with summaries,
+        learning insights, and improvement notes for the next round of practice.
+      </p>
+      <div class="stats" aria-label="Repository summary">
+        <div class="stat"><strong>18</strong><span>Python files reviewed</span></div>
+        <div class="stat"><strong>2</strong><span>Main practice levels</span></div>
+        <div class="stat"><strong>4</strong><span>Interactive note pages</span></div>
+        <div class="stat"><strong>9</strong><span>Core DSA themes</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <h2>Learning Coverage</h2>
+      <div class="grid">
+        <div class="topic">
+          <h3>Data Structures</h3>
+          <p>Linked lists, queues, stacks, heaps, dictionaries, and sets appear across the practice files.</p>
+        </div>
+        <div class="topic">
+          <h3>Algorithms</h3>
+          <p>Binary search, two-pointer intersection, recursion, matrix traversal, and max-selection are represented.</p>
+        </div>
+        <div class="topic">
+          <h3>Problem Solving</h3>
+          <p>Most files include prompt text, examples, constraints, and direct implementations suited to coding-platform practice.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>DSA Notes Library</h2>
+      <p>
+        These are the HTML notes already created inside <code>DSA_Notes</code>. They are linked here from the
+        main page so the report can act as the starting point for both code practice and concept revision.
+      </p>
+      <div class="notes">
+        <article class="note-card">
+          <h3><a href="DSA_Notes/python_strings_masterclass.html">Python Strings Masterclass</a></h3>
+          <p>String operations, patterns, and problem-solving techniques for text-based DSA questions.</p>
+        </article>
+        <article class="note-card">
+          <h3><a href="DSA_Notes/nlogn_deep_dive.html">N log N Deep Dive</a></h3>
+          <p>Complexity intuition for sorting, divide-and-conquer thinking, and efficient algorithm design.</p>
+        </article>
+        <article class="note-card">
+          <h3><a href="DSA_Notes/map_set_hashmap_notes.html">Map, Set, HashMap Notes</a></h3>
+          <p>Hash-based lookup, uniqueness, frequency counting, and dictionary/set use cases.</p>
+        </article>
+        <article class="note-card">
+          <h3><a href="DSA_Notes/heap_interactive_notes.html">Heap Interactive Notes</a></h3>
+          <p>Heap behavior and priority-queue concepts that connect directly to max-heap practice files.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Topic Balance</h2>
+      <div class="bars" aria-label="Topic distribution">
+        <div class="bar-row"><span>Arrays</span><div class="bar-track"><div class="bar-fill" style="width: 78%"></div></div><strong>7</strong></div>
+        <div class="bar-row"><span>Linked lists</span><div class="bar-track"><div class="bar-fill" style="width: 34%"></div></div><strong>3</strong></div>
+        <div class="bar-row"><span>Strings</span><div class="bar-track"><div class="bar-fill" style="width: 34%"></div></div><strong>3</strong></div>
+        <div class="bar-row"><span>Stack/queue/heap</span><div class="bar-track"><div class="bar-fill" style="width: 45%"></div></div><strong>4</strong></div>
+        <div class="bar-row"><span>Recursion</span><div class="bar-track"><div class="bar-fill" style="width: 12%"></div></div><strong>1</strong></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Basics Folder</h2>
+      <div class="cards">
+        <article class="file-card">
+          <header class="file-title"><a href="Basics/FindMaxInArray.py">FindMaxInArray.py</a><span class="tag good">heap</span></header>
+          <p class="meta">Concepts: max heap behavior with Python's min-heap, insert, pop maximum.</p>
+          <p>Implements max-removal queries by storing negative values in <code>heapq</code>.</p>
+          <ul><li>Good DSA idea: converts a min-heap into max-heap behavior.</li><li>Next step: wrap shared heap state in a class to match the prompt cleanly.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Basics/basic_linked_list.py">basic_linked_list.py</a><span class="tag good">linked list</span></header>
+          <p class="meta">Concepts: nodes, head pointer, append, prepend, delete, traversal.</p>
+          <p>Builds a beginner-friendly singly linked list with detailed method explanations.</p>
+          <ul><li>Strong learning value: pointer updates are explained line by line.</li><li>Append is O(n); adding a tail pointer would make it O(1).</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Basics/QueueSimple.py">QueueSimple.py</a><span class="tag good">queue</span></header>
+          <p class="meta">Concepts: FIFO, <code>deque</code>, O(1) append and popleft.</p>
+          <p>Uses <code>collections.deque</code> correctly for queue operations.</p>
+          <ul><li>Good library choice for front removals.</li><li>Ready for platform stubs that expect <code>insert</code> and <code>getFirst</code>.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Basics/MostFrequent.py">MostFrequent.py</a><span class="tag review">review</span></header>
+          <p class="meta">Concepts: frequency map, ASCII tie-breaking.</p>
+          <p>Counts characters with a dictionary and attempts to return the most frequent character.</p>
+          <ul><li>Insight: the update line should assign <code>max_count = count</code>, not <code>count = max_count</code>.</li><li>A focused test for ties like <code>aaaaAAAA</code> would catch this quickly.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Basics/learning_class.py">learning_class.py</a><span class="tag">OOP</span></header>
+          <p class="meta">Concepts: classes, constructors, instance methods, class variables.</p>
+          <p>Practices object-oriented Python with a simple shared user database dictionary.</p>
+          <ul><li>Good for understanding instance state versus class-level state.</li><li>Next step: avoid printing passwords in real applications.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Basics/__init__.py">__init__.py</a><span class="tag warn">notes</span></header>
+          <p class="meta">Concepts: package marker plus linked-list notes.</p>
+          <p>Currently stores explanatory notes inside the package initializer.</p>
+          <ul><li>Insight: move learning notes into a markdown or HTML note so imports stay lightweight.</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Intermediate Folder</h2>
+      <div class="cards">
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/AdditionOfMatrix.py">AdditionOfMatrix.py</a><span class="tag">matrix</span></header>
+          <p class="meta">Concepts: nested list comprehension, matrix addition.</p>
+          <p>Adds two same-sized matrices element by element.</p>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/average_height.py">average_height.py</a><span class="tag good">input</span></header>
+          <p class="meta">Concepts: stdin parsing, floating-point average, formatted output.</p>
+          <p>Reads student heights and prints the average to six decimal places.</p>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/diagonalsum.py">diagonalsum.py</a><span class="tag review">review</span></header>
+          <p class="meta">Concepts: square matrix traversal, principal diagonal.</p>
+          <p>Contains multiple diagonal-sum approaches, including a clean helper function.</p>
+          <ul><li>Insight: the top-level input logic reads values inconsistently; keep one solve path to avoid blocked input.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/fizzbuzz%20basic.py">fizzbuzz basic.py</a><span class="tag">loops</span></header>
+          <p class="meta">Concepts: divisibility checks, branching, output per line.</p>
+          <p>Classic FizzBuzz solution from 1 to n.</p>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/IntersectionOfTwoArrayBasic.py">IntersectionOfTwoArrayBasic.py</a><span class="tag good">two pointers</span></header>
+          <p class="meta">Concepts: sorting, duplicate-aware intersection, two-pointer scan.</p>
+          <p>Finds the sorted intersection while preserving duplicate counts.</p>
+          <ul><li>Good algorithmic structure after sorting both inputs.</li><li>Next step: remove repeated print lines in the main block.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/LinkedListSplit.py">LinkedListSplit.py</a><span class="tag good">linked list</span></header>
+          <p class="meta">Concepts: stable partition, odd/even splitting, tail pointers.</p>
+          <p>Splits a linked list into odd and even lists while preserving original order.</p>
+          <ul><li>Strong use of separate head and tail pointers.</li><li>Correctly terminates both result lists with <code>None</code>.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/MaxProduct2.py">MaxProduct2.py</a><span class="tag">heap</span></header>
+          <p class="meta">Concepts: selecting top two values, max product.</p>
+          <p>Uses a heap to retrieve the two largest numbers before computing the product.</p>
+          <ul><li>Insight: for this constraint, a single pass tracking two maximums would use O(1) extra space.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/Recursion.py">Recursion.py</a><span class="tag">recursion</span></header>
+          <p class="meta">Concepts: recursive sum, factorial, Fibonacci.</p>
+          <p>Shows base cases and recursive calls through three classic examples.</p>
+          <ul><li>Insight: Fibonacci is exponential without memoization, which is useful to compare against dynamic programming later.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/SearchTarget.py">SearchTarget.py</a><span class="tag good">binary search</span></header>
+          <p class="meta">Concepts: sorted arrays, left/right bounds, O(log n) search.</p>
+          <p>Implements binary search and returns the target index or -1.</p>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/simplediampond.py">simplediampond.py</a><span class="tag">patterns</span></header>
+          <p class="meta">Concepts: range loops, string multiplication, output shaping.</p>
+          <p>Builds a simple diamond pattern with increasing and decreasing rows.</p>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/ValidParanthesies.py">ValidParanthesies.py</a><span class="tag good">stack</span></header>
+          <p class="meta">Concepts: stack, bracket matching, early invalid detection.</p>
+          <p>Validates bracket sequences using a list-backed stack and closing-to-opening map.</p>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/WordCount.py">WordCount.py</a><span class="tag">set</span></header>
+          <p class="meta">Concepts: splitting strings, uniqueness with sets.</p>
+          <p>Counts unique whitespace-separated words in a string.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Insights</h2>
+      <div class="grid">
+        <div class="insight">
+          <h3>Most Ready Files</h3>
+          <p><code>QueueSimple.py</code>, <code>LinkedListSplit.py</code>, <code>SearchTarget.py</code>, and <code>ValidParanthesies.py</code> are clean practice solutions with clear core logic.</p>
+        </div>
+        <div class="insight">
+          <h3>Best Next Cleanup</h3>
+          <p>Move demo code behind <code>if __name__ == "__main__"</code>, remove repeated prints, and keep each coding-platform solution to one input/output path.</p>
+        </div>
+        <div class="insight">
+          <h3>Next Learning Step</h3>
+          <p>Add small tests for each function, especially edge cases: empty structures, ties, single-element inputs, and duplicate values.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Generated for the DSA_Python folder. Host this folder through GitHub Pages using the included workflow.
+  </footer>
+</body>
+</html>
