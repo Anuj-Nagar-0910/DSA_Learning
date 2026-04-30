@@ -117,9 +117,101 @@
   @media (prefers-color-scheme: dark) {
     .tip { background: #412402; border-color: #854F0B; color: #FAC775; }
   }
+  :root {
+    --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --color-text-primary: #172026;
+    --color-text-secondary: #66717a;
+    --color-text-tertiary: #85919b;
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f8fb;
+    --color-border-primary: #8db6e8;
+    --color-border-secondary: #d9e1e8;
+    --color-border-tertiary: #e6edf3;
+    --border-radius-md: 8px;
+    --border-radius-lg: 8px;
+  }
+  body {
+    margin: 0;
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+  }
+  .wrap {
+    width: min(1120px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 28px 0 56px;
+  }
+  .note-hero {
+    margin-bottom: 18px;
+    padding: 32px 24px;
+    border-radius: 8px;
+    background: #0f1720;
+    color: #f8fbff;
+    font-family: var(--font-sans);
+  }
+  .back-link {
+    display: inline-flex;
+    margin-bottom: 14px;
+    color: #9fd3ff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .note-hero h1 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+  .note-hero p {
+    max-width: 760px;
+    margin: 14px 0 0;
+    color: #d8e2eb;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 12px;
+    margin-bottom: 18px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 23, 32, 0.08);
+  }
+  .nav-btn {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    min-height: 34px;
+  }
+  .lesson.active,
+  .concept-block,
+  .playground {
+    border-radius: 8px;
+  }
+  .lesson.active {
+    padding: 22px;
+    background: var(--color-background-primary);
+    border: 1px solid var(--color-border-secondary);
+  }
+  @media (max-width: 760px) {
+    .wrap { width: min(100% - 20px, 1120px); }
+    .note-hero { padding: 24px 18px; }
+    .lesson.active { padding: 16px; }
+  }
 </style>
 
 <div class="wrap">
+<header class="note-hero">
+  <a class="back-link" href="../index.html">Back to DSA Python report</a>
+  <h1>Python Strings Masterclass</h1>
+  <p>Interactive string notes with examples, visual indexing, and quick practice tools.</p>
+</header>
 <h2 class="sr-only">Python Strings Interactive Masterclass</h2>
 
 <div class="nav" id="nav"></div>

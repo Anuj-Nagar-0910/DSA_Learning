@@ -7,7 +7,7 @@ h3{font-size:15px;font-weight:500;color:var(--color-text-primary);margin:1.25rem
 p,li{font-size:13px;line-height:1.7;color:var(--color-text-secondary)}
 ul{padding-left:1.1rem}
 .card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
-.section{margin-bottom:2rem}
+.section{margin-bottom:2rem;background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:8px;padding:22px}
 .label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:2px}
 .mono{font-family:var(--font-mono);font-size:13px;color:var(--color-text-primary)}
 .chip{display:inline-block;font-size:11px;padding:2px 10px;border-radius:20px;font-weight:500}
@@ -45,9 +45,25 @@ td:nth-child(2),td:nth-child(3),td:nth-child(4){font-family:var(--font-mono);fon
 .bar-val{font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);min-width:56px}
 .steps-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.75rem 1rem;font-size:13px;min-height:48px;color:var(--color-text-secondary);line-height:1.7}
 .path-node{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-size:12px;font-weight:500;border:1.5px solid;margin:2px}
+:root{--font-sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--font-mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;--color-text-primary:#172026;--color-text-secondary:#66717a;--color-text-tertiary:#85919b;--color-background-primary:#ffffff;--color-background-secondary:#f5f8fb;--color-border-primary:#8db6e8;--color-border-secondary:#d9e1e8;--color-border-tertiary:#e6edf3;--border-radius-md:8px;--border-radius-lg:8px}
+body{margin:0;background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.wrap{width:min(1120px,calc(100% - 32px));max-width:1120px;margin:0 auto;padding:28px 0 56px}
+.note-hero{margin-bottom:18px;padding:32px 24px;border-radius:8px;background:#0f1720;color:#f8fbff;font-family:var(--font-sans)}
+.back-link{display:inline-flex;margin-bottom:14px;color:#9fd3ff;font-size:.9rem;font-weight:700;text-decoration:none}
+.back-link:hover{text-decoration:underline}
+.note-hero h1{margin:0;font-size:clamp(2rem,5vw,3.5rem);line-height:1;letter-spacing:0;color:#f8fbff}
+.note-hero p{max-width:760px;margin:14px 0 0;color:#d8e2eb;font-size:1rem;line-height:1.6}
+.section{background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:8px;padding:22px;margin-bottom:18px}
+.card{border-radius:8px}
+@media(max-width:760px){.wrap{width:min(100% - 20px,1120px)}.note-hero{padding:24px 18px}.section{padding:16px}.row{flex-direction:column}.slider-row{align-items:flex-start;flex-wrap:wrap}}
 </style>
 
 <div class="wrap">
+<header class="note-hero">
+  <a class="back-link" href="../index.html">Back to DSA Python report</a>
+  <h1>N log N Deep Dive</h1>
+  <p>Interactive complexity notes that connect logarithms, tree height, heap operations, and growth-rate comparisons.</p>
+</header>
 
 <div class="section">
   <h2>Part 1 — what does log n actually mean?</h2>

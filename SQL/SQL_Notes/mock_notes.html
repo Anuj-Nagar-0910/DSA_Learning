@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Mock Practice Notes</title>
+  <style>
+    :root {
+      --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      --panel: rgba(255, 255, 255, 0.95);
+      --panel-soft: #fbfdff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --line: rgba(255, 255, 255, 0.2);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --teal: #0f766e;
+      --teal-soft: #e6fffb;
+      --blue: #2563eb;
+      --blue-soft: #eaf2ff;
+      --amber: #b45309;
+      --amber-soft: #fff7ed;
+      --rose: #be123c;
+      --rose-soft: #fff1f2;
+      --violet: #7c3aed;
+      --violet-soft: #f3e8ff;
+      --slate-soft: #f1f5f9;
+      --border-radius-lg: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      color: var(--text);
+      background: var(--bg);
+      background-attachment: fixed;
+      line-height: 1.6;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .shell {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding: 40px;
+      background: var(--panel);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow);
+      animation: slideIn 0.8s ease-out;
+    }
+
+    .back-link {
+      display: inline-flex;
+      color: #667eea;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #6b7280;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #374151, #6b7280);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .sub {
+      margin: 0;
+      max-width: 960px;
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input[type="search"] {
+      flex: 1 1 320px;
+      min-height: 42px;
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      color: var(--text);
+      font-size: 16px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    input[type="search"]:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+
+    button {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(135deg, #9ca3af, #6b7280);
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover,
+    button.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+
+    .layout {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 22px 20px 30px;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    aside {
+      position: sticky;
+      top: 132px;
+      align-self: start;
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel h2 {
+      margin: 0;
+      padding: 14px 16px;
+      font-size: 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .jump,
+    .mini {
+      padding: 10px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .jump a,
+    .mini div {
+      text-decoration: none;
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .jump a:hover {
+      background: #eef6ff;
+      color: var(--blue);
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .overview {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel-soft);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .chips,
+    .meta,
+    .tag-row,
+    .section-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip,
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .chip.join, .tag.join { background: var(--blue-soft); color: var(--blue); }
+    .chip.grouping, .tag.grouping { background: var(--amber-soft); color: var(--amber); }
+    .chip.datediff, .tag.datediff { background: var(--teal-soft); color: var(--teal); }
+    .chip.subquery, .tag.subquery { background: var(--rose-soft); color: var(--rose); }
+    .chip.pattern, .tag.pattern { background: #eef2ff; color: #4338ca; }
+    .chip.outerjoin, .tag.outerjoin { background: var(--violet-soft); color: var(--violet); }
+
+    .problem {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .problem.hidden { display: none; }
+
+    .problem-head {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    }
+
+    .problem-head h3 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .problem-body {
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+    }
+
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel-soft);
+      overflow: hidden;
+    }
+
+    .box h4 {
+      margin: 0;
+      padding: 12px 14px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .inner {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .success,
+    .failure,
+    .learning {
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    .success {
+      border-left: 4px solid var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .failure {
+      border-left: 4px solid var(--rose);
+      background: var(--rose-soft);
+    }
+
+    .learning {
+      border-left: 4px solid var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .walkthrough {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 14px;
+    }
+
+    .code-list {
+      background: var(--code-bg);
+      border-radius: 12px;
+      padding: 8px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .code-line {
+      width: 100%;
+      min-height: auto;
+      border: 0;
+      background: transparent;
+      color: var(--code-text);
+      text-align: left;
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      font-size: 13px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .code-line:hover,
+    .code-line.active {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+
+    .line-no {
+      color: #94a3b8;
+      text-align: right;
+      user-select: none;
+    }
+
+    .explain {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .explain strong {
+      font-size: 15px;
+    }
+
+    @media (max-width: 1120px) {
+      .grid-two,
+      .walkthrough {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell">
+      <section class="hero">
+        <a class="back-link" href="../index.html">← Back to SQL Learning Index</a>
+        <h1>SQL Mock Assignment Notes</h1>
+        <p class="sub">Interactive notes built from <code>sql_practice_mock.sql</code>. Every problem has categories, clause tags, critical learning, and a clickable line-by-line explanation so you can revise the logic instead of just memorizing the answer.</p>
+        <div class="toolbar">
+          <input id="search" type="search" placeholder="Search by problem, clause, table, or concept">
+          <button class="active" data-filter="all">All</button>
+          <button data-filter="join">Join</button>
+          <button data-filter="grouping">Grouping</button>
+          <button data-filter="datediff">DateDiff</button>
+          <button data-filter="subquery">Subquery</button>
+          <button data-filter="pattern">Pattern Match</button>
+          <button data-filter="outerjoin">Outer Join</button>
+          <button id="showAll">Reset View</button>
+        </div>
+      </section>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside>
+      <section class="panel">
+        <h2>Jump List</h2>
+        <div class="jump" id="jumpList"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Category Guide</h2>
+        <div class="mini">
+          <div><strong>Join</strong>: combine related tables using keys.</div>
+          <div><strong>Grouping</strong>: aggregate values with `COUNT`, `AVG`, `SUM`, `MAX`.</div>
+          <div><strong>DateDiff</strong>: compute a duration from start and end dates.</div>
+          <div><strong>Subquery</strong>: solve a smaller question inside the main query.</div>
+          <div><strong>Pattern Match</strong>: filter text with `LIKE` and `%` wildcards.</div>
+          <div><strong>Outer Join</strong>: keep rows even when no match exists.</div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="content">
+      <section class="panel overview">
+        <div class="stats">
+          <div class="stat"><strong>14</strong><span>Problems covered</span></div>
+          <div class="stat"><strong>14</strong><span>Clickable walkthroughs</span></div>
+          <div class="stat"><strong>6</strong><span>Revision categories</span></div>
+          <div class="stat"><strong>Study mode</strong><span>Critical learning included for each problem</span></div>
+        </div>
+        <div>
+          <h2 style="margin:0 0 8px;">Skill Map</h2>
+          <div class="chips">
+            <span class="chip join">JOIN</span>
+            <span class="chip grouping">GROUP BY</span>
+            <span class="chip grouping">COUNT</span>
+            <span class="chip grouping">AVG</span>
+            <span class="chip grouping">SUM</span>
+            <span class="chip grouping">MAX</span>
+            <span class="chip pattern">LIKE</span>
+            <span class="chip subquery">SUBQUERY</span>
+            <span class="chip datediff">DATEDIFF</span>
+            <span class="chip outerjoin">LEFT JOIN</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="problemContainer"></section>
+    </section>
+  </main>
+
+  <script>
+    const problems = [
+      {
+        id: "p1",
+        title: "Department Employee Count",
+        summary: "Get each department name and the total number of employees in it, then sort departments alphabetically.",
+        categories: ["join", "grouping"],
+        tags: ["JOIN", "COUNT", "GROUP BY", "ORDER BY", "ASC"],
+        query: [
+          "SELECT",
+          "    d.dept_name,",
+          "    COUNT(de.emp_no) AS num_employees",
+          "FROM departments d",
+          "JOIN dept_emp de",
+          "    ON d.dept_no = de.dept_no",
+          "GROUP BY d.dept_name",
+          "ORDER BY d.dept_name ASC;"
+        ],
+        why: [
+          "The department name lives in `departments`, but employee assignment rows live in `dept_emp`, so a join is necessary.",
+          "`COUNT(de.emp_no)` turns many employee-assignment rows into one total per department.",
+          "`GROUP BY d.dept_name` is required because the query mixes a normal column with an aggregate.",
+          "`ORDER BY d.dept_name ASC` matches the alphabetical output requirement."
+        ],
+        critical: "Whenever a prompt asks for a summary per department, think in two steps: join the descriptive table to the transactional table, then aggregate.",
+        lines: [
+          "Start the query and prepare to choose the output fields.",
+          "Display the readable department label, not just the department key.",
+          "Count employee assignment rows and rename the result for clarity.",
+          "Begin with the table that stores department names.",
+          "Bring in department assignment rows so each department can see its employees.",
+          "Match rows using the shared department key.",
+          "Collapse the joined rows into one row per department.",
+          "Sort the grouped result alphabetically."
+        ]
+      },
+      {
+        id: "p2",
+        title: "Hire Year Summary",
+        summary: "Count how many employees were hired in each year.",
+        categories: ["grouping"],
+        tags: ["YEAR()", "COUNT(*)", "GROUP BY"],
+        query: [
+          "SELECT",
+          "    YEAR(hire_date) AS hire_year,",
+          "    COUNT(*) AS total_employees",
+          "FROM employees",
+          "GROUP BY YEAR(hire_date);"
+        ],
+        why: [
+          "`YEAR(hire_date)` extracts only the year component from a full date.",
+          "`COUNT(*)` counts how many employee rows fall into each hire year.",
+          "Grouping by the same year expression creates one result row for each year."
+        ],
+        critical: "If the prompt says 'for each year', you almost always need a date-extraction function plus `GROUP BY`.",
+        lines: [
+          "Begin the result set.",
+          "Extract the year part and label it as `hire_year`.",
+          "Count how many rows land in each year group.",
+          "Use the employees table because hire dates live there.",
+          "Group rows by the derived year expression."
+        ]
+      },
+      {
+        id: "p3",
+        title: "Average Salary By Title",
+        summary: "Show each job title with its average salary.",
+        categories: ["join", "grouping"],
+        tags: ["JOIN", "AVG", "GROUP BY"],
+        query: [
+          "SELECT",
+          "    t.title,",
+          "    AVG(s.salary) AS avg_salary",
+          "FROM titles t",
+          "JOIN salaries s",
+          "    ON t.emp_no = s.emp_no",
+          "GROUP BY t.title;"
+        ],
+        why: [
+          "`titles` stores the role name, while `salaries` stores the numeric salary value.",
+          "`AVG(s.salary)` is the correct aggregate because the task asks for an average.",
+          "Grouping by title builds one average for each job title."
+        ],
+        critical: "When the display column and the measured numeric column live in different tables, a join is the bridge that makes aggregation possible.",
+        lines: [
+          "Start the output.",
+          "Choose the grouping label: the job title.",
+          "Compute the average salary for that title group.",
+          "Start from the title history table.",
+          "Bring in salary history rows.",
+          "Join the two histories using employee number.",
+          "Group the joined rows by title."
+        ]
+      },
+      {
+        id: "p4",
+        title: "Name Pattern Match",
+        summary: "Find employees whose first name starts with A and last name ends with n.",
+        categories: ["pattern"],
+        tags: ["WHERE", "LIKE", "AND", "%"],
+        query: [
+          "SELECT *",
+          "FROM employees",
+          "WHERE first_name LIKE 'A%'",
+          "  AND last_name LIKE '%n';"
+        ],
+        why: [
+          "`LIKE 'A%'` means the text begins with A.",
+          "`LIKE '%n'` means the text ends with n.",
+          "`AND` forces both pattern conditions to be true for the same employee."
+        ],
+        critical: "The `%` wildcard is position-sensitive: at the end it means 'starts with', at the beginning it means 'ends with'.",
+        lines: [
+          "Select all employee columns because the task asked for all columns.",
+          "Read rows from the employees table.",
+          "Keep only rows where the first name starts with A.",
+          "Also require the last name to end with n."
+        ]
+      },
+      {
+        id: "p5",
+        title: "Employee With Highest Title Changes",
+        summary: "Find the employee who changed titles the most.",
+        categories: ["join", "subquery", "grouping"],
+        tags: ["SUBQUERY", "COUNT", "GROUP BY", "ORDER BY", "LIMIT", "JOIN"],
+        query: [
+          "SELECT",
+          "    e.first_name,",
+          "    e.last_name,",
+          "    tc.title_changes",
+          "FROM employees e",
+          "JOIN (",
+          "    SELECT",
+          "        emp_no,",
+          "        COUNT(*) AS title_changes",
+          "    FROM titles",
+          "    GROUP BY emp_no",
+          "    ORDER BY title_changes DESC",
+          "    LIMIT 1",
+          ") tc",
+          "ON e.emp_no = tc.emp_no;"
+        ],
+        why: [
+          "The inner query first figures out which employee number has the largest number of title rows.",
+          "`COUNT(*)` measures how many title-change records each employee has.",
+          "`ORDER BY ... DESC LIMIT 1` keeps only the highest count.",
+          "The outer join is used only to turn the winning employee number into a readable name."
+        ],
+        critical: "When a problem asks for 'the employee with the maximum number of X', it is often cleaner to solve the ranking in a subquery first, then join for labels.",
+        lines: [
+          "Start the outer query.",
+          "Show the employee's first name.",
+          "Show the employee's last name.",
+          "Also display the computed title-change count from the subquery.",
+          "Use the employees table for readable person details.",
+          "Join to a subquery that identifies the top employee by title changes.",
+          "Start the inner query.",
+          "Keep the grouping key so it can be joined back later.",
+          "Count title rows per employee and name that measure.",
+          "Use the titles table because that is where title history lives.",
+          "Create one count per employee.",
+          "Sort from most changes to least.",
+          "Keep only the highest row.",
+          "Give the subquery result a short alias.",
+          "Join outer employee rows to the winning employee number."
+        ]
+      },
+      {
+        id: "p6",
+        title: "Employee With Highest Salary Changes",
+        summary: "Find the employee with the most salary history records.",
+        categories: ["join", "subquery", "grouping"],
+        tags: ["SUBQUERY", "COUNT", "GROUP BY", "ORDER BY", "LIMIT", "JOIN"],
+        query: [
+          "SELECT",
+          "    e.first_name,",
+          "    e.last_name,",
+          "    sc.salary_changes",
+          "FROM employees e",
+          "JOIN (",
+          "    SELECT",
+          "        emp_no,",
+          "        COUNT(*) AS salary_changes",
+          "    FROM salaries",
+          "    GROUP BY emp_no",
+          "    ORDER BY salary_changes DESC",
+          "    LIMIT 1",
+          ") sc",
+          "ON e.emp_no = sc.emp_no;"
+        ],
+        why: [
+          "This uses the same structure as the title-change problem, but the counted rows come from `salaries`.",
+          "The subquery isolates the top employee by salary-record count.",
+          "The outer query converts the winning `emp_no` into name columns."
+        ],
+        critical: "Recognize repeatable patterns. If one top-N subquery works for title history, the same skeleton usually works for salary history.",
+        lines: [
+          "Begin the outer query.",
+          "Return the first name.",
+          "Return the last name.",
+          "Return the counted salary-change value.",
+          "Use the employees table for names.",
+          "Join a helper subquery.",
+          "Begin the helper query.",
+          "Keep the employee key.",
+          "Count salary rows per employee.",
+          "Read from the salary history table.",
+          "Group by employee number.",
+          "Sort highest count first.",
+          "Keep only one top result.",
+          "Alias the subquery result.",
+          "Join the winning employee number back to employees."
+        ]
+      },
+      {
+        id: "p7",
+        title: "Yearly Maximum Salary",
+        summary: "Show the highest salary recorded in each year.",
+        categories: ["grouping"],
+        tags: ["YEAR()", "MAX", "GROUP BY"],
+        query: [
+          "SELECT",
+          "    YEAR(from_date) AS year,",
+          "    MAX(salary) AS max_salary",
+          "FROM salaries",
+          "GROUP BY YEAR(from_date);"
+        ],
+        why: [
+          "`YEAR(from_date)` converts each salary row into a year bucket.",
+          "`MAX(salary)` picks the highest salary within each year bucket.",
+          "`GROUP BY YEAR(from_date)` is what creates the yearly comparison."
+        ],
+        critical: "Aggregation questions often pair a bucket function like `YEAR()` with a metric function like `MAX()`.",
+        lines: [
+          "Start the query.",
+          "Create a readable year label from `from_date`.",
+          "Pick the highest salary in each year.",
+          "Use salary history as the source.",
+          "Group rows by year so `MAX` is calculated per year."
+        ]
+      },
+      {
+        id: "p8",
+        title: "Employees With Only One Salary Record",
+        summary: "Find employees who never had a salary change.",
+        categories: ["join", "grouping"],
+        tags: ["JOIN", "GROUP BY", "HAVING", "COUNT"],
+        query: [
+          "SELECT",
+          "    e.first_name,",
+          "    e.last_name",
+          "FROM employees e",
+          "JOIN salaries s",
+          "    ON e.emp_no = s.emp_no",
+          "GROUP BY e.emp_no, e.first_name, e.last_name",
+          "HAVING COUNT(s.emp_no) = 1;"
+        ],
+        why: [
+          "Employees need to be joined to salary rows so we can count how many salary records each employee has.",
+          "`GROUP BY` forms one group per employee.",
+          "`HAVING COUNT(...) = 1` keeps only employees whose salary-history count is exactly one."
+        ],
+        critical: "Use `HAVING` when the condition depends on an aggregate. `WHERE COUNT(...)` is not valid because counting happens after row filtering.",
+        lines: [
+          "Start the result.",
+          "Show the first name.",
+          "Show the last name.",
+          "Read employee details.",
+          "Attach salary rows so they can be counted.",
+          "Join employee and salary history by employee number.",
+          "Make one group per employee identity.",
+          "Keep only groups with exactly one salary row."
+        ]
+      },
+      {
+        id: "p9",
+        title: "Department Managers With Active Salary",
+        summary: "Retrieve manager details, department, title, and salary where the salary row is active.",
+        categories: ["join"],
+        tags: ["INNER JOIN", "WHERE", "ALIASES"],
+        query: [
+          "SELECT",
+          "    e.emp_no,",
+          "    e.first_name,",
+          "    e.last_name,",
+          "    d.dept_name,",
+          "    t.title AS title,",
+          "    s.salary AS salary",
+          "FROM employees AS e",
+          "INNER JOIN dept_manager AS dm",
+          "    ON e.emp_no = dm.emp_no",
+          "INNER JOIN departments AS d",
+          "    ON dm.dept_no = d.dept_no",
+          "INNER JOIN titles AS t",
+          "    ON e.emp_no = t.emp_no",
+          "INNER JOIN salaries AS s",
+          "    ON e.emp_no = s.emp_no",
+          "WHERE s.to_date = '9999-01-01';"
+        ],
+        why: [
+          "The result needs columns from five different tables, so multiple joins are unavoidable.",
+          "`dept_manager` tells us who manages a department.",
+          "`departments` provides the department name.",
+          "`titles` and `salaries` provide role and pay details.",
+          "The active salary condition is enforced by checking the special open-ended date in `salaries`."
+        ],
+        critical: "In a normalized schema, complex business questions usually mean 'walk through the relationships table by table' rather than trying to solve everything from a single table.",
+        lines: [
+          "Start selecting the output columns.",
+          "Return the employee number.",
+          "Return the first name.",
+          "Return the last name.",
+          "Return the department label.",
+          "Return the title and rename the column.",
+          "Return the salary and rename the column.",
+          "Use employees as the base identity table.",
+          "Join the manager-assignment table.",
+          "Match managers to employees.",
+          "Join the departments table.",
+          "Map the manager row to its department name.",
+          "Join the title history table.",
+          "Match titles by employee number.",
+          "Join the salary history table.",
+          "Match salary rows by employee number.",
+          "Keep only active salary rows."
+        ]
+      },
+      {
+        id: "p10",
+        title: "Departments With No Employees",
+        summary: "Find departments that have no assignment rows in dept_emp.",
+        categories: ["outerjoin"],
+        tags: ["LEFT JOIN", "IS NULL", "WHERE"],
+        query: [
+          "SELECT d.dept_name",
+          "FROM departments d",
+          "LEFT JOIN dept_emp de",
+          "    ON d.dept_no = de.dept_no",
+          "WHERE de.emp_no IS NULL;"
+        ],
+        why: [
+          "`LEFT JOIN` keeps all departments, even when no employee assignment exists.",
+          "Rows with no match produce `NULL` values on the joined side.",
+          "`WHERE de.emp_no IS NULL` filters to exactly those unmatched departments."
+        ],
+        critical: "This is the classic unmatched-row pattern: `LEFT JOIN` plus `IS NULL`.",
+        lines: [
+          "Select the department name because that is the answer we want to show.",
+          "Start from all departments so none are lost.",
+          "Use a left join so departments stay even if they have no employee rows.",
+          "Match possible employee assignments by department number.",
+          "Keep only rows where no employee assignment was found."
+        ]
+      },
+      {
+        id: "p11",
+        title: "Department Employee Count And Salary Sum",
+        summary: "Show each department with total employees and total salary expenditure.",
+        categories: ["join", "grouping"],
+        tags: ["JOIN", "COUNT", "SUM", "GROUP BY"],
+        query: [
+          "SELECT",
+          "    d.dept_name,",
+          "    COUNT(de.emp_no) AS total_employees,",
+          "    SUM(s.salary) AS total_salary",
+          "FROM departments d",
+          "JOIN dept_emp de",
+          "    ON d.dept_no = de.dept_no",
+          "JOIN salaries s",
+          "    ON de.emp_no = s.emp_no",
+          "GROUP BY d.dept_name;"
+        ],
+        why: [
+          "The query combines department info with employee assignments and salary values.",
+          "`COUNT` and `SUM` can be used together in the same grouped query.",
+          "`GROUP BY d.dept_name` makes both totals belong to the same department row."
+        ],
+        critical: "A grouped query can return several different aggregates at once as long as they all summarize the same grouping key.",
+        lines: [
+          "Begin the grouped summary.",
+          "Show the department label.",
+          "Count employees assigned to that department.",
+          "Add up salary values for that department.",
+          "Start from departments.",
+          "Join employee assignments.",
+          "Match on department number.",
+          "Join salaries through employee number.",
+          "Match salaries to assigned employees.",
+          "Create one row per department."
+        ]
+      },
+      {
+        id: "p12",
+        title: "Employees Not Assigned To Sales",
+        summary: "List employees attached to rows where the department is not Sales.",
+        categories: ["join", "grouping"],
+        tags: ["DISTINCT", "INNER JOIN", "WHERE", "<>"],
+        query: [
+          "SELECT DISTINCT",
+          "    e.emp_no,",
+          "    e.first_name,",
+          "    e.last_name",
+          "FROM employees AS e",
+          "INNER JOIN dept_emp AS de",
+          "    ON e.emp_no = de.emp_no",
+          "INNER JOIN departments AS d",
+          "    ON de.dept_no = d.dept_no",
+          "WHERE d.dept_name <> 'Sales';"
+        ],
+        why: [
+          "Employees can have multiple department-assignment rows, so duplicates can appear after joining.",
+          "`DISTINCT` removes repeated employee rows from the final result.",
+          "The filter keeps only assignment rows where department name is not Sales."
+        ],
+        critical: "Be careful: `DISTINCT` is useful here because `emp_no` is included. Without a unique identifier in the selected columns, `DISTINCT` could hide valid people with the same name.",
+        lines: [
+          "Select unique employee rows only.",
+          "Return the employee number for safe uniqueness.",
+          "Return the first name.",
+          "Return the last name.",
+          "Start from employees.",
+          "Join department assignment history.",
+          "Match assignment rows to employees.",
+          "Join the department lookup table.",
+          "Map assignment rows to department names.",
+          "Filter away Sales rows."
+        ]
+      },
+      {
+        id: "p13",
+        title: "Development Department For More Than 3 Years",
+        summary: "Find employees whose Development department assignment lasted more than 3 years.",
+        categories: ["join", "datediff"],
+        tags: ["INNER JOIN", "DATEDIFF", "WHERE", "AND"],
+        query: [
+          "SELECT",
+          "    e.first_name,",
+          "    e.last_name",
+          "FROM employees AS e",
+          "INNER JOIN dept_emp AS de",
+          "    ON e.emp_no = de.emp_no",
+          "INNER JOIN departments AS d",
+          "    ON de.dept_no = d.dept_no",
+          "WHERE d.dept_name = 'Development'",
+          "  AND DATEDIFF(de.to_date, de.from_date) > 365 * 3;"
+        ],
+        why: [
+          "`dept_emp` is the correct place to measure department tenure because it stores `from_date` and `to_date`.",
+          "`DATEDIFF` gives the assignment length in days.",
+          "The condition `> 365 * 3` enforces more than 3 years.",
+          "The department filter is applied first so only Development assignments are tested."
+        ],
+        critical: "When the prompt is about time spent in a department, measure the assignment period from the assignment table, not the employee hire date.",
+        lines: [
+          "Start the result set.",
+          "Return the first name.",
+          "Return the last name.",
+          "Use employees for person details.",
+          "Join assignment history.",
+          "Match assignments to employees.",
+          "Join department names.",
+          "Match assignment rows to department labels.",
+          "Keep only Development assignments.",
+          "Also require the assignment duration to be more than three years."
+        ]
+      },
+      {
+        id: "p14",
+        title: "Department Salary Expenditure From 1990 To 2000",
+        summary: "Calculate total salary expenditure per department for salary rows fully inside the given date range.",
+        categories: ["join", "grouping"],
+        tags: ["INNER JOIN", "SUM", "WHERE", "GROUP BY", "DATE RANGE"],
+        query: [
+          "SELECT",
+          "    d.dept_name,",
+          "    SUM(s.salary) AS total_salary",
+          "FROM departments AS d",
+          "INNER JOIN dept_emp AS de",
+          "    ON d.dept_no = de.dept_no",
+          "INNER JOIN salaries AS s",
+          "    ON de.emp_no = s.emp_no",
+          "WHERE s.from_date >= '1990-01-01'",
+          "  AND s.to_date <= '2000-12-31'",
+          "GROUP BY d.dept_name;"
+        ],
+        why: [
+          "The department name comes from `departments`, but salaries are attached to employees, so `dept_emp` is needed in the middle.",
+          "`SUM(s.salary)` adds salary values for each department.",
+          "Both date conditions are important because the expected result counts salary rows fully inside the requested period.",
+          "`GROUP BY d.dept_name` produces one expenditure total per department."
+        ],
+        critical: "For date-range questions, always ask: should the row start inside the period, overlap with the period, or be fully contained inside the period? This problem needed full containment.",
+        lines: [
+          "Start the grouped result.",
+          "Show the department label.",
+          "Sum salary values and label the total.",
+          "Begin from departments.",
+          "Join department assignments.",
+          "Match departments to assignment rows.",
+          "Join salary history.",
+          "Match salaries to assigned employees.",
+          "Keep salary rows that start on or after January 1, 1990.",
+          "Also keep only salary rows that end on or before December 31, 2000.",
+          "Produce one row per department."
+        ]
+      }
+    ];
+
+    const jumpList = document.getElementById("jumpList");
+    const problemContainer = document.getElementById("problemContainer");
+
+    function categoryClass(category) {
+      return category;
+    }
+
+    function renderProblem(problem) {
+      const problemEl = document.createElement("section");
+      problemEl.className = "problem";
+      problemEl.id = problem.id;
+      problemEl.dataset.category = problem.categories.join(" ");
+      problemEl.dataset.search = [
+        problem.title,
+        problem.summary,
+        problem.categories.join(" "),
+        problem.tags.join(" "),
+        problem.why.join(" "),
+        problem.critical
+      ].join(" ").toLowerCase();
+
+      const tagHtml = problem.tags.map(tag => `<span class="tag">${tag}</span>`).join("");
+      const categoryHtml = problem.categories.map(cat => `<span class="chip ${categoryClass(cat)}">${cat === "outerjoin" ? "Outer Join" : cat === "datediff" ? "DateDiff" : cat === "pattern" ? "Pattern Match" : cat.charAt(0).toUpperCase() + cat.slice(1)}</span>`).join("");
+      const queryText = problem.query.join("\n").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+      const lineButtons = problem.query.map((line, index) => {
+        const safeLine = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        const safeExplain = problem.lines[index]
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+        return `<button class="code-line ${index === 0 ? "active" : ""}" data-explain="${safeExplain}"><span class="line-no">${index + 1}</span><span>${safeLine}</span></button>`;
+      }).join("");
+
+      const whyItems = problem.why.map(item => `<li>${item}</li>`).join("");
+
+      problemEl.innerHTML = `
+        <div class="problem-head">
+          <h3>${problem.title}</h3>
+          <p>${problem.summary}</p>
+          <div class="meta">${categoryHtml}</div>
+        </div>
+        <div class="problem-body">
+          <div class="grid-two">
+            <div class="box">
+              <h4>Final Query</h4>
+              <pre><code>${queryText}</code></pre>
+            </div>
+            <div class="box">
+              <h4>Clause Tags And Why It Works</h4>
+              <div class="inner">
+                <div class="tag-row">${tagHtml}</div>
+                <ul>${whyItems}</ul>
+              </div>
+            </div>
+          </div>
+          <div class="grid-two">
+            <div class="box">
+              <h4>Critical Learning</h4>
+              <div class="inner">
+                <div class="learning">${problem.critical}</div>
+              </div>
+            </div>
+            <div class="box">
+              <h4>Study Note</h4>
+              <div class="inner">
+                <div class="success">This problem is tagged under <strong>${problem.categories.join(", ")}</strong>, so you can quickly group it with similar query patterns while revising.</div>
+              </div>
+            </div>
+          </div>
+          <div class="box">
+            <h4>Line By Line Explorer</h4>
+            <div class="inner walkthrough">
+              <div class="code-list">${lineButtons}</div>
+              <div class="explain">
+                <strong>${problem.query[0]}</strong>
+                <p>${problem.lines[0]}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      return problemEl;
+    }
+
+    problems.forEach(problem => {
+      const jump = document.createElement("a");
+      jump.href = `#${problem.id}`;
+      jump.textContent = problem.title;
+      jumpList.appendChild(jump);
+      problemContainer.appendChild(renderProblem(problem));
+    });
+
+    const searchInput = document.getElementById("search");
+    const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
+    const problemEls = Array.from(document.querySelectorAll(".problem"));
+    let activeFilter = "all";
+
+    function applyFilters() {
+      const term = searchInput.value.trim().toLowerCase();
+      problemEls.forEach(problem => {
+        const category = problem.dataset.category || "";
+        const hay = problem.dataset.search || "";
+        const categoryOk = activeFilter === "all" || category.includes(activeFilter);
+        const textOk = !term || hay.includes(term);
+        problem.classList.toggle("hidden", !(categoryOk && textOk));
+      });
+    }
+
+    searchInput.addEventListener("input", applyFilters);
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        filterButtons.forEach(btn => btn.classList.toggle("active", btn === button));
+        applyFilters();
+      });
+    });
+
+    document.getElementById("showAll").addEventListener("click", () => {
+      activeFilter = "all";
+      searchInput.value = "";
+      filterButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.filter === "all"));
+      applyFilters();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.querySelectorAll(".walkthrough").forEach(wrap => {
+      const lines = Array.from(wrap.querySelectorAll(".code-line"));
+      const explainBox = wrap.querySelector(".explain");
+      lines.forEach(line => {
+        line.addEventListener("click", () => {
+          lines.forEach(l => l.classList.remove("active"));
+          line.classList.add("active");
+          explainBox.innerHTML = `<strong>${line.textContent.trim()}</strong><p>${line.dataset.explain}</p>`;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

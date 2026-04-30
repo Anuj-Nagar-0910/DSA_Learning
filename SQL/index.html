@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Learning Index</title>
+  <style>
+    :root {
+      --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --color-text-primary: #172026;
+      --color-text-secondary: #66717a;
+      --color-text-tertiary: #85919b;
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f5f8fb;
+      --color-border-primary: #8db6e8;
+      --color-border-secondary: #d9e1e8;
+      --color-border-tertiary: #e6edf3;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
+      --gradient-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      --gradient-card: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      background: var(--gradient-bg);
+      background-attachment: fixed;
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .wrap {
+      width: min(1280px, calc(100% - 32px));
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 40px 0 64px;
+    }
+
+    .note-hero {
+      margin-bottom: 32px;
+      padding: 84px 60px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+      color: #f8fbff;
+      font-family: var(--font-sans);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 28px 70px rgba(15, 23, 42, 0.28);
+      animation: slideIn 0.8s ease-out;
+      min-height: 520px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .note-hero::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 60%);
+      filter: blur(16px);
+      z-index: 0;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .back-link {
+      display: inline-flex;
+      margin-bottom: 20px;
+      color: #9fd3ff;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #ffffff;
+    }
+
+    .note-hero h1 {
+      margin: 0;
+      font-size: clamp(3rem, 6vw, 5.2rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      text-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+      max-width: 920px;
+      z-index: 1;
+    }
+
+    .note-hero p {
+      max-width: 780px;
+      margin: 24px 0 0;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 1.25rem;
+      line-height: 1.7;
+      font-weight: 400;
+      z-index: 1;
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius-lg);
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #374151, #6b7280);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin: 1.5rem 0 0.6rem;
+      transition: color 0.3s ease;
+    }
+
+    h3:hover {
+      color: #6b7280;
+    }
+
+    p, li {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+    }
+
+    ul {
+      padding-left: 1.2rem;
+    }
+
+    .card {
+      background: var(--color-background-primary);
+      border: 1px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(135deg, #9ca3af, #6b7280);
+      transition: width 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card:hover::before {
+      width: 6px;
+    }
+
+    .chip {
+      display: inline-block;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin: 2px 4px 2px 0;
+      transition: transform 0.2s ease;
+    }
+
+    .chip:hover {
+      transform: scale(1.05);
+    }
+
+    .chip-blue {
+      background: linear-gradient(135deg, #E6F1FB, #B3D9FF);
+      color: #0C447C;
+    }
+
+    .chip-amber {
+      background: linear-gradient(135deg, #FAEEDA, #FFD4A3);
+      color: #633806;
+    }
+
+    .chip-purple {
+      background: linear-gradient(135deg, #EEEDFE, #D4CCFF);
+      color: #3C3489;
+    }
+
+    .chip-green {
+      background: linear-gradient(135deg, #EAF3DE, #CFFFC4);
+      color: #27500A;
+    }
+
+    .metric {
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      border-radius: var(--border-radius-md);
+      padding: 1rem 1.25rem;
+      flex: 1;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .metric:hover {
+      transform: scale(1.02);
+    }
+
+    .metric .lbl {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric .val {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      font-family: var(--font-mono);
+      background: linear-gradient(135deg, #374151, #6b7280);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 1rem;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--color-text-primary);
+      background: rgba(102, 126, 234, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .note-card {
+      background: var(--color-background-primary);
+      border: 1px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .note-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(135deg, #9ca3af, #6b7280);
+    }
+
+    .note-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .note-card h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .note-card p {
+      margin: 0;
+      color: var(--color-text-secondary);
+      font-size: 14px;
+    }
+
+    .note-card a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: color 0.3s ease;
+    }
+
+    .note-card a:hover {
+      color: #6b7280;
+    }
+
+    @media (max-width: 760px) {
+      .wrap {
+        width: min(100% - 20px, 1200px);
+      }
+      .note-hero {
+        padding: 40px 24px;
+      }
+      .section {
+        padding: 20px;
+      }
+      .row {
+        flex-direction: column;
+      }
+      .notes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="note-hero">
+      <a class="back-link" href="../DSA_Python/index.html">Back to DSA Python report</a>
+      <h1>SQL Learning Index</h1>
+      <p>Comprehensive overview of SQL practice sets, notes, and key concepts learned from employee and bike store databases.</p>
+    </header>
+
+    <div class="section">
+      <h2>SQL Notes Library</h2>
+      <p>Access the SQL notes and resources created during learning.</p>
+      <div class="notes-grid">
+        <div class="note-card">
+          <a href="SQL_Notes/mock_notes.html">
+            <h3>Mock Notes</h3>
+            <p>Practice notes and examples from SQL mock interviews.</p>
+          </a>
+        </div>
+        <div class="note-card">
+          <a href="SQL_Notes/summary.html">
+            <h3>Summary Notes</h3>
+            <p>Comprehensive summary of SQL concepts and practices.</p>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>SQL Practice Overview</h2>
+      <p>The SQL practice sets cover two main databases: an employee management system and a bike store retail system. These practices emphasize real-world query scenarios involving joins, aggregations, date manipulations, and complex filtering.</p>
+      <div class="row">
+        <div class="metric">
+          <div class="lbl">Practice Files</div>
+          <div class="val">4</div>
+        </div>
+        <div class="metric">
+          <div class="lbl">Databases Covered</div>
+          <div class="val">2</div>
+        </div>
+        <div class="metric">
+          <div class="lbl">Key Concepts</div>
+          <div class="val">15+</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Key SQL Concepts Learned</h2>
+      <div class="card">
+        <h3>Basic Querying & Filtering</h3>
+        <p>Mastered SELECT statements with WHERE clauses, using operators like BETWEEN, NOT IN, and pattern matching with LIKE.</p>
+        <ul>
+          <li><span class="chip chip-blue">SELECT *</span> with column selection</li>
+          <li><span class="chip chip-amber">WHERE</span> conditions and logical operators</li>
+          <li><span class="chip chip-purple">BETWEEN</span> and <span class="chip chip-purple">NOT IN</span> for range and exclusion filtering</li>
+          <li><span class="chip chip-green">LIKE</span> for pattern matching (e.g., 'A%', '%n')</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Date & Time Manipulations</h3>
+        <p>Worked extensively with date functions for filtering records based on time periods and calculating durations.</p>
+        <ul>
+          <li><span class="chip chip-blue">DATE_SUB</span>, <span class="chip chip-blue">CURDATE</span>, <span class="chip chip-blue">INTERVAL</span> for date arithmetic</li>
+          <li><span class="chip chip-amber">DATEDIFF</span> for calculating time differences</li>
+          <li><span class="chip chip-purple">YEAR()</span> function for extracting year from dates</li>
+          <li><span class="chip chip-green">IS NULL</span> checks for active records</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Joins & Relationships</h3>
+        <p>Practiced INNER JOINs to connect multiple tables and retrieve related data across entities.</p>
+        <ul>
+          <li><span class="chip chip-blue">INNER JOIN</span> between employees, departments, salaries, titles</li>
+          <li><span class="chip chip-amber">Multi-table joins</span> for complex queries</li>
+          <li><span class="chip chip-purple">DISTINCT</span> to avoid duplicate results</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Aggregations & Grouping</h3>
+        <p>Used aggregate functions with GROUP BY to summarize data and analyze patterns.</p>
+        <ul>
+          <li><span class="chip chip-blue">COUNT()</span>, <span class="chip chip-blue">AVG()</span>, <span class="chip chip-blue">MAX()</span>, <span class="chip chip-blue">SUM()</span></li>
+          <li><span class="chip chip-amber">GROUP BY</span> with multiple columns</li>
+          <li><span class="chip chip-purple">ORDER BY</span> and <span class="chip chip-purple">LIMIT</span> for sorting and pagination</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Advanced Techniques</h3>
+        <p>Explored subqueries, string functions, and complex filtering for sophisticated data retrieval.</p>
+        <ul>
+          <li><span class="chip chip-blue">Subqueries</span> in FROM and WHERE clauses</li>
+          <li><span class="chip chip-amber">CONCAT()</span> for string concatenation</li>
+          <li><span class="chip chip-purple">Composite primary keys</span> in junction tables</li>
+          <li><span class="chip chip-green">Self-referencing tables</span> (e.g., manager hierarchy)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Practice Scenarios Covered</h2>
+      <div class="card">
+        <h3>Employee Database Queries</h3>
+        <p>Focused on HR-related queries: employee details, salaries, department assignments, and tenure calculations.</p>
+        <ul>
+          <li>Employees hired 10+ years ago</li>
+          <li>Salary ranges and active assignments</li>
+          <li>Department managers with current salaries</li>
+          <li>Employees not in specific departments</li>
+          <li>Long-term department assignments</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Bike Store Database Queries</h3>
+        <p>Covered retail operations: customer orders, staff performance, product inventory, and sales analytics.</p>
+        <ul>
+          <li>Staff members with most orders processed</li>
+          <li>Department employee counts</li>
+          <li>Hiring trends by year</li>
+          <li>Average salaries by job title</li>
+          <li>Employees with most title/salary changes</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

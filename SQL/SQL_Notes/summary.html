@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Practice Notes</title>
+  <style>
+    :root {
+      --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      --panel: rgba(255, 255, 255, 0.95);
+      --text: #1f2933;
+      --muted: #5d6773;
+      --line: rgba(255, 255, 255, 0.2);
+      --accent: #0f766e;
+      --accent-dark: #115e59;
+      --code-bg: #14213d;
+      --code-text: #f6f8fa;
+      --warn: #9a3412;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
+      --border-radius-lg: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background: var(--bg);
+      background-attachment: fixed;
+      color: var(--text);
+      line-height: 1.6;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      color: #667eea;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #6b7280;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #374151, #6b7280);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input[type="search"] {
+      flex: 1 1 260px;
+      min-height: 42px;
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      font-size: 16px;
+      background: #fff;
+      color: var(--text);
+      transition: box-shadow 0.3s ease;
+    }
+
+    input[type="search"]:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+
+    button {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(135deg, #9ca3af, #6b7280);
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover,
+    button.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    nav {
+      position: sticky;
+      top: 126px;
+      align-self: start;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    nav h2 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    nav a {
+      display: block;
+      color: var(--accent-dark);
+      text-decoration: none;
+      padding: 6px 4px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      background: #e8f3ef;
+    }
+
+    .content {
+      display: grid;
+      gap: 14px;
+    }
+
+    .concepts,
+    .note-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .concepts {
+      padding: 16px;
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .concept {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: #fbfcfa;
+    }
+
+    .concept strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    details {
+      background: var(--panel);
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 16px;
+      font-weight: 700;
+      color: var(--accent-dark);
+      border-bottom: 1px solid var(--line);
+    }
+
+    details[open] summary {
+      background: #e8f3ef;
+    }
+
+    .section-body {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    h3 {
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    p {
+      margin: 0;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    li + li {
+      margin-top: 4px;
+    }
+
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      background: #eef2ef;
+      color: var(--accent-dark);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .failure {
+      border-left: 4px solid var(--warn);
+      padding-left: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 820px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div>
+        <a class="back-link" href="../index.html">← Back to SQL Learning Index</a>
+        <h1>SQL Practice Notes</h1>
+        <p class="subtitle">Revision notes for the queries in practice.sql, with failures and fixes.</p>
+      </div>
+      <div class="controls">
+        <input id="search" type="search" placeholder="Search notes, concepts, tables, or SQL...">
+        <button type="button" data-filter="all" class="active">All</button>
+        <button type="button" data-filter="employees">Employees</button>
+        <button type="button" data-filter="zomato">Zomato</button>
+        <button type="button" id="expandAll">Expand</button>
+        <button type="button" id="collapseAll">Collapse</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav>
+      <h2>Jump To</h2>
+      <a href="#managers">Current Manager Salary</a>
+      <a href="#not-sales">Not Sales Employees</a>
+      <a href="#development">Development Tenure</a>
+      <a href="#salary">Salary Expenditure</a>
+      <a href="#zomato">High-Rated Restaurants</a>
+      <a href="#checklist">Revision Checklist</a>
+    </nav>
+
+    <section class="content">
+      <section class="concepts">
+        <h2>Concept Index</h2>
+        <div class="concept-grid">
+          <div class="concept"><strong>INNER JOIN</strong><span>Combines matching rows across related tables.</span></div>
+          <div class="concept"><strong>DISTINCT</strong><span>Removes duplicate result rows, but can hide valid rows if used carelessly.</span></div>
+          <div class="concept"><strong>DATEDIFF</strong><span>Calculates duration between two dates in days.</span></div>
+          <div class="concept"><strong>SUM</strong><span>Adds values inside each group.</span></div>
+          <div class="concept"><strong>GROUP BY</strong><span>Creates one row per group, such as user or department.</span></div>
+          <div class="concept"><strong>HAVING</strong><span>Filters grouped aggregate results.</span></div>
+          <div class="concept"><strong>Subquery</strong><span>Calculates a value used by the outer query.</span></div>
+          <div class="concept"><strong>CREATE VIEW</strong><span>Creates a reusable virtual table from a query.</span></div>
+        </div>
+      </section>
+
+      <details class="note-card" id="managers" data-topic="employees" open>
+        <summary>1. Current Salary Of Department Managers</summary>
+        <div class="section-body">
+          <div class="pill-row">
+            <span class="pill">INNER JOIN</span>
+            <span class="pill">Aliases</span>
+            <span class="pill">Active Salary</span>
+          </div>
+          <h3>Task</h3>
+          <p>Retrieve employee number, first name, last name, department name, current title, and current salary of department managers where salary is active.</p>
+          <h3>Final Query</h3>
+          <pre><code>SELECT
+    e.emp_no,
+    e.first_name,
+    e.last_name,
+    d.dept_name,
+    t.title AS current_title,
+    s.salary AS current_salary
+FROM employees AS e
+INNER JOIN dept_manager AS dm
+    ON e.emp_no = dm.emp_no
+INNER JOIN departments AS d
+    ON dm.dept_no = d.dept_no
+INNER JOIN titles AS t
+    ON e.emp_no = t.emp_no
+INNER JOIN salaries AS s
+    ON e.emp_no = s.emp_no
+WHERE s.to_date = '9999-01-01';</code></pre>
+          <h3>Why It Works</h3>
+          <ul>
+            <li>`salaries` stores salary history.</li>
+            <li>`s.to_date = '9999-01-01'` keeps active salary rows.</li>
+            <li>Multiple `INNER JOIN`s bring together details from separate normalized tables.</li>
+          </ul>
+          <h3>Shortcoming</h3>
+          <p class="failure">If the prompt asks for current manager and current title, the query may also need filters on `dept_manager.to_date` and `titles.to_date`.</p>
+        </div>
+      </details>
+
+      <details class="note-card" id="not-sales" data-topic="employees">
+        <summary>2. Employees Not Assigned To Sales</summary>
+        <div class="section-body">
+          <div class="pill-row">
+            <span class="pill">INNER JOIN</span>
+            <span class="pill">DISTINCT</span>
+            <span class="pill">WHERE</span>
+          </div>
+          <h3>Final Query</h3>
+          <pre><code>SELECT DISTINCT
+    e.emp_no,
+    e.first_name,
+    e.last_name
+FROM employees AS e
+INNER JOIN dept_emp AS de
+    ON e.emp_no = de.emp_no
+INNER JOIN departments AS d
+    ON de.dept_no = d.dept_no
+WHERE d.dept_name &lt;&gt; 'Sales';</code></pre>
+          <h3>Why It Works</h3>
+          <ul>
+            <li>The expected result treated the problem as row-level non-Sales assignment rows.</li>
+            <li>`dept_emp` can contain multiple assignment rows per employee.</li>
+            <li>`DISTINCT` keeps each employee only once after joining assignment rows.</li>
+          </ul>
+          <h3>What Failed</h3>
+          <p class="failure">`NOT EXISTS` was too strict because it excluded anyone who ever had a Sales assignment. Adding `to_date = '9999-01-01'` assumed current assignment, which the prompt did not say.</p>
+        </div>
+      </details>
+
+      <details class="note-card" id="development" data-topic="employees">
+        <summary>3. Development Department Tenure</summary>
+        <div class="section-body">
+          <div class="pill-row">
+            <span class="pill">INNER JOIN</span>
+            <span class="pill">DATEDIFF</span>
+            <span class="pill">No DISTINCT</span>
+          </div>
+          <h3>Final Query</h3>
+          <pre><code>SELECT
+    e.first_name,
+    e.last_name
+FROM employees AS e
+INNER JOIN dept_emp AS de
+    ON e.emp_no = de.emp_no
+INNER JOIN departments AS d
+    ON de.dept_no = d.dept_no
+WHERE d.dept_name = 'Development'
+  AND DATEDIFF(de.to_date, de.from_date) &gt; 365 * 3;</code></pre>
+          <h3>Why It Works</h3>
+          <ul>
+            <li>`dept_emp.from_date` and `dept_emp.to_date` store department tenure.</li>
+            <li>`DATEDIFF` measures the actual duration in days.</li>
+            <li>No `DISTINCT` is used because different employees can have the same name.</li>
+          </ul>
+          <h3>What Failed</h3>
+          <p class="failure">`TIMESTAMPDIFF(YEAR, ...)` did not match the expected day-based duration. `DISTINCT first_name, last_name` collapsed valid employees with the same name.</p>
+        </div>
+      </details>
+
+      <details class="note-card" id="salary" data-topic="employees">
+        <summary>4. Department Salary Expenditure, 1990 To 2000</summary>
+        <div class="section-body">
+          <div class="pill-row">
+            <span class="pill">INNER JOIN</span>
+            <span class="pill">SUM</span>
+            <span class="pill">GROUP BY</span>
+            <span class="pill">Date Range</span>
+          </div>
+          <h3>Final Query</h3>
+          <pre><code>SELECT
+    d.dept_name,
+    SUM(s.salary) AS total_salary
+FROM departments AS d
+INNER JOIN dept_emp AS de
+    ON d.dept_no = de.dept_no
+INNER JOIN salaries AS s
+    ON de.emp_no = s.emp_no
+WHERE s.from_date &gt;= '1990-01-01'
+  AND s.to_date &lt;= '2000-12-31'
+GROUP BY d.dept_name;</code></pre>
+          <h3>Why It Works</h3>
+          <ul>
+            <li>`salaries` does not store department number, so `dept_emp` is needed.</li>
+            <li>`SUM(s.salary)` calculates expenditure.</li>
+            <li>Both date boundaries are checked so the salary row is fully inside the requested period.</li>
+          </ul>
+          <h3>What Failed</h3>
+          <p class="failure">Filtering only `s.from_date BETWEEN '1990-01-01' AND '2000-12-31'` included salaries that continued after the period, which made totals too high.</p>
+        </div>
+      </details>
+
+      <details class="note-card" id="zomato" data-topic="zomato">
+        <summary>5. High-Spending Users At High-Rated Restaurants</summary>
+        <div class="section-body">
+          <div class="pill-row">
+            <span class="pill">CREATE VIEW</span>
+            <span class="pill">INNER JOIN</span>
+            <span class="pill">SUM</span>
+            <span class="pill">GROUP BY</span>
+            <span class="pill">HAVING</span>
+            <span class="pill">Subquery</span>
+            <span class="pill">AVG</span>
+          </div>
+          <h3>Final Query</h3>
+          <pre><code>CREATE VIEW high_rated_restaurants AS
+SELECT
+    restaurant_id,
+    name,
+    rating
+FROM Restaurants
+WHERE rating &gt; 4;
+
+SELECT
+    o.user_id,
+    SUM(o.total_price) AS total_spending
+FROM Orders AS o
+INNER JOIN high_rated_restaurants AS hrr
+    ON o.restaurant_id = hrr.restaurant_id
+GROUP BY o.user_id
+HAVING SUM(o.total_price) &gt; (
+    SELECT AVG(o2.total_price)
+    FROM Orders AS o2
+    INNER JOIN high_rated_restaurants AS hrr2
+        ON o2.restaurant_id = hrr2.restaurant_id
+);</code></pre>
+          <h3>Why It Works</h3>
+          <ul>
+            <li>The view keeps only restaurants where `rating > 4`.</li>
+            <li>`INNER JOIN` keeps only orders placed at those restaurants.</li>
+            <li>`GROUP BY o.user_id` creates one total per user.</li>
+            <li>`HAVING` filters users after `SUM(o.total_price)` is calculated.</li>
+            <li>The subquery uses `AVG(o2.total_price)`, so the threshold is average order spending, not average user total spending.</li>
+          </ul>
+          <h3>What Failed</h3>
+          <p class="failure">Selecting `rating` changed the expected output shape and forced grouping by rating, which split user totals. Averaging user-level totals also created the wrong threshold.</p>
+        </div>
+      </details>
+
+      <section class="concepts" id="checklist">
+        <h2>Revision Checklist</h2>
+        <ul>
+          <li>Use `WHERE` before grouping to filter raw rows.</li>
+          <li>Use `HAVING` after grouping to filter aggregate values.</li>
+          <li>Use `DISTINCT` only when selected columns are safe to deduplicate.</li>
+          <li>For history tables, check whether the prompt asks for current rows.</li>
+          <li>For date ranges, check whether rows must start inside, overlap, or be fully contained.</li>
+          <li>Match expected output columns exactly. Extra columns can change grouping and results.</li>
+          <li>In subqueries, confirm whether the average is per row, per order, per user, or per group.</li>
+        </ul>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const search = document.getElementById('search');
+    const cards = Array.from(document.querySelectorAll('.note-card'));
+    const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
+    let activeFilter = 'all';
+
+    function applyFilters() {
+      const term = search.value.trim().toLowerCase();
+
+      cards.forEach((card) => {
+        const topicMatch = activeFilter === 'all' || card.dataset.topic === activeFilter;
+        const textMatch = !term || card.textContent.toLowerCase().includes(term);
+        const visible = topicMatch && textMatch;
+        card.classList.toggle('hidden', !visible);
+        if (term && visible) {
+          card.open = true;
+        }
+      });
+    }
+
+    search.addEventListener('input', applyFilters);
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        activeFilter = button.dataset.filter;
+        filterButtons.forEach((btn) => btn.classList.toggle('active', btn === button));
+        applyFilters();
+      });
+    });
+
+    document.getElementById('expandAll').addEventListener('click', () => {
+      cards.forEach((card) => {
+        if (!card.classList.contains('hidden')) {
+          card.open = true;
+        }
+      });
+    });
+
+    document.getElementById('collapseAll').addEventListener('click', () => {
+      cards.forEach((card) => {
+        card.open = false;
+      });
+    });
+  </script>
+</body>
+</html>

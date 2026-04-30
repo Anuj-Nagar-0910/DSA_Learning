@@ -86,6 +86,7 @@
       padding: 18px;
       border: 1px solid rgba(255, 255, 255, 0.16);
       background: rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
     }
 
     .stat strong {
@@ -189,6 +190,27 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fbfdff;
+      overflow: hidden;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .file-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    .file-card > :not(header) {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      margin-top: 0;
+      transition: max-height 0.25s ease, opacity 0.25s ease, margin 0.25s ease;
+    }
+
+    .file-card:hover > :not(header) {
+      max-height: 1000px;
+      opacity: 1;
+      margin-top: 12px;
     }
 
     .file-card header {
@@ -253,7 +275,7 @@
 
     .notes {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 12px;
     }
 
@@ -292,16 +314,16 @@
         learning insights, and improvement notes for the next round of practice.
       </p>
       <div class="stats" aria-label="Repository summary">
-        <div class="stat"><strong>18</strong><span>Python files reviewed</span></div>
+        <div class="stat"><strong>20</strong><span>Python files reviewed</span></div>
         <div class="stat"><strong>2</strong><span>Main practice levels</span></div>
-        <div class="stat"><strong>4</strong><span>Interactive note pages</span></div>
-        <div class="stat"><strong>9</strong><span>Core DSA themes</span></div>
+        <div class="stat"><strong>6</strong><span>Interactive note pages</span></div>
+        <div class="stat"><strong>12</strong><span>Core DSA themes</span></div>
       </div>
     </div>
   </header>
 
   <main class="wrap">
-    <section>
+    <section id="learning-coverage">
       <h2>Learning Coverage</h2>
       <div class="grid">
         <div class="topic">
@@ -319,7 +341,7 @@
       </div>
     </section>
 
-    <section>
+    <section id="notes-library">
       <h2>DSA Notes Library</h2>
       <p>
         These are the HTML notes already created inside <code>DSA_Notes</code>. They are linked here from the
@@ -342,10 +364,18 @@
           <h3><a href="DSA_Notes/heap_interactive_notes.html">Heap Interactive Notes</a></h3>
           <p>Heap behavior and priority-queue concepts that connect directly to max-heap practice files.</p>
         </article>
+        <article class="note-card">
+          <h3><a href="DSA_Notes/linked_list_interactive_notes.html">Linked List Interactive Notes</a></h3>
+          <p>Linked-list intuition, nodes, CRUD operations, dry runs, quizzes, and common pointer patterns.</p>
+        </article>
+        <article class="note-card">
+          <h3><a href="DSA_Notes/graphs_trees_python_interactive_notes.html">Graphs & Trees in Python</a></h3>
+          <p>Interactive notes covering graphs, trees, traversals, implementations, complexity, and interview tips.</p>
+        </article>
       </div>
     </section>
 
-    <section>
+    <section id="topic-balance">
       <h2>Topic Balance</h2>
       <div class="bars" aria-label="Topic distribution">
         <div class="bar-row"><span>Arrays</span><div class="bar-track"><div class="bar-fill" style="width: 78%"></div></div><strong>7</strong></div>
@@ -356,7 +386,7 @@
       </div>
     </section>
 
-    <section>
+    <section id="basics-folder">
       <h2>Basics Folder</h2>
       <div class="cards">
         <article class="file-card">
@@ -403,7 +433,7 @@
       </div>
     </section>
 
-    <section>
+    <section id="intermediate-folder">
       <h2>Intermediate Folder</h2>
       <div class="cards">
         <article class="file-card">
@@ -485,7 +515,7 @@
       </div>
     </section>
 
-    <section>
+    <section id="insights">
       <h2>Insights</h2>
       <div class="grid">
         <div class="insight">

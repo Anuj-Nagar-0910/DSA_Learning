@@ -34,17 +34,58 @@ Sample Output 1
 1 3 5
 
 2 4
-"""
 
+Constraints
+1 <= N <= 200
+"""
 class Node:
     def __init__(self, data):
         self.data = data
         self.next = None
 
-
-def split_linked_list(head):
-    odd_head = odd_tail = None
-    even_head = even_tail = None
+def split_list(head):
+    """
+    Split a linked list into two separate lists based on odd and even values.
+    
+    This function traverses a singly linked list and separates it into two 
+    distinct linked lists: one containing all nodes with odd data values and 
+    another containing all nodes with even data values. The relative order 
+    of nodes is preserved in both resulting lists.
+    
+    Args:
+        head: The head node of the original linked list to be split.
+                Can be None if the list is empty.
+    
+    Returns:
+        tuple: A tuple containing two elements:
+            - odd_head: Head node of the linked list containing odd values.
+                        None if no odd values exist.
+            - even_head: Head node of the linked list containing even values.
+                        None if no even values exist.
+    
+    Example:
+        >>> # Original list: 1 -> 3 -> 2 -> 4 -> 5
+        >>> odd_head, even_head = split_list(head)
+        >>> # Odd list: 1 -> 3 -> 5
+        >>> # Even list: 2 -> 4
+    
+    Time Complexity:
+        O(n) where n is the number of nodes in the original list.
+    
+    Space Complexity:
+        O(1) as the function only uses a constant amount of extra space
+        for pointers, and reuses existing nodes.
+    
+    Note:
+        - The original linked list structure is modified during the split.
+        - Both resulting lists are properly terminated with None.
+        - Empty input (head=None) returns (None, None).
+    """
+    
+    odd_head = None
+    odd_tail = None
+    even_head = None
+    even_tail = None
 
     current = head
     while current:
@@ -72,21 +113,10 @@ def split_linked_list(head):
     return odd_head, even_head
 
 
-def print_linked_list(head):
+def print_list(head):
     result = []
     current = head
     while current:
         result.append(str(current.data))
         current = current.next
-    print(" ".join(result))
-
-
-def create_linked_list(values):
-    if not values:
-        return None
-    head = Node(values[0])
-    current = head
-    for val in values[1:]:
-        current.next = Node(val)
-        current = current.next
-    return head
+    print(' '.join(result))

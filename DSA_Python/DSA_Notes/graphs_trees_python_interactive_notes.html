@@ -1,0 +1,1284 @@
+
+<h2 class="sr-only">Interactive study notes on Graphs and Trees in Python — covering intuition, definitions, traversals, implementations, complexity, and interview tips.</h2>
+
+<style>
+:root {
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --color-background: #f5f8fb;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #eef2f7;
+  --color-text-primary: #111827;
+  --color-text-secondary: #475569;
+  --color-border-secondary: #cbd5e1;
+  --color-border-tertiary: #e2e8f0;
+  --border-radius-lg: 18px;
+  --border-radius-md: 12px;
+  --border-radius-sm: 8px;
+  --c-accent: #1d9e75;
+  --c-accent2: #7f77dd;
+  --c-node: #378add;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+}
+.wrap {
+  width: min(1140px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 24px 0 40px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.page-header {
+  margin-bottom: 18px;
+}
+.note-hero {
+  margin-bottom: 18px;
+  padding: 32px 24px;
+  border-radius: 18px;
+  background: #0f1720;
+  color: #f8fbff;
+}
+.note-hero .page-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.note-hero h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 3.2vw, 3.8rem);
+  line-height: 1.05;
+}
+.note-hero p {
+  margin: 0;
+  max-width: 760px;
+  color: #d8e2eb;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.back-link {
+  display: inline-flex;
+  margin-bottom: 18px;
+  color: #9fd3ff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 0;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--color-border-tertiary);
+}
+.nav-btn {
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-background-primary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.nav-btn:hover { background: var(--color-background-secondary); }
+.nav-btn.active {
+  background: var(--c-accent);
+  color: #ffffff;
+  border-color: var(--c-accent);
+}
+
+.section { display: none; animation: fadeIn 0.2s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+h2 { font-size: 1.25rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 14px; }
+h3 { font-size: 1rem; font-weight: 600; color: var(--color-text-primary); margin: 18px 0 8px; }
+h4 { font-size: 0.95rem; font-weight: 600; color: var(--color-text-secondary); margin: 12px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+p, li { font-size: 0.97rem; line-height: 1.8; color: var(--color-text-primary); }
+ul { padding-left: 20px; }
+li { margin-bottom: 6px; }
+
+.card {
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+.card.teal { border-left: 4px solid var(--c-accent); }
+.card.purple { border-left: 4px solid var(--c-accent2); }
+.card.blue { border-left: 4px solid var(--c-node); }
+.card.amber { border-left: 4px solid #ef9f27; }
+.card.red { border-left: 4px solid #e24b4a; }
+
+pre {
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin: 10px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-text-primary);
+}
+code { font-family: var(--font-mono); font-size: 13px; background: var(--color-background-secondary); padding: 2px 6px; border-radius: 5px; color: var(--color-text-primary); }
+
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  padding: 4px 10px; border-radius: 999px; margin-right: 4px;
+}
+.badge-teal { background: #E1F5EE; color: #0F6E56; }
+.badge-purple { background: #EEEDFE; color: #534AB7; }
+.badge-blue { background: #E6F1FB; color: #185FA5; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+.badge-red { background: #FCEBEB; color: #A32D2D; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin: 14px 0; }
+th, td { padding: 12px 14px; border-bottom: 1px solid var(--color-border-tertiary); }
+th { text-align: left; background: var(--color-background-secondary); color: var(--color-text-secondary); font-weight: 600; }
+tr:last-child td { border-bottom: none; }
+
+.quiz-question { margin-bottom: 20px; }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.quiz-opt {
+  padding: 12px 16px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-background-primary);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.15s ease;
+  color: var(--color-text-primary);
+}
+.quiz-opt:hover { background: var(--color-background-secondary); }
+.quiz-opt.correct { background: #e1f5ee; border-color: #0f6e56; color: #085041; }
+.quiz-opt.wrong { background: #fcebeb; border-color: #a32d2d; color: #501313; }
+.quiz-opt.revealed { background: #e1f5ee; border-color: #0f6e56; color: #085041; }
+.quiz-explain {
+  margin-top: 12px;
+  font-size: 0.92rem;
+  color: var(--color-text-secondary);
+  padding: 12px 14px;
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  display: none;
+}
+
+.viz-canvas {
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 18px;
+  margin: 18px 0;
+}
+svg text { font-family: var(--font-sans); }
+
+.step-btn {
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-background-primary);
+  cursor: pointer;
+  color: var(--color-text-primary);
+  margin-right: 10px;
+  transition: all 0.15s ease;
+}
+.step-btn:hover { background: var(--color-background-secondary); }
+.step-btn.primary { background: var(--c-accent); color: #ffffff; border-color: var(--c-accent); }
+
+.complexity-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.complexity-label { font-size: 0.95rem; min-width: 160px; color: var(--color-text-primary); }
+.complexity-bar { flex: 1; height: 12px; border-radius: 999px; background: var(--c-accent); transition: width 0.5s ease; }
+.complexity-val { font-size: 0.9rem; color: var(--color-text-secondary); min-width: 60px; font-family: var(--font-mono); }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.pill {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+}
+
+#traversal-log {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  padding: 14px 16px;
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  min-height: 42px;
+  color: var(--c-accent);
+  border: 1px solid var(--color-border-tertiary);
+  letter-spacing: 0.02em;
+}
+
+.fill-blank {
+  display: inline-block;
+  border-bottom: 2px solid var(--c-accent2);
+  min-width: 80px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0 4px;
+  color: var(--c-accent2);
+}
+.fill-blank.solved { color: var(--c-accent); border-color: var(--c-accent); }
+
+.tip-box {
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 12px 14px;
+  margin: 10px 0;
+  font-size: 0.95rem;
+}
+.tip-icon { font-size: 14px; margin-right: 6px; }
+
+.progress-bar-outer {
+  width: 100%;
+  height: 8px;
+  background: var(--color-background-secondary);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0 20px;
+}
+.progress-bar-inner { height: 100%; background: var(--c-accent); border-radius: 999px; transition: width 0.4s ease; }
+
+.section-tag { font-size: 1.1rem; margin-right: 8px; }
+
+.output-box {
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  margin-top: 12px;
+  min-height: 32px;
+}
+
+@media (max-width: 900px) {
+  .wrap { width: calc(100% - 24px); padding: 18px 0 30px; }
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .nav-btn { flex: 1 1 auto; }
+  .page-title-row { flex-direction: column; align-items: flex-start; }
+}
+</style>
+
+<div class="wrap">
+
+<div class="page-header note-hero">
+  <a class="back-link" href="../index.html">Back to DSA Python report</a>
+  <div class="page-title-row">
+    <h1>Graphs & Trees in Python</h1>
+    <span class="badge badge-teal">Interactive Notes</span>
+  </div>
+  <p>Interactive study notes on graphs, trees, traversals, implementation patterns, complexity insights, and interview tips.</p>
+</div>
+<div class="progress-bar-outer" id="global-progress"><div class="progress-bar-inner" style="width:11%"></div></div>
+
+<nav class="nav-bar" id="main-nav">
+  <button class="nav-btn active" onclick="showSection('intuition',this)">🔍 Intuition</button>
+  <button class="nav-btn" onclick="showSection('definitions',this)">📘 Definitions</button>
+  <button class="nav-btn" onclick="showSection('concepts',this)">🧠 Core Concepts</button>
+  <button class="nav-btn" onclick="showSection('operations',this)">⚙️ Traversals</button>
+  <button class="nav-btn" onclick="showSection('impl',this)">🐍 Implementation</button>
+  <button class="nav-btn" onclick="showSection('complexity',this)">⚡ Complexity</button>
+  <button class="nav-btn" onclick="showSection('compare',this)">📊 Comparison</button>
+  <button class="nav-btn" onclick="showSection('patterns',this)">🧩 Patterns</button>
+  <button class="nav-btn" onclick="showSection('dryrun',this)">💻 Dry Runs</button>
+  <button class="nav-btn" onclick="showSection('quiz',this)">🧠 Concept Checks</button>
+  <button class="nav-btn" onclick="showSection('practice',this)">🧪 Practice</button>
+  <button class="nav-btn" onclick="showSection('interview',this)">🚀 Interview Tips</button>
+</nav>
+
+<!-- SECTION 1: INTUITION -->
+<div id="sec-intuition" class="section active">
+  <h2><span class="section-tag">🔍</span>Intuition</h2>
+
+  <div class="grid2">
+    <div class="card teal">
+      <h3>Tree = Family Tree</h3>
+      <p>One ancestor (root) → children → grandchildren. No cycles. Every node has exactly one parent (except root).</p>
+      <div class="pill-row">
+        <span class="pill">Hierarchical</span><span class="pill">One parent</span><span class="pill">Acyclic</span>
+      </div>
+      <p style="font-size:13px; color:var(--color-text-secondary); margin-top:8px;">Used in: DOM, file systems, org charts, decision trees, BSTs, heaps</p>
+    </div>
+    <div class="card purple">
+      <h3>Graph = City Road Map</h3>
+      <p>Cities = nodes, roads = edges. Roads can go one-way or both ways. Can have cycles. No strict parent-child rule.</p>
+      <div class="pill-row">
+        <span class="pill">General</span><span class="pill">Any connections</span><span class="pill">May have cycles</span>
+      </div>
+      <p style="font-size:13px; color:var(--color-text-secondary); margin-top:8px;">Used in: social networks, GPS routing, web crawlers, dependency graphs</p>
+    </div>
+  </div>
+
+  <div class="card blue" style="margin-top:8px;">
+    <h3>Key Mental Model</h3>
+    <div class="grid2">
+      <div>
+        <h4>Tree is a restricted Graph</h4>
+        <ul>
+          <li>Connected + Acyclic + Directed (parent→child)</li>
+          <li>N nodes → exactly N−1 edges</li>
+          <li>Always one path between any two nodes</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Graph is the general case</h4>
+        <ul>
+          <li>Can be connected or disconnected</li>
+          <li>Can have cycles</li>
+          <li>Edges can be weighted</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="viz-canvas">
+    <svg viewBox="0 0 580 180" width="100%" style="max-height:180px;">
+      <text x="130" y="18" font-size="12" font-weight="500" fill="#0F6E56" text-anchor="middle">Tree</text>
+      <circle cx="130" cy="45" r="18" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+      <text x="130" y="50" text-anchor="middle" font-size="13" fill="#085041">1</text>
+      <line x1="115" y1="60" x2="75" y2="95" stroke="#1D9E75" stroke-width="1.5"/>
+      <line x1="145" y1="60" x2="185" y2="95" stroke="#1D9E75" stroke-width="1.5"/>
+      <circle cx="75" cy="108" r="18" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+      <text x="75" y="113" text-anchor="middle" font-size="13" fill="#085041">2</text>
+      <circle cx="185" cy="108" r="18" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+      <text x="185" y="113" text-anchor="middle" font-size="13" fill="#085041">3</text>
+      <line x1="65" y1="123" x2="45" y2="155" stroke="#1D9E75" stroke-width="1.5"/>
+      <line x1="85" y1="123" x2="105" y2="155" stroke="#1D9E75" stroke-width="1.5"/>
+      <circle cx="45" cy="162" r="14" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+      <text x="45" y="167" text-anchor="middle" font-size="12" fill="#085041">4</text>
+      <circle cx="105" cy="162" r="14" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+      <text x="105" y="167" text-anchor="middle" font-size="12" fill="#085041">5</text>
+      <text x="105" y="175" font-size="10" fill="#5DCAA5" text-anchor="middle" style="display:none"></text>
+
+      <text x="430" y="18" font-size="12" font-weight="500" fill="#534AB7" text-anchor="middle">Graph</text>
+      <circle cx="370" cy="55" r="18" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+      <text x="370" y="60" text-anchor="middle" font-size="13" fill="#26215C">A</text>
+      <circle cx="480" cy="55" r="18" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+      <text x="480" y="60" text-anchor="middle" font-size="13" fill="#26215C">B</text>
+      <circle cx="350" cy="145" r="18" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+      <text x="350" y="150" text-anchor="middle" font-size="13" fill="#26215C">C</text>
+      <circle cx="500" cy="145" r="18" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+      <text x="500" y="150" text-anchor="middle" font-size="13" fill="#26215C">D</text>
+      <circle cx="430" cy="100" r="18" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+      <text x="430" y="105" text-anchor="middle" font-size="13" fill="#26215C">E</text>
+      <line x1="386" y1="65" x2="414" y2="88" stroke="#7F77DD" stroke-width="1.5"/>
+      <line x1="466" y1="65" x2="444" y2="88" stroke="#7F77DD" stroke-width="1.5"/>
+      <line x1="367" y1="73" x2="357" y2="127" stroke="#7F77DD" stroke-width="1.5"/>
+      <line x1="440" y1="115" x2="493" y2="130" stroke="#7F77DD" stroke-width="1.5"/>
+      <line x1="368" y1="145" x2="482" y2="145" stroke="#7F77DD" stroke-width="1.5"/>
+      <text x="425" y="158" font-size="10" fill="#AFA9EC" text-anchor="middle">cycle possible ↺</text>
+    </svg>
+  </div>
+</div>
+
+<!-- SECTION 2: DEFINITIONS -->
+<div id="sec-definitions" class="section">
+  <h2><span class="section-tag">📘</span>Definitions</h2>
+
+  <h3>Tree Terminology</h3>
+  <table>
+    <tr><th>Term</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td><code>root</code></td><td>Top node, no parent</td><td>Node 1 in a tree</td></tr>
+    <tr><td><code>leaf</code></td><td>Node with no children</td><td>Bottom-most nodes</td></tr>
+    <tr><td><code>height</code></td><td>Longest path from root to leaf</td><td>Height of tree above = 2</td></tr>
+    <tr><td><code>depth</code></td><td>Distance from root to a node</td><td>Root has depth 0</td></tr>
+    <tr><td><code>subtree</code></td><td>A node and all its descendants</td><td>Any internal node forms one</td></tr>
+    <tr><td><code>degree</code></td><td>Number of children a node has</td><td>Binary tree: max degree = 2</td></tr>
+  </table>
+
+  <h3>Tree Types</h3>
+  <div class="grid3">
+    <div class="card teal">
+      <h4>Binary Tree</h4>
+      <p>Each node has at most 2 children (left, right)</p>
+    </div>
+    <div class="card teal">
+      <h4>BST</h4>
+      <p>Left &lt; Node &lt; Right — enables O(log n) search</p>
+    </div>
+    <div class="card teal">
+      <h4>Balanced Tree</h4>
+      <p>Heights of subtrees differ by at most 1 (AVL, Red-Black)</p>
+    </div>
+    <div class="card teal">
+      <h4>N-ary Tree</h4>
+      <p>Each node can have up to N children</p>
+    </div>
+    <div class="card teal">
+      <h4>Trie</h4>
+      <p>Tree for string prefixes — each edge = one char</p>
+    </div>
+    <div class="card teal">
+      <h4>Heap</h4>
+      <p>Complete binary tree with heap property (min/max)</p>
+    </div>
+  </div>
+
+  <h3>Graph Terminology</h3>
+  <table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td><code>vertex / node</code></td><td>A point in the graph</td></tr>
+    <tr><td><code>edge</code></td><td>Connection between two vertices</td></tr>
+    <tr><td><code>directed (digraph)</code></td><td>Edges have direction (A→B ≠ B→A)</td></tr>
+    <tr><td><code>undirected</code></td><td>Edges go both ways (A—B)</td></tr>
+    <tr><td><code>weighted</code></td><td>Edges have a cost/weight</td></tr>
+    <tr><td><code>degree</code></td><td>Number of edges connected to a node</td></tr>
+    <tr><td><code>path</code></td><td>Sequence of nodes connected by edges</td></tr>
+    <tr><td><code>cycle</code></td><td>Path that starts and ends at same node</td></tr>
+    <tr><td><code>connected</code></td><td>Every node reachable from every other</td></tr>
+    <tr><td><code>DAG</code></td><td>Directed Acyclic Graph — no cycles, ordered</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 3: CORE CONCEPTS -->
+<div id="sec-concepts" class="section">
+  <h2><span class="section-tag">🧠</span>Core Concepts</h2>
+
+  <h3>Graph Representations</h3>
+  <div class="grid2">
+    <div class="card purple">
+      <h4>Adjacency List (preferred)</h4>
+      <pre>graph = {
+  'A': ['B', 'C'],
+  'B': ['A', 'D'],
+  'C': ['A'],
+  'D': ['B']
+}</pre>
+      <p style="font-size:12px; color:var(--color-text-secondary);">Space: O(V+E) — ideal for sparse graphs</p>
+    </div>
+    <div class="card blue">
+      <h4>Adjacency Matrix</h4>
+      <pre>matrix = [
+  [0, 1, 1, 0],
+  [1, 0, 0, 1],
+  [1, 0, 0, 0],
+  [0, 1, 0, 0],
+]</pre>
+      <p style="font-size:12px; color:var(--color-text-secondary);">Space: O(V²) — good for dense graphs</p>
+    </div>
+  </div>
+
+  <h3>Tree Node Definition</h3>
+  <pre>class TreeNode:
+    def __init__(self, val=0):
+        self.val = val
+        self.left = None
+        self.right = None</pre>
+
+  <h3>BST Property — Visual Check</h3>
+  <div class="viz-canvas">
+    <svg viewBox="0 0 400 160" width="100%" style="max-height:160px;">
+      <circle cx="200" cy="35" r="22" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+      <text x="200" y="41" text-anchor="middle" font-size="14" fill="#26215C">8</text>
+      <line x1="180" y1="53" x2="120" y2="85" stroke="#7F77DD" stroke-width="1.5"/>
+      <line x1="220" y1="53" x2="285" y2="85" stroke="#7F77DD" stroke-width="1.5"/>
+      <circle cx="115" cy="100" r="20" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+      <text x="115" y="106" text-anchor="middle" font-size="14" fill="#26215C">3</text>
+      <circle cx="285" cy="100" r="20" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+      <text x="285" y="106" text-anchor="middle" font-size="14" fill="#26215C">12</text>
+      <line x1="103" y1="117" x2="75" y2="140" stroke="#7F77DD" stroke-width="1.5"/>
+      <line x1="127" y1="117" x2="155" y2="140" stroke="#7F77DD" stroke-width="1.5"/>
+      <circle cx="70" cy="150" r="16" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+      <text x="70" y="156" text-anchor="middle" font-size="12" fill="#085041">1</text>
+      <circle cx="155" cy="150" r="16" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+      <text x="155" y="156" text-anchor="middle" font-size="12" fill="#085041">6</text>
+      <text x="50" y="80" font-size="11" fill="#7F77DD">all &lt; 8</text>
+      <text x="295" y="80" font-size="11" fill="#7F77DD">all &gt; 8</text>
+      <text x="50" y="93" font-size="11" fill="#5DCAA5">all &lt; 3</text>
+      <text x="140" y="93" font-size="11" fill="#5DCAA5">3&lt;x&lt;8</text>
+    </svg>
+  </div>
+
+  <div class="card amber">
+    <h4>When to use which?</h4>
+    <table>
+      <tr><th>Scenario</th><th>Use</th></tr>
+      <tr><td>Hierarchical data (folders, XML)</td><td>Tree</td></tr>
+      <tr><td>Sorted data + fast search/insert</td><td>BST</td></tr>
+      <tr><td>Relationship data (social, maps)</td><td>Graph</td></tr>
+      <tr><td>Shortest path problems</td><td>Weighted Graph + BFS/Dijkstra</td></tr>
+      <tr><td>Dependency ordering</td><td>DAG + Topological Sort</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SECTION 4: TRAVERSALS -->
+<div id="sec-operations" class="section">
+  <h2><span class="section-tag">⚙️</span>Traversals — Interactive</h2>
+
+  <h3>Tree Traversals — Live Demo</h3>
+  <div class="viz-canvas" id="tree-viz-wrap">
+    <svg id="tree-svg" viewBox="0 0 420 170" width="100%" style="max-height:170px;">
+      <g id="tree-edges">
+        <line x1="210" y1="52" x2="130" y2="90" stroke="var(--color-border-secondary)" stroke-width="1.5"/>
+        <line x1="210" y1="52" x2="290" y2="90" stroke="var(--color-border-secondary)" stroke-width="1.5"/>
+        <line x1="125" y1="105" x2="80" y2="140" stroke="var(--color-border-secondary)" stroke-width="1.5"/>
+        <line x1="135" y1="105" x2="165" y2="140" stroke="var(--color-border-secondary)" stroke-width="1.5"/>
+        <line x1="283" y1="105" x2="255" y2="140" stroke="var(--color-border-secondary)" stroke-width="1.5"/>
+        <line x1="297" y1="105" x2="335" y2="140" stroke="var(--color-border-secondary)" stroke-width="1.5"/>
+      </g>
+      <g id="tn-1"><circle cx="210" cy="38" r="22" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/><text x="210" y="44" text-anchor="middle" font-size="15" fill="#085041" font-weight="500">1</text></g>
+      <g id="tn-2"><circle cx="125" cy="100" r="20" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/><text x="125" y="106" text-anchor="middle" font-size="14" fill="#085041">2</text></g>
+      <g id="tn-3"><circle cx="290" cy="100" r="20" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/><text x="290" y="106" text-anchor="middle" font-size="14" fill="#085041">3</text></g>
+      <g id="tn-4"><circle cx="78" cy="152" r="17" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/><text x="78" y="157" text-anchor="middle" font-size="13" fill="#085041">4</text></g>
+      <g id="tn-5"><circle cx="168" cy="152" r="17" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/><text x="168" y="157" text-anchor="middle" font-size="13" fill="#085041">5</text></g>
+      <g id="tn-6"><circle cx="253" cy="152" r="17" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/><text x="253" y="157" text-anchor="middle" font-size="13" fill="#085041">6</text></g>
+      <g id="tn-7"><circle cx="338" cy="152" r="17" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/><text x="338" y="157" text-anchor="middle" font-size="13" fill="#085041">7</text></g>
+    </svg>
+    <div style="margin-top:8px;">
+      <button class="step-btn primary" onclick="runTraversal('inorder')">In-order</button>
+      <button class="step-btn" onclick="runTraversal('preorder')">Pre-order</button>
+      <button class="step-btn" onclick="runTraversal('postorder')">Post-order</button>
+      <button class="step-btn" onclick="runTraversal('bfs')">BFS (Level)</button>
+    </div>
+    <div style="margin-top:8px; font-size:12px; color:var(--color-text-secondary);">Visit order:</div>
+    <div id="traversal-log">Select a traversal above</div>
+  </div>
+
+  <div class="grid2" style="margin-top:12px;">
+    <div class="card teal">
+      <h4>In-order (L → Root → R)</h4>
+      <pre>def inorder(node):
+    if not node:
+        return
+    inorder(node.left)
+    print(node.val)
+    inorder(node.right)</pre>
+      <p style="font-size:12px; color:var(--color-text-secondary);">BST in-order = sorted output</p>
+    </div>
+    <div class="card purple">
+      <h4>Pre-order (Root → L → R)</h4>
+      <pre>def preorder(node):
+    if not node:
+        return
+    print(node.val)
+    preorder(node.left)
+    preorder(node.right)</pre>
+      <p style="font-size:12px; color:var(--color-text-secondary);">Used to copy/serialize a tree</p>
+    </div>
+    <div class="card blue">
+      <h4>Post-order (L → R → Root)</h4>
+      <pre>def postorder(node):
+    if not node:
+        return
+    postorder(node.left)
+    postorder(node.right)
+    print(node.val)</pre>
+      <p style="font-size:12px; color:var(--color-text-secondary);">Used to delete a tree, calc folder sizes</p>
+    </div>
+    <div class="card amber">
+      <h4>BFS / Level-order</h4>
+      <pre>from collections import deque
+def bfs(root):
+    q = deque([root])
+    while q:
+        node = q.popleft()
+        print(node.val)
+        if node.left: q.append(node.left)
+        if node.right: q.append(node.right)</pre>
+    </div>
+  </div>
+
+  <h3>Graph Traversals</h3>
+  <div class="grid2">
+    <div class="card teal">
+      <h4>DFS — Recursive</h4>
+      <pre>def dfs(graph, node, visited=set()):
+    if node in visited:
+        return
+    visited.add(node)
+    print(node)
+    for neighbor in graph[node]:
+        dfs(graph, neighbor, visited)</pre>
+    </div>
+    <div class="card purple">
+      <h4>BFS — Iterative</h4>
+      <pre>from collections import deque
+def bfs(graph, start):
+    visited = set()
+    q = deque([start])
+    visited.add(start)
+    while q:
+        node = q.popleft()
+        print(node)
+        for n in graph[node]:
+            if n not in visited:
+                visited.add(n)
+                q.append(n)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: IMPLEMENTATION -->
+<div id="sec-impl" class="section">
+  <h2><span class="section-tag">🐍</span>Implementation</h2>
+
+  <h3>Complete BST Implementation</h3>
+  <pre>class BST:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, val):
+        self.root = self._insert(self.root, val)
+
+    def _insert(self, node, val):
+        if not node:
+            return TreeNode(val)
+        if val < node.val:
+            node.left = self._insert(node.left, val)
+        elif val > node.val:
+            node.right = self._insert(node.right, val)
+        return node
+
+    def search(self, val):
+        return self._search(self.root, val)
+
+    def _search(self, node, val):
+        if not node or node.val == val:
+            return node
+        if val < node.val:
+            return self._search(node.left, val)
+        return self._search(node.right, val)</pre>
+
+  <h3>Graph — Build & Traverse</h3>
+  <pre>from collections import defaultdict, deque
+
+class Graph:
+    def __init__(self):
+        self.adj = defaultdict(list)
+
+    def add_edge(self, u, v, directed=False):
+        self.adj[u].append(v)
+        if not directed:
+            self.adj[v].append(u)
+
+    def dfs(self, start):
+        visited, stack = set(), [start]
+        result = []
+        while stack:
+            node = stack.pop()
+            if node not in visited:
+                visited.add(node)
+                result.append(node)
+                stack.extend(self.adj[node])
+        return result
+
+    def bfs(self, start):
+        visited, queue = {start}, deque([start])
+        result = []
+        while queue:
+            node = queue.popleft()
+            result.append(node)
+            for n in self.adj[node]:
+                if n not in visited:
+                    visited.add(n)
+                    queue.append(n)
+        return result
+
+# Usage
+g = Graph()
+g.add_edge('A', 'B')
+g.add_edge('A', 'C')
+g.add_edge('B', 'D')
+print(g.dfs('A'))   # ['A', 'C', 'B', 'D']
+print(g.bfs('A'))   # ['A', 'B', 'C', 'D']</pre>
+
+  <h3>Detect Cycle in Undirected Graph</h3>
+  <pre>def has_cycle(graph, n):
+    visited = [False] * n
+    def dfs(node, parent):
+        visited[node] = True
+        for neighbor in graph[node]:
+            if not visited[neighbor]:
+                if dfs(neighbor, node):
+                    return True
+            elif neighbor != parent:
+                return True  # back edge = cycle!
+        return False
+    return any(dfs(i, -1) for i in range(n) if not visited[i])</pre>
+</div>
+
+<!-- SECTION 6: COMPLEXITY -->
+<div id="sec-complexity" class="section">
+  <h2><span class="section-tag">⚡</span>Complexity & Performance</h2>
+
+  <h3>Tree Operations (BST)</h3>
+  <table>
+    <tr><th>Operation</th><th>Average</th><th>Worst (Unbalanced)</th></tr>
+    <tr><td>Search</td><td>O(log n)</td><td>O(n)</td></tr>
+    <tr><td>Insert</td><td>O(log n)</td><td>O(n)</td></tr>
+    <tr><td>Delete</td><td>O(log n)</td><td>O(n)</td></tr>
+    <tr><td>Traversal</td><td>O(n)</td><td>O(n)</td></tr>
+    <tr><td>Height</td><td>O(log n)</td><td>O(n)</td></tr>
+  </table>
+
+  <h3>Graph Operations</h3>
+  <table>
+    <tr><th>Operation</th><th>Adj List</th><th>Adj Matrix</th></tr>
+    <tr><td>Add edge</td><td>O(1)</td><td>O(1)</td></tr>
+    <tr><td>Remove edge</td><td>O(E)</td><td>O(1)</td></tr>
+    <tr><td>Check edge</td><td>O(degree)</td><td>O(1)</td></tr>
+    <tr><td>BFS / DFS</td><td>O(V+E)</td><td>O(V²)</td></tr>
+    <tr><td>Space</td><td>O(V+E)</td><td>O(V²)</td></tr>
+  </table>
+
+  <h3>Visual: Relative Costs</h3>
+  <div class="card" style="padding: 16px 20px;">
+    <div class="complexity-row">
+      <span class="complexity-label">BST search (balanced)</span>
+      <div style="flex:1; background:var(--color-background-secondary); border-radius:5px; height:10px;">
+        <div style="width:20%; height:10px; border-radius:5px; background:#1D9E75;"></div>
+      </div>
+      <span class="complexity-val">O(log n)</span>
+    </div>
+    <div class="complexity-row">
+      <span class="complexity-label">BST search (skewed)</span>
+      <div style="flex:1; background:var(--color-background-secondary); border-radius:5px; height:10px;">
+        <div style="width:90%; height:10px; border-radius:5px; background:#E24B4A;"></div>
+      </div>
+      <span class="complexity-val">O(n)</span>
+    </div>
+    <div class="complexity-row">
+      <span class="complexity-label">BFS (adj list)</span>
+      <div style="flex:1; background:var(--color-background-secondary); border-radius:5px; height:10px;">
+        <div style="width:40%; height:10px; border-radius:5px; background:#7F77DD;"></div>
+      </div>
+      <span class="complexity-val">O(V+E)</span>
+    </div>
+    <div class="complexity-row">
+      <span class="complexity-label">BFS (adj matrix)</span>
+      <div style="flex:1; background:var(--color-background-secondary); border-radius:5px; height:10px;">
+        <div style="width:70%; height:10px; border-radius:5px; background:#EF9F27;"></div>
+      </div>
+      <span class="complexity-val">O(V²)</span>
+    </div>
+    <div class="complexity-row">
+      <span class="complexity-label">Dijkstra (heap)</span>
+      <div style="flex:1; background:var(--color-background-secondary); border-radius:5px; height:10px;">
+        <div style="width:55%; height:10px; border-radius:5px; background:#378ADD;"></div>
+      </div>
+      <span class="complexity-val">O((V+E)logV)</span>
+    </div>
+  </div>
+
+  <div class="card red" style="margin-top:12px;">
+    <h4>Space Complexity</h4>
+    <ul>
+      <li>Recursive DFS: O(h) stack — h = height. Worst case O(n) for skewed tree</li>
+      <li>BFS queue: O(w) — w = max width. Worst case O(n) for complete tree</li>
+      <li>Visited set (graph): always O(V)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SECTION 7: COMPARISON -->
+<div id="sec-compare" class="section">
+  <h2><span class="section-tag">📊</span>Comparison</h2>
+
+  <h3>DFS vs BFS</h3>
+  <table>
+    <tr><th>Property</th><th>DFS</th><th>BFS</th></tr>
+    <tr><td>Data structure</td><td>Stack (or recursion)</td><td>Queue</td></tr>
+    <tr><td>Space</td><td>O(h) — height</td><td>O(w) — width</td></tr>
+    <tr><td>Finds shortest path?</td><td>No (unweighted)</td><td>Yes (unweighted)</td></tr>
+    <tr><td>Complete?</td><td>No (infinite graphs)</td><td>Yes</td></tr>
+    <tr><td>Best for</td><td>Detect cycle, topo sort, maze</td><td>Shortest path, level-by-level</td></tr>
+    <tr><td>Tree traversal</td><td>Pre/In/Post-order</td><td>Level-order</td></tr>
+  </table>
+
+  <h3>Tree Types Comparison</h3>
+  <table>
+    <tr><th>Type</th><th>Search</th><th>Insert</th><th>Ordered?</th><th>Use Case</th></tr>
+    <tr><td>BST</td><td>O(log n)*</td><td>O(log n)*</td><td>Yes</td><td>Sorted data</td></tr>
+    <tr><td>AVL Tree</td><td>O(log n)</td><td>O(log n)</td><td>Yes</td><td>Frequent lookups</td></tr>
+    <tr><td>Heap</td><td>O(n)</td><td>O(log n)</td><td>Partial</td><td>Priority queue</td></tr>
+    <tr><td>Trie</td><td>O(k)</td><td>O(k)</td><td>By char</td><td>Autocomplete</td></tr>
+    <tr><td>Segment Tree</td><td>O(log n)</td><td>O(log n)</td><td>By index</td><td>Range queries</td></tr>
+  </table>
+  <p style="font-size:12px; color:var(--color-text-secondary); margin-top:4px;">* Worst case O(n) if unbalanced</p>
+
+  <h3>Graph Representation: When to Use?</h3>
+  <div class="grid2">
+    <div class="card teal">
+      <h4>Adjacency List — Use when:</h4>
+      <ul>
+        <li>Graph is sparse (few edges)</li>
+        <li>Need to iterate over neighbors</li>
+        <li>Memory is a concern</li>
+        <li>Most real-world graphs</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h4>Adjacency Matrix — Use when:</h4>
+      <ul>
+        <li>Graph is dense (many edges)</li>
+        <li>Need O(1) edge lookup</li>
+        <li>Floyd-Warshall algorithm</li>
+        <li>Small number of vertices</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8: PATTERNS -->
+<div id="sec-patterns" class="section">
+  <h2><span class="section-tag">🧩</span>Patterns & Use Cases</h2>
+
+  <div class="grid2">
+    <div class="card teal">
+      <h4>Pattern: Two-Pass DFS</h4>
+      <p style="font-size:13px;">Run DFS twice to find connected components, bridges, or articulation points (Kosaraju's / Tarjan's)</p>
+    </div>
+    <div class="card purple">
+      <h4>Pattern: BFS + Distance Array</h4>
+      <p style="font-size:13px;">Maintain <code>dist[]</code> alongside BFS for shortest unweighted paths. Initialize with -1 or infinity.</p>
+    </div>
+    <div class="card blue">
+      <h4>Pattern: Topological Sort</h4>
+      <p style="font-size:13px;">DAG: use DFS post-order OR Kahn's algorithm (BFS + in-degree). Use for task scheduling, build order.</p>
+    </div>
+    <div class="card amber">
+      <h4>Pattern: Union-Find</h4>
+      <p style="font-size:13px;">Track connected components efficiently. Use for Kruskal's MST, cycle detection in undirected graphs.</p>
+    </div>
+    <div class="card teal">
+      <h4>Pattern: Level BFS on Trees</h4>
+      <p style="font-size:13px;">Use a sentinel <code>None</code> or size-based loop to process level by level. Useful for zigzag, average, or right-view problems.</p>
+    </div>
+    <div class="card purple">
+      <h4>Pattern: Lowest Common Ancestor</h4>
+      <p style="font-size:13px;">Use post-order DFS. Return node when both left and right subtrees find the targets.</p>
+    </div>
+  </div>
+
+  <h3>Common Interview Patterns</h3>
+  <table>
+    <tr><th>Problem Type</th><th>Algorithm</th><th>Key Data Structure</th></tr>
+    <tr><td>Shortest path (unweighted)</td><td>BFS</td><td>Queue + visited set</td></tr>
+    <tr><td>Shortest path (weighted)</td><td>Dijkstra</td><td>Min-heap (heapq)</td></tr>
+    <tr><td>Minimum spanning tree</td><td>Prim's / Kruskal's</td><td>Heap / Union-Find</td></tr>
+    <tr><td>Cycle detection (directed)</td><td>DFS with color (white/gray/black)</td><td>Visited + recursion stack</td></tr>
+    <tr><td>Cycle detection (undirected)</td><td>DFS with parent tracking</td><td>Visited set</td></tr>
+    <tr><td>Task ordering</td><td>Topological Sort</td><td>Deque + in-degree array</td></tr>
+    <tr><td>Tree diameter</td><td>DFS twice or single post-order</td><td>Global max variable</td></tr>
+  </table>
+
+  <h3>Dijkstra's — Clean Template</h3>
+  <pre>import heapq
+
+def dijkstra(graph, start):
+    dist = {node: float('inf') for node in graph}
+    dist[start] = 0
+    heap = [(0, start)]  # (distance, node)
+
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d > dist[u]:
+            continue
+        for v, w in graph[u]:
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+                heapq.heappush(heap, (dist[v], v))
+    return dist</pre>
+</div>
+
+<!-- SECTION 9: DRY RUNS -->
+<div id="sec-dryrun" class="section">
+  <h2><span class="section-tag">💻</span>Dry Runs</h2>
+
+  <h3>BFS Dry Run — Step by Step</h3>
+  <div class="card blue" style="margin-bottom:0;">
+    <pre>Graph: A-B, A-C, B-D, C-D, D-E    Start: A</pre>
+  </div>
+  <div id="bfs-steps" style="margin-top:8px;"></div>
+  <div style="margin-top:10px;">
+    <button class="step-btn primary" id="bfs-next-btn" onclick="nextBFSStep()">Next Step</button>
+    <button class="step-btn" onclick="resetBFS()">Reset</button>
+  </div>
+
+  <h3 style="margin-top:20px;">BST Insert Dry Run</h3>
+  <div class="card teal">
+    <p style="font-size:13px;">Insert: 5, 3, 7, 1, 4 into empty BST</p>
+    <table>
+      <tr><th>Insert</th><th>Action</th><th>Tree State</th></tr>
+      <tr><td>5</td><td>Root is empty → place at root</td><td>5</td></tr>
+      <tr><td>3</td><td>3 &lt; 5 → go left → empty → insert</td><td>5(L:3)</td></tr>
+      <tr><td>7</td><td>7 &gt; 5 → go right → empty → insert</td><td>5(L:3, R:7)</td></tr>
+      <tr><td>1</td><td>1&lt;5→L; 1&lt;3→L → insert</td><td>3(L:1); 5's left subtree</td></tr>
+      <tr><td>4</td><td>4&lt;5→L; 4&gt;3→R → insert</td><td>3(L:1, R:4)</td></tr>
+    </table>
+    <p style="font-size:12px; color:var(--color-text-secondary); margin-top:8px;">In-order result: 1, 3, 4, 5, 7 (sorted!)</p>
+  </div>
+
+  <h3>Topological Sort Dry Run</h3>
+  <pre>Tasks: A→C, B→C, C→D
+In-degrees: A=0, B=0, C=2, D=1
+
+Step 1: Queue = [A, B] (in-degree 0)
+Step 2: Process A → C's in-degree becomes 1 → order=[A]
+Step 3: Process B → C's in-degree becomes 0 → queue=[C] → order=[A,B]
+Step 4: Process C → D's in-degree becomes 0 → queue=[D] → order=[A,B,C]
+Step 5: Process D → order=[A,B,C,D]</pre>
+</div>
+
+<!-- SECTION 10: QUIZ -->
+<div id="sec-quiz" class="section">
+  <h2><span class="section-tag">🧠</span>Concept Checks</h2>
+  <p style="font-size:13px; color:var(--color-text-secondary); margin-bottom:16px;">Test your understanding. Select an answer to reveal the explanation.</p>
+
+  <div id="quiz-container"></div>
+</div>
+
+<!-- SECTION 11: PRACTICE -->
+<div id="sec-practice" class="section">
+  <h2><span class="section-tag">🧪</span>Practice Problems</h2>
+
+  <h3>Beginner</h3>
+  <div class="card teal">
+    <p style="font-size:13px; font-weight:500;">1. Maximum Depth of Binary Tree</p>
+    <p style="font-size:13px;">Return the height of a binary tree.</p>
+    <pre>def maxDepth(root):
+    if not root:
+        return 0
+    return 1 + max(maxDepth(root.left),
+                   maxDepth(root.right))</pre>
+  </div>
+  <div class="card teal">
+    <p style="font-size:13px; font-weight:500;">2. Number of Islands (BFS)</p>
+    <p style="font-size:13px;">Count connected components of '1's in a 2D grid.</p>
+    <pre>def numIslands(grid):
+    count = 0
+    def bfs(r, c):
+        q = deque([(r, c)])
+        grid[r][c] = '0'
+        while q:
+            row, col = q.popleft()
+            for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+                nr, nc = row+dr, col+dc
+                if 0<=nr<len(grid) and 0<=nc<len(grid[0]) and grid[nr][nc]=='1':
+                    grid[nr][nc] = '0'
+                    q.append((nr, nc))
+    for r in range(len(grid)):
+        for c in range(len(grid[0])):
+            if grid[r][c] == '1':
+                bfs(r, c)
+                count += 1
+    return count</pre>
+  </div>
+
+  <h3>Intermediate</h3>
+  <div class="card purple">
+    <p style="font-size:13px; font-weight:500;">3. Lowest Common Ancestor of BST</p>
+    <pre>def lowestCommonAncestor(root, p, q):
+    while root:
+        if p.val < root.val and q.val < root.val:
+            root = root.left
+        elif p.val > root.val and q.val > root.val:
+            root = root.right
+        else:
+            return root</pre>
+  </div>
+  <div class="card purple">
+    <p style="font-size:13px; font-weight:500;">4. Course Schedule (Cycle Detection in Directed Graph)</p>
+    <pre>def canFinish(numCourses, prerequisites):
+    graph = defaultdict(list)
+    for a, b in prerequisites:
+        graph[b].append(a)
+    # 0=unvisited, 1=in-progress, 2=done
+    state = [0] * numCourses
+    def dfs(node):
+        if state[node] == 1: return False  # cycle!
+        if state[node] == 2: return True
+        state[node] = 1
+        for nei in graph[node]:
+            if not dfs(nei): return False
+        state[node] = 2
+        return True
+    return all(dfs(i) for i in range(numCourses))</pre>
+  </div>
+
+  <h3>Advanced</h3>
+  <div class="card blue">
+    <p style="font-size:13px; font-weight:500;">5. Serialize & Deserialize Binary Tree</p>
+    <p style="font-size:12px; color:var(--color-text-secondary);">Hint: Use BFS. Encode None as "null". Split on comma. Rebuild using a queue index.</p>
+  </div>
+  <div class="card blue">
+    <p style="font-size:13px; font-weight:500;">6. Word Ladder (Shortest Transformation)</p>
+    <p style="font-size:12px; color:var(--color-text-secondary);">Hint: Model as unweighted graph. BFS guarantees shortest path. Use wildcard patterns as intermediate keys.</p>
+  </div>
+  <div class="card blue">
+    <p style="font-size:13px; font-weight:500;">7. Alien Dictionary (Topological Sort)</p>
+    <p style="font-size:12px; color:var(--color-text-secondary);">Hint: Compare adjacent words to build a directed graph of char ordering. Run topo sort. If cycle, return "".</p>
+  </div>
+</div>
+
+<!-- SECTION 12: INTERVIEW -->
+<div id="sec-interview" class="section">
+  <h2><span class="section-tag">🚀</span>Interview Tips & Common Mistakes</h2>
+
+  <h3>Top Mistakes to Avoid</h3>
+  <div class="card red">
+    <ul>
+      <li><strong>Forgetting the visited set</strong> in graph traversal → infinite loop in cyclic graphs</li>
+      <li><strong>Confusing height vs depth</strong> — height measured from leaves up, depth from root down</li>
+      <li><strong>Assuming BST is always balanced</strong> — O(log n) is average case, not guaranteed</li>
+      <li><strong>Not handling disconnected graphs</strong> — loop over all nodes, not just from one source</li>
+      <li><strong>Mutating the graph mid-traversal</strong> — use a copy if you mark cells in place</li>
+      <li><strong>Stack overflow with deep recursion</strong> — convert to iterative DFS for production</li>
+    </ul>
+  </div>
+
+  <h3>Key Interview Questions & Approaches</h3>
+  <table>
+    <tr><th>Question</th><th>Approach</th><th>Complexity</th></tr>
+    <tr><td>Tree is valid BST?</td><td>DFS with min/max bounds</td><td>O(n)</td></tr>
+    <tr><td>Diameter of binary tree</td><td>Post-order DFS, track max globally</td><td>O(n)</td></tr>
+    <tr><td>All paths root to leaf</td><td>DFS + backtracking with path list</td><td>O(n)</td></tr>
+    <tr><td>Clone graph</td><td>BFS + HashMap (old→new node)</td><td>O(V+E)</td></tr>
+    <tr><td>Shortest path in matrix</td><td>BFS with 4-directional movement</td><td>O(m×n)</td></tr>
+    <tr><td>Redundant connection</td><td>Union-Find</td><td>O(n α(n))</td></tr>
+    <tr><td>Critical connections</td><td>Tarjan's bridge-finding DFS</td><td>O(V+E)</td></tr>
+  </table>
+
+  <h3>Quick Interview Checklist</h3>
+  <div class="grid2">
+    <div class="card teal">
+      <h4>Before you code</h4>
+      <ul>
+        <li>Directed or undirected?</li>
+        <li>Weighted edges?</li>
+        <li>Can there be cycles?</li>
+        <li>Connected or disconnected?</li>
+        <li>What's the expected output — path, bool, count?</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h4>Optimization signals</h4>
+      <ul>
+        <li>Shortest path → BFS (unweighted), Dijkstra (weighted)</li>
+        <li>All paths → DFS + backtrack</li>
+        <li>Ordering → Topological sort</li>
+        <li>Components → Union-Find or DFS loop</li>
+        <li>Balance needed → AVL or heapq</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <h4>Python-specific tips</h4>
+    <ul>
+      <li>Use <code>collections.deque</code> for BFS — O(1) popleft vs O(n) for list</li>
+      <li>Use <code>collections.defaultdict(list)</code> for adjacency lists</li>
+      <li>Use <code>heapq</code> (min-heap) for Dijkstra — negate values for max-heap</li>
+      <li>Increase recursion limit: <code>sys.setrecursionlimit(10**5)</code> for deep trees</li>
+      <li>Use <code>set()</code> for visited — O(1) lookup</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+<script>
+const sections = ['intuition','definitions','concepts','operations','impl','complexity','compare','patterns','dryrun','quiz','practice','interview'];
+const visited = new Set(['intuition']);
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+  visited.add(id);
+  const pct = Math.round((visited.size / sections.length) * 100);
+  document.querySelector('.progress-bar-inner').style.width = pct + '%';
+  if (id === 'quiz') initQuiz();
+}
+
+const treeOrder = {
+  inorder:   [4,2,5,1,6,3,7],
+  preorder:  [1,2,4,5,3,6,7],
+  postorder: [4,5,2,6,7,3,1],
+  bfs:       [1,2,3,4,5,6,7]
+};
+
+const nodeColors = {
+  default: { fill: '#E1F5EE', stroke: '#1D9E75' },
+  visited: { fill: '#7F77DD', stroke: '#534AB7' },
+  current: { fill: '#1D9E75', stroke: '#085041' }
+};
+
+function setNodeColor(nodeId, state) {
+  const g = document.getElementById('tn-' + nodeId);
+  if (!g) return;
+  const c = g.querySelector('circle');
+  const t = g.querySelector('text');
+  if (state === 'visited') {
+    c.setAttribute('fill', '#EEEDFE'); c.setAttribute('stroke', '#7F77DD');
+    t.setAttribute('fill', '#26215C');
+  } else if (state === 'current') {
+    c.setAttribute('fill', '#1D9E75'); c.setAttribute('stroke', '#085041');
+    t.setAttribute('fill', '#fff');
+  } else {
+    c.setAttribute('fill', '#E1F5EE'); c.setAttribute('stroke', '#1D9E75');
+    t.setAttribute('fill', '#085041');
+  }
+}
+
+function resetNodeColors() {
+  for (let i = 1; i <= 7; i++) setNodeColor(i, 'default');
+}
+
+function runTraversal(type) {
+  resetNodeColors();
+  const order = treeOrder[type];
+  const log = document.getElementById('traversal-log');
+  log.textContent = '';
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i > 0) setNodeColor(order[i-1], 'visited');
+    if (i < order.length) {
+      setNodeColor(order[i], 'current');
+      log.textContent = order.slice(0, i+1).join(' → ');
+      i++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 500);
+}
+
+const bfsStepData = [
+  { q: 'A', visited: 'A', processed: '', note: 'Start: enqueue A, mark visited' },
+  { q: 'B, C', visited: 'A,B,C', processed: 'A', note: 'Process A → enqueue neighbors B, C' },
+  { q: 'C, D', visited: 'A,B,C,D', processed: 'A→B', note: 'Process B → enqueue D (C already visited)' },
+  { q: 'D', visited: 'A,B,C,D', processed: 'A→B→C', note: 'Process C → D already in visited' },
+  { q: 'E', visited: 'A,B,C,D,E', processed: 'A→B→C→D', note: 'Process D → enqueue E' },
+  { q: '(empty)', visited: 'A,B,C,D,E', processed: 'A→B→C→D→E', note: 'Process E → queue empty, done!' },
+];
+let bfsIdx = 0;
+
+function renderBFSStep() {
+  const d = bfsStepData[bfsIdx];
+  const container = document.getElementById('bfs-steps');
+  container.innerHTML = `
+    <div class="card blue" style="margin-top:0;">
+      <div class="grid2">
+        <div><h4>Queue</h4><code>[${d.q}]</code></div>
+        <div><h4>Visited</h4><code>{${d.visited}}</code></div>
+      </div>
+      <div style="margin-top:8px;"><h4>BFS Order so far</h4><code>${d.processed || '—'}</code></div>
+      <p style="font-size:12px; color:var(--color-text-secondary); margin-top:8px;">${d.note}</p>
+    </div>`;
+  document.getElementById('bfs-next-btn').textContent = bfsIdx < bfsStepData.length - 1 ? 'Next Step' : 'Done';
+}
+
+function nextBFSStep() {
+  if (bfsIdx < bfsStepData.length - 1) { bfsIdx++; renderBFSStep(); }
+}
+
+function resetBFS() {
+  bfsIdx = 0; renderBFSStep();
+}
+
+renderBFSStep();
+
+const quizData = [
+  {
+    q: 'What is the in-order traversal of a BST guaranteed to produce?',
+    options: ['Nodes in insertion order', 'Nodes in sorted (ascending) order', 'Nodes by level', 'Leaf nodes first'],
+    correct: 1,
+    explain: 'BST property: left < root < right. In-order visits left → root → right, so output is always sorted ascending.'
+  },
+  {
+    q: 'Which algorithm guarantees shortest path in an unweighted graph?',
+    options: ['DFS', 'Dijkstra', 'BFS', 'Topological Sort'],
+    correct: 2,
+    explain: 'BFS explores layer by layer. The first time it reaches a node, it\'s via the shortest path (fewest edges). DFS does NOT guarantee this.'
+  },
+  {
+    q: 'A graph with V nodes and E edges stored as an adjacency list uses how much space?',
+    options: ['O(V²)', 'O(E²)', 'O(V + E)', 'O(V × E)'],
+    correct: 2,
+    explain: 'Adjacency list stores each node once (O(V)) and each edge once or twice (O(E)). Total: O(V+E). Matrix always uses O(V²).'
+  },
+  {
+    q: 'You want to detect a cycle in a directed graph. What do you track during DFS?',
+    options: ['Parent node only', 'Node color: unvisited/in-progress/done', 'Queue size', 'Tree height'],
+    correct: 1,
+    explain: 'In directed graph DFS, mark nodes: white (unvisited), gray (in current DFS path), black (fully processed). If you hit a gray node → back edge → cycle!'
+  },
+  {
+    q: 'What does Topological Sort require about the graph?',
+    options: ['It must be connected', 'It must be a DAG (Directed Acyclic Graph)', 'It must be weighted', 'It must be undirected'],
+    correct: 1,
+    explain: 'Topological sort only makes sense if there are no cycles. A cycle means "A must come before B AND B must come before A" which is impossible to order linearly.'
+  }
+];
+
+let quizInited = false;
+function initQuiz() {
+  if (quizInited) return;
+  quizInited = true;
+  const container = document.getElementById('quiz-container');
+  quizData.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-question card';
+    div.innerHTML = `<p style="font-size:14px; font-weight:500; margin-bottom:10px;">${qi+1}. ${q.q}</p>
+      <div class="quiz-options">${q.options.map((o, oi) =>
+        `<button class="quiz-opt" onclick="answerQuiz(${qi},${oi})">${o}</button>`
+      ).join('')}</div>
+      <div class="quiz-explain" id="qexplain-${qi}">${q.explain}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(qi, oi) {
+  const q = quizData[qi];
+  const opts = document.querySelectorAll('.quiz-question')[qi].querySelectorAll('.quiz-opt');
+  opts.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === q.correct) btn.classList.add('revealed');
+    else if (idx === oi && oi !== q.correct) btn.classList.add('wrong');
+  });
+  if (oi === q.correct) opts[oi].classList.remove('revealed');
+  if (oi === q.correct) { opts[oi].classList.add('correct'); }
+  document.getElementById('qexplain-' + qi).style.display = 'block';
+}
+</script>

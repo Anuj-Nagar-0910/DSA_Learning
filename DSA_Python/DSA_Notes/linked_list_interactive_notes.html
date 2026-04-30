@@ -1,0 +1,1045 @@
+
+<style>
+  :root { --accent: #7F77DD; --accent-light: #EEEDFE; --accent-mid: #AFA9EC; --teal: #1D9E75; --teal-light: #E1F5EE; --coral: #D85A30; --coral-light: #FAECE7; --amber: #BA7517; --amber-light: #FAEEDA; --green: #639922; --green-light: #EAF3DE; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-mono, monospace); }
+  .notes { max-width: 860px; padding: 1.5rem 0; }
+  .section { margin-bottom: 2rem; }
+  .section-header { display: flex; align-items: center; gap: 10px; padding: 0.6rem 1rem; background: var(--color-background-secondary); border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); cursor: pointer; user-select: none; }
+  .section-header h2 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .section-header .icon { font-size: 16px; }
+  .section-header .chevron { margin-left: auto; font-size: 13px; color: var(--color-text-secondary); transition: transform 0.2s; }
+  .section-header.open .chevron { transform: rotate(90deg); }
+  .section-body { display: none; padding: 1rem 0 0 0; }
+  .section-body.open { display: block; }
+
+  .tab-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .tab { padding: 5px 14px; font-size: 13px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); font-family: var(--font-sans); transition: all 0.15s; }
+  .tab:hover { background: var(--color-background-secondary); }
+  .tab.active { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; font-weight: 500; }
+
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+  .card h3 { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.5rem; font-family: var(--font-sans); }
+  .card p, .card li { font-size: 13px; color: var(--color-text-secondary); line-height: 1.65; font-family: var(--font-sans); }
+  .card ul { padding-left: 1rem; }
+  .card li { margin-bottom: 3px; }
+  .hl { color: var(--accent); font-weight: 500; }
+  .hl-teal { color: var(--teal); font-weight: 500; }
+  .hl-coral { color: var(--coral); font-weight: 500; }
+  .hl-amber { color: var(--amber); font-weight: 500; }
+
+  .node-row { display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin: 0.75rem 0; }
+  .node-box { display: flex; border: 1.5px solid #AFA9EC; border-radius: 6px; overflow: hidden; font-size: 12px; font-family: var(--font-mono); }
+  .node-data { background: #EEEDFE; color: #3C3489; padding: 6px 10px; font-weight: 500; }
+  .node-ptr { background: var(--color-background-secondary); color: var(--color-text-secondary); padding: 6px 8px; border-left: 1px solid #AFA9EC; }
+  .arrow { font-size: 18px; color: #7F77DD; padding: 0 6px; }
+  .null-box { background: var(--color-background-secondary); border: 1.5px dashed var(--color-border-secondary); border-radius: 6px; padding: 6px 10px; font-size: 12px; color: var(--color-text-secondary); font-family: var(--font-mono); }
+  .head-label { font-size: 11px; color: var(--teal); font-weight: 500; text-align: center; margin-bottom: 2px; font-family: var(--font-sans); }
+  .node-wrapper { display: flex; flex-direction: column; align-items: center; }
+
+  pre { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.85rem 1rem; font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 0.5rem 0; font-family: var(--font-mono); color: var(--color-text-primary); }
+  .kw { color: #534AB7; } .fn { color: #1D9E75; } .cm { color: var(--color-text-secondary); font-style: italic; } .st { color: #D85A30; }
+
+  .crud-panel { display: none; }
+  .crud-panel.active { display: block; }
+  .step-runner { margin-top: 0.75rem; }
+  .step-display { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 1rem; min-height: 90px; font-size: 13px; font-family: var(--font-sans); color: var(--color-text-primary); line-height: 1.6; }
+  .step-controls { display: flex; align-items: center; gap: 8px; margin-top: 0.6rem; }
+  .step-controls button { padding: 5px 14px; font-size: 13px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; background: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); transition: all 0.15s; }
+  .step-controls button:hover { background: var(--color-background-secondary); }
+  .step-controls button:active { transform: scale(0.98); }
+  .step-counter { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; }
+  .visual-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .highlight-node .node-data { background: #FAEEDA; color: #BA7517; }
+  .highlight-node .node-box { border-color: #EF9F27; }
+  .delete-node .node-data { background: #FAECE7; color: #993C1D; }
+  .delete-node .node-box { border-color: #D85A30; text-decoration: line-through; opacity: 0.6; }
+  .new-node .node-data { background: #EAF3DE; color: #3B6D11; }
+  .new-node .node-box { border-color: #97C459; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-sans); }
+  th { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; padding: 8px 12px; border: 0.5px solid var(--color-border-tertiary); text-align: left; }
+  td { padding: 7px 12px; border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); vertical-align: top; }
+  .o1 { color: #3B6D11; font-weight: 500; } .on { color: #993C1D; font-weight: 500; }
+
+  .quiz-q { font-size: 13px; color: var(--color-text-primary); font-family: var(--font-sans); margin-bottom: 0.6rem; line-height: 1.6; font-weight: 500; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.75rem; }
+  .quiz-opt { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); cursor: pointer; font-size: 13px; font-family: var(--font-sans); color: var(--color-text-primary); background: var(--color-background-primary); transition: all 0.15s; }
+  .quiz-opt:hover { background: var(--color-background-secondary); }
+  .quiz-opt.correct { background: #EAF3DE; border-color: #97C459; color: #3B6D11; }
+  .quiz-opt.wrong { background: #FAECE7; border-color: #D85A30; color: #993C1D; }
+  .quiz-feedback { font-size: 13px; font-family: var(--font-sans); padding: 8px 12px; border-radius: var(--border-radius-md); margin-bottom: 0.75rem; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #EAF3DE; color: #3B6D11; }
+  .quiz-feedback.bad { background: #FAECE7; color: #993C1D; }
+  .quiz-next { font-size: 13px; padding: 5px 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; background: var(--color-background-primary); font-family: var(--font-sans); }
+  .quiz-next:hover { background: var(--color-background-secondary); }
+
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: var(--border-radius-md); font-family: var(--font-sans); font-weight: 500; margin-left: 6px; }
+  .badge-purple { background: #EEEDFE; color: #3C3489; }
+  .badge-teal { background: #E1F5EE; color: #085041; }
+  .badge-coral { background: #FAECE7; color: #993C1D; }
+
+  .analogy-box { display: flex; gap: 10px; align-items: flex-start; background: var(--color-background-secondary); border-left: 3px solid #7F77DD; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 10px 14px; margin: 0.6rem 0; }
+  .analogy-icon { font-size: 20px; flex-shrink: 0; }
+  .analogy-text { font-size: 13px; font-family: var(--font-sans); color: var(--color-text-secondary); line-height: 1.65; }
+
+  .tip-box { background: #FAEEDA; border-left: 3px solid #EF9F27; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 8px 12px; margin: 0.5rem 0; font-size: 13px; font-family: var(--font-sans); color: #633806; line-height: 1.6; }
+  .warn-box { background: #FAECE7; border-left: 3px solid #D85A30; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 8px 12px; margin: 0.5rem 0; font-size: 13px; font-family: var(--font-sans); color: #993C1D; line-height: 1.6; }
+
+  .practice-item { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; margin-bottom: 8px; font-size: 13px; font-family: var(--font-sans); cursor: pointer; }
+  .practice-item .pi-title { font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; display: flex; align-items: center; }
+  .practice-item .pi-body { color: var(--color-text-secondary); display: none; margin-top: 6px; line-height: 1.65; }
+  .practice-item.expanded .pi-body { display: block; }
+  .practice-item.expanded { background: var(--color-background-secondary); }
+
+  .dry-run-steps { display: flex; flex-direction: column; gap: 6px; }
+  .dry-step { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); }
+  .dry-step-num { font-size: 12px; font-weight: 500; color: #534AB7; background: #EEEDFE; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: var(--font-sans); }
+  .dry-step-content { font-size: 13px; font-family: var(--font-sans); color: var(--color-text-secondary); line-height: 1.6; flex: 1; }
+  .dry-step-vis { margin-top: 6px; }
+  :root {
+    --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --color-text-primary: #172026;
+    --color-text-secondary: #66717a;
+    --color-text-tertiary: #85919b;
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f8fb;
+    --color-border-primary: #8db6e8;
+    --color-border-secondary: #d9e1e8;
+    --color-border-tertiary: #e6edf3;
+    --border-radius-md: 8px;
+    --border-radius-lg: 8px;
+  }
+  body {
+    margin: 0;
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+  }
+  .notes {
+    width: min(1120px, calc(100% - 32px));
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 0 56px;
+  }
+  .note-hero {
+    margin-bottom: 18px;
+    padding: 32px 24px;
+    border-radius: 8px;
+    background: #0f1720;
+    color: #f8fbff;
+    font-family: var(--font-sans);
+  }
+  .back-link {
+    display: inline-flex;
+    margin-bottom: 14px;
+    color: #9fd3ff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .note-hero h1 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: 0;
+    color: #f8fbff;
+  }
+  .note-hero p {
+    max-width: 760px;
+    margin: 14px 0 0;
+    color: #d8e2eb;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .section {
+    padding: 0;
+    margin-bottom: 16px;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 8px;
+    background: var(--color-background-primary);
+    overflow: clip;
+  }
+  .section-header {
+    position: sticky;
+    top: 0;
+    z-index: 8;
+    min-height: 52px;
+    padding: 0.8rem 1rem;
+    border: 0;
+    border-bottom: 1px solid var(--color-border-tertiary);
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 8px 20px rgba(15, 23, 32, 0.05);
+  }
+  .section-header h2 {
+    font-size: 1rem;
+    letter-spacing: 0;
+  }
+  .section-body {
+    padding: 18px;
+  }
+  .card,
+  .practice-item,
+  .dry-step,
+  .step-display {
+    border-radius: 8px;
+  }
+  .tab-row {
+    position: sticky;
+    top: 52px;
+    z-index: 7;
+    padding: 10px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 8px;
+  }
+  .tab {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    min-height: 34px;
+  }
+  .linked-nav {
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    padding: 12px;
+    margin-bottom: 18px;
+    overflow-x: auto;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 23, 32, 0.08);
+  }
+  .linked-nav button {
+    flex: 0 0 auto;
+    min-height: 34px;
+    padding: 5px 14px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: 999px;
+    background: var(--color-background-primary);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    transition: all 0.15s;
+  }
+  .linked-nav button:hover {
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+  }
+  .linked-nav button.active {
+    background: #0f1720;
+    border-color: #0f1720;
+    color: #f8fbff;
+    font-weight: 700;
+  }
+  .notes.tabbed > .section {
+    display: none;
+  }
+  .notes.tabbed > .section.active {
+    display: block;
+  }
+  .notes.tabbed .section.active .section-body {
+    display: block;
+  }
+  .notes.tabbed .section-header {
+    position: static;
+    cursor: default;
+  }
+  .notes.tabbed .section-header .chevron {
+    display: none;
+  }
+  .notes.tabbed .section-header h2 {
+    font-size: 1.08rem;
+  }
+  .visual-row,
+  .node-row {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  @media (max-width: 760px) {
+    .notes { width: min(100% - 20px, 1120px); }
+    .note-hero { padding: 24px 18px; }
+    .section-body { padding: 14px; }
+    .section-header { align-items: flex-start; }
+    .step-controls { flex-wrap: wrap; }
+    .step-counter { width: 100%; margin-left: 0; }
+    table { display: block; overflow-x: auto; }
+  }
+</style>
+
+<div class="notes tabbed">
+  <header class="note-hero">
+    <a class="back-link" href="../index.html">Back to DSA Python report</a>
+    <h1>Linked Lists &amp; Nodes</h1>
+    <p>Interactive Python notes for linked-list intuition, node references, CRUD operations, dry runs, quizzes, and practice prompts.</p>
+  </header>
+  <h2 style="sr-only">Linked Lists in Python — Interactive Notes</h2>
+
+  <nav class="linked-nav" aria-label="Linked list note sections">
+    <button class="active" onclick="showLinkedSection(0,this)">Intuition</button>
+    <button onclick="showLinkedSection(1,this)">Definitions</button>
+    <button onclick="showLinkedSection(2,this)">Core Concepts</button>
+    <button onclick="showLinkedSection(3,this)">CRUD</button>
+    <button onclick="showLinkedSection(4,this)">Python Code</button>
+    <button onclick="showLinkedSection(5,this)">Complexity</button>
+    <button onclick="showLinkedSection(6,this)">Patterns</button>
+    <button onclick="showLinkedSection(7,this)">Dry Runs</button>
+    <button onclick="showLinkedSection(8,this)">Concept Checks</button>
+    <button onclick="showLinkedSection(9,this)">Practice</button>
+    <button onclick="showLinkedSection(10,this)">Interview Tips</button>
+  </nav>
+
+  <!-- SECTION 1: INTUITION -->
+  <div class="section active">
+    <div class="section-header open" onclick="toggleSection(this)">
+      <span class="icon">🔍</span>
+      <h2>Intuition</h2>
+      <span class="chevron open">▶</span>
+    </div>
+    <div class="section-body open">
+      <div class="card">
+        <h3>Real-life analogy</h3>
+        <div class="analogy-box">
+          <div class="analogy-icon">🚂</div>
+          <div class="analogy-text"><strong>Train cars:</strong> each car (node) holds cargo (data) and is connected to the next car (pointer). You must walk car-by-car from the engine (head) to reach any car. You can't jump directly to car #5.</div>
+        </div>
+        <div class="analogy-box">
+          <div class="analogy-icon">🔗</div>
+          <div class="analogy-text"><strong>Chain links:</strong> each link holds data and knows only the next link. Removing a link? Just re-connect the neighbours.</div>
+        </div>
+        <div class="analogy-box">
+          <div class="analogy-icon">📌</div>
+          <div class="analogy-text"><strong>Scavenger hunt:</strong> the first clue (head) tells you where to find the next. Each clue leads to the next, until a clue says "done!" (None).</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Linked List vs Array — when to choose</h3>
+        <table>
+          <tr><th>Feature</th><th>Array / List</th><th>Linked List</th></tr>
+          <tr><td>Access by index</td><td class="o1">O(1) — direct</td><td class="on">O(n) — must traverse</td></tr>
+          <tr><td>Insert at head</td><td class="on">O(n) — shift all</td><td class="o1">O(1) — rewire head</td></tr>
+          <tr><td>Insert at tail</td><td class="o1">O(1) amortised</td><td class="on">O(n) (singly) / O(1) (with tail ptr)</td></tr>
+          <tr><td>Delete from head</td><td class="on">O(n)</td><td class="o1">O(1)</td></tr>
+          <tr><td>Memory</td><td>Contiguous block</td><td>Scattered — each node anywhere</td></tr>
+          <tr><td>Dynamic resize</td><td>Expensive realloc</td><td>Free — add node anywhere</td></tr>
+        </table>
+        <div class="tip-box" style="margin-top:0.6rem;">Use linked lists when inserts/deletes at the front are frequent, or when size is highly dynamic (e.g., LRU cache, undo history, queue/deque).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: DEFINITIONS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">📘</span>
+      <h2>Definitions</h2>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="section-body">
+      <div class="card">
+        <h3>Node</h3>
+        <p style="margin-bottom:8px;">A node is the <span class="hl">basic unit</span> of a linked list. It contains two things:</p>
+        <ul>
+          <li><span class="hl">data</span> — the value stored (int, string, object, anything)</li>
+          <li><span class="hl">next</span> — a reference (pointer) to the next node, or <code>None</code> if last</li>
+        </ul>
+        <div class="node-row" style="margin-top:10px;">
+          <div class="node-wrapper">
+            <div class="head-label">head</div>
+            <div class="node-box"><div class="node-data">10</div><div class="node-ptr">next →</div></div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="node-box"><div class="node-data">20</div><div class="node-ptr">next →</div></div>
+          <div class="arrow">→</div>
+          <div class="node-wrapper">
+            <div class="head-label" style="color:var(--coral);">tail</div>
+            <div class="node-box"><div class="node-data">30</div><div class="node-ptr">next →</div></div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="null-box">None</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Types of Linked Lists</h3>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:4px;">
+          <div>
+            <span class="badge badge-purple">Singly</span>
+            <span style="font-size:13px; font-family:var(--font-sans); color:var(--color-text-secondary); margin-left:6px;">Each node points to only the <strong>next</strong> node. Traversal: one direction only.</span>
+            <div class="node-row" style="margin-top:6px;">
+              <div class="node-box"><div class="node-data">A</div><div class="node-ptr">→</div></div>
+              <div class="arrow">→</div>
+              <div class="node-box"><div class="node-data">B</div><div class="node-ptr">→</div></div>
+              <div class="arrow">→</div>
+              <div class="node-box"><div class="node-data">C</div><div class="node-ptr">→</div></div>
+              <div class="arrow">→</div><div class="null-box">None</div>
+            </div>
+          </div>
+          <div>
+            <span class="badge badge-teal">Doubly</span>
+            <span style="font-size:13px; font-family:var(--font-sans); color:var(--color-text-secondary); margin-left:6px;">Each node has <strong>prev</strong> + <strong>next</strong> pointers. Can traverse both ways.</span>
+            <div class="node-row" style="margin-top:6px; font-family:var(--font-mono); font-size:12px; color:var(--color-text-secondary);">
+              None ← [A] ⇄ [B] ⇄ [C] → None
+            </div>
+          </div>
+          <div>
+            <span class="badge badge-coral">Circular</span>
+            <span style="font-size:13px; font-family:var(--font-sans); color:var(--color-text-secondary); margin-left:6px;">Tail's <strong>next</strong> points back to head. No None terminator.</span>
+            <div class="node-row" style="margin-top:6px; font-family:var(--font-mono); font-size:12px; color:var(--color-text-secondary);">
+              [A] → [B] → [C] → back to [A]
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Head &amp; Tail</h3>
+        <ul>
+          <li><span class="hl-teal">head</span> — reference to the <em>first</em> node. Entry point to the list. If <code>head is None</code>, the list is empty.</li>
+          <li><span class="hl-coral">tail</span> — reference to the <em>last</em> node. Its <code>next</code> is always <code>None</code> (singly). Maintained explicitly for O(1) appends.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: CORE CONCEPTS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">🧠</span>
+      <h2>Core Concepts</h2>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="section-body">
+      <div class="card">
+        <h3>Dynamic memory &amp; references</h3>
+        <p>Python manages memory automatically. A node object lives in the heap. The variable holding it is just a <span class="hl">reference (pointer)</span> — a label that says "look over here". Reassigning a reference does <em>not</em> move the node, it just changes where the label points.</p>
+        <div class="tip-box">Key mental model: <code>current = current.next</code> means "move the label to the next node", not "move the node".</div>
+      </div>
+      <div class="card">
+        <h3>Traversal pattern (the cursor loop)</h3>
+        <pre><span class="cm"># canonical traversal — O(n)</span>
+current = self.head          <span class="cm"># start at head</span>
+<span class="kw">while</span> current <span class="kw">is not</span> None:
+    print(current.data)      <span class="cm"># do something</span>
+    current = current.next   <span class="cm"># advance cursor</span></pre>
+        <p style="font-size:13px; font-family:var(--font-sans); color:var(--color-text-secondary);">Think of <code>current</code> as a flashlight scanning the chain. When it hits <code>None</code>, you've reached the end.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: CRUD -->
+  <div class="section">
+    <div class="section-header open" onclick="toggleSection(this)">
+      <span class="icon">⚙️</span>
+      <h2>CRUD Operations — Interactive Step-by-Step</h2>
+      <span class="chevron open">▶</span>
+    </div>
+    <div class="section-body open">
+      <div class="tab-row">
+        <div class="tab active" onclick="switchCRUD(this,'create')">Create</div>
+        <div class="tab" onclick="switchCRUD(this,'read')">Read</div>
+        <div class="tab" onclick="switchCRUD(this,'update')">Update</div>
+        <div class="tab" onclick="switchCRUD(this,'delete')">Delete</div>
+      </div>
+
+      <!-- CREATE -->
+      <div class="crud-panel active" id="crud-create">
+        <div class="card">
+          <h3>Create — Insert at head <span class="badge badge-purple">O(1)</span></h3>
+          <pre><span class="kw">def</span> <span class="fn">prepend</span>(self, data):
+    new_node = Node(data)        <span class="cm"># 1. create node</span>
+    new_node.next = self.head    <span class="cm"># 2. point new → old head</span>
+    self.head = new_node         <span class="cm"># 3. head = new node</span></pre>
+          <div class="step-runner" id="sr-prepend">
+            <div class="step-display" id="sd-prepend">Press "Next step" to walk through prepend(5) on list [10→20→30]</div>
+            <div class="step-controls">
+              <button onclick="runStep('prepend',-1)">↺ Reset</button>
+              <button onclick="runStep('prepend',1)">Next step →</button>
+              <span class="step-counter" id="sc-prepend">0 / 4</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Create — Append at tail <span class="badge badge-teal">O(n) / O(1) with tail ptr</span></h3>
+          <pre><span class="kw">def</span> <span class="fn">append</span>(self, data):
+    new_node = Node(data)
+    <span class="kw">if not</span> self.head:
+        self.head = new_node; <span class="kw">return</span>
+    current = self.head
+    <span class="kw">while</span> current.next:        <span class="cm"># walk to last node</span>
+        current = current.next
+    current.next = new_node   <span class="cm"># attach at end</span></pre>
+        </div>
+        <div class="card">
+          <h3>Create — Insert after given node <span class="badge badge-coral">O(n) to find, O(1) to insert</span></h3>
+          <pre><span class="kw">def</span> <span class="fn">insert_after</span>(self, target_data, data):
+    current = self.head
+    <span class="kw">while</span> current <span class="kw">and</span> current.data != target_data:
+        current = current.next
+    <span class="kw">if</span> current:
+        new_node = Node(data)
+        new_node.next = current.next  <span class="cm"># new → current's next</span>
+        current.next = new_node       <span class="cm"># current → new</span></pre>
+        </div>
+      </div>
+
+      <!-- READ -->
+      <div class="crud-panel" id="crud-read">
+        <div class="card">
+          <h3>Read — Traverse (print all) <span class="badge badge-purple">O(n)</span></h3>
+          <pre><span class="kw">def</span> <span class="fn">display</span>(self):
+    current = self.head
+    <span class="kw">while</span> current:
+        print(current.data, end=<span class="st">" → "</span>)
+        current = current.next
+    print(<span class="st">"None"</span>)</pre>
+        </div>
+        <div class="card">
+          <h3>Read — Search by value <span class="badge badge-teal">O(n)</span></h3>
+          <pre><span class="kw">def</span> <span class="fn">search</span>(self, target):
+    current = self.head
+    position = 0
+    <span class="kw">while</span> current:
+        <span class="kw">if</span> current.data == target:
+            <span class="kw">return</span> position    <span class="cm"># found!</span>
+        current = current.next
+        position += 1
+    <span class="kw">return</span> -1               <span class="cm"># not found</span></pre>
+          <div class="step-runner" id="sr-search">
+            <div class="step-display" id="sd-search">Press "Next step" to walk through search(20) on [10→20→30]</div>
+            <div class="step-controls">
+              <button onclick="runStep('search',-1)">↺ Reset</button>
+              <button onclick="runStep('search',1)">Next step →</button>
+              <span class="step-counter" id="sc-search">0 / 4</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPDATE -->
+      <div class="crud-panel" id="crud-update">
+        <div class="card">
+          <h3>Update — Modify node value <span class="badge badge-purple">O(n)</span></h3>
+          <pre><span class="kw">def</span> <span class="fn">update</span>(self, old_val, new_val):
+    current = self.head
+    <span class="kw">while</span> current:
+        <span class="kw">if</span> current.data == old_val:
+            current.data = new_val  <span class="cm"># in-place update</span>
+            <span class="kw">return True</span>
+        current = current.next
+    <span class="kw">return False</span>                <span class="cm"># not found</span></pre>
+          <div class="analogy-box"><div class="analogy-icon">💡</div><div class="analogy-text">Update never rewires pointers — only the data field changes. Pointers stay identical. This means update is "safe" — no risk of losing nodes.</div></div>
+        </div>
+      </div>
+
+      <!-- DELETE -->
+      <div class="crud-panel" id="crud-delete">
+        <div class="card">
+          <h3>Delete — Three cases</h3>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="padding:8px 12px; background:var(--color-background-secondary); border-radius:var(--border-radius-md); font-size:13px; font-family:var(--font-sans);">
+              <strong style="color:var(--color-text-primary);">Case 1: Delete head</strong> — just move head forward
+            </div>
+            <div style="padding:8px 12px; background:var(--color-background-secondary); border-radius:var(--border-radius-md); font-size:13px; font-family:var(--font-sans);">
+              <strong style="color:var(--color-text-primary);">Case 2: Delete tail</strong> — traverse to second-last, set its next = None
+            </div>
+            <div style="padding:8px 12px; background:var(--color-background-secondary); border-radius:var(--border-radius-md); font-size:13px; font-family:var(--font-sans);">
+              <strong style="color:var(--color-text-primary);">Case 3: Delete middle</strong> — prev.next = current.next (bypass)
+            </div>
+          </div>
+          <pre style="margin-top:10px;"><span class="kw">def</span> <span class="fn">delete</span>(self, target):
+    <span class="kw">if not</span> self.head: <span class="kw">return</span>          <span class="cm"># empty list</span>
+    <span class="kw">if</span> self.head.data == target:      <span class="cm"># case 1: head</span>
+        self.head = self.head.next
+        <span class="kw">return</span>
+    prev, current = None, self.head
+    <span class="kw">while</span> current:
+        <span class="kw">if</span> current.data == target:
+            prev.next = current.next  <span class="cm"># bypass node</span>
+            <span class="kw">return</span>
+        prev = current
+        current = current.next</pre>
+          <div class="step-runner" id="sr-delete">
+            <div class="step-display" id="sd-delete">Press "Next step" to walk through delete(20) on [10→20→30]</div>
+            <div class="step-controls">
+              <button onclick="runStep('delete',-1)">↺ Reset</button>
+              <button onclick="runStep('delete',1)">Next step →</button>
+              <span class="step-counter" id="sc-delete">0 / 5</span>
+            </div>
+          </div>
+        </div>
+        <div class="warn-box">Never lose the <code>prev</code> pointer before bypassing. Losing track of prev means you can't reconnect the chain — nodes get orphaned in memory.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: FULL PYTHON IMPLEMENTATION -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">🐍</span>
+      <h2>Full Python Implementation</h2>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="section-body">
+      <div class="card">
+        <pre><span class="kw">class</span> <span class="fn">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, data):
+        self.data = data
+        self.next = None     <span class="cm"># pointer to next node</span>
+
+<span class="kw">class</span> <span class="fn">LinkedList</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.head = None     <span class="cm"># empty list</span>
+
+    <span class="cm"># ── CREATE ───────────────────────────────</span>
+    <span class="kw">def</span> <span class="fn">prepend</span>(self, data):          <span class="cm"># O(1)</span>
+        node = Node(data)
+        node.next = self.head
+        self.head = node
+
+    <span class="kw">def</span> <span class="fn">append</span>(self, data):           <span class="cm"># O(n)</span>
+        node = Node(data)
+        <span class="kw">if not</span> self.head:
+            self.head = node; <span class="kw">return</span>
+        cur = self.head
+        <span class="kw">while</span> cur.next: cur = cur.next
+        cur.next = node
+
+    <span class="cm"># ── READ ─────────────────────────────────</span>
+    <span class="kw">def</span> <span class="fn">display</span>(self):                <span class="cm"># O(n)</span>
+        cur, res = self.head, []
+        <span class="kw">while</span> cur:
+            res.append(str(cur.data))
+            cur = cur.next
+        print(<span class="st">" → "</span>.join(res) + <span class="st">" → None"</span>)
+
+    <span class="kw">def</span> <span class="fn">search</span>(self, target):         <span class="cm"># O(n)</span>
+        cur, i = self.head, 0
+        <span class="kw">while</span> cur:
+            <span class="kw">if</span> cur.data == target: <span class="kw">return</span> i
+            cur, i = cur.next, i + 1
+        <span class="kw">return</span> -1
+
+    <span class="cm"># ── UPDATE ───────────────────────────────</span>
+    <span class="kw">def</span> <span class="fn">update</span>(self, old, new):       <span class="cm"># O(n)</span>
+        cur = self.head
+        <span class="kw">while</span> cur:
+            <span class="kw">if</span> cur.data == old:
+                cur.data = new; <span class="kw">return True</span>
+            cur = cur.next
+        <span class="kw">return False</span>
+
+    <span class="cm"># ── DELETE ───────────────────────────────</span>
+    <span class="kw">def</span> <span class="fn">delete</span>(self, target):         <span class="cm"># O(n)</span>
+        <span class="kw">if not</span> self.head: <span class="kw">return</span>
+        <span class="kw">if</span> self.head.data == target:
+            self.head = self.head.next; <span class="kw">return</span>
+        prev, cur = None, self.head
+        <span class="kw">while</span> cur:
+            <span class="kw">if</span> cur.data == target:
+                prev.next = cur.next; <span class="kw">return</span>
+            prev, cur = cur, cur.next
+
+<span class="cm"># ── USAGE ────────────────────────────────────</span>
+ll = LinkedList()
+ll.append(10); ll.append(20); ll.append(30)
+ll.prepend(5)
+ll.display()           <span class="cm"># 5 → 10 → 20 → 30 → None</span>
+print(ll.search(20))   <span class="cm"># 2</span>
+ll.update(20, 99)
+ll.delete(10)
+ll.display()           <span class="cm"># 5 → 99 → 30 → None</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: COMPLEXITY TABLE -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">⚡</span>
+      <h2>Complexity Table</h2>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="section-body">
+      <div class="card">
+        <table>
+          <tr><th>Operation</th><th>Time</th><th>Space</th><th>Notes</th></tr>
+          <tr><td>Prepend (insert head)</td><td class="o1">O(1)</td><td class="o1">O(1)</td><td>Just rewire head pointer</td></tr>
+          <tr><td>Append (insert tail)</td><td class="on">O(n)</td><td class="o1">O(1)</td><td>O(1) if tail pointer maintained</td></tr>
+          <tr><td>Insert after node</td><td class="on">O(n)</td><td class="o1">O(1)</td><td>O(n) to find, O(1) to link</td></tr>
+          <tr><td>Access by index</td><td class="on">O(n)</td><td class="o1">O(1)</td><td>No random access — must traverse</td></tr>
+          <tr><td>Search by value</td><td class="on">O(n)</td><td class="o1">O(1)</td><td>Linear scan</td></tr>
+          <tr><td>Update value</td><td class="on">O(n)</td><td class="o1">O(1)</td><td>Find then mutate data field</td></tr>
+          <tr><td>Delete head</td><td class="o1">O(1)</td><td class="o1">O(1)</td><td>Move head pointer forward</td></tr>
+          <tr><td>Delete tail / middle</td><td class="on">O(n)</td><td class="o1">O(1)</td><td>Must find predecessor</td></tr>
+          <tr><td>Reverse (iterative)</td><td class="on">O(n)</td><td class="o1">O(1)</td><td>Three-pointer technique</td></tr>
+          <tr><td>Detect cycle (Floyd's)</td><td class="on">O(n)</td><td class="o1">O(1)</td><td>Fast + slow pointer</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: PATTERNS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">🧩</span>
+      <h2>Patterns &amp; Use Cases</h2>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="section-body">
+      <div class="card">
+        <h3>Reverse a linked list (iterative) <span class="badge badge-purple">O(n) time, O(1) space</span></h3>
+        <pre><span class="kw">def</span> <span class="fn">reverse</span>(self):
+    prev, current = None, self.head
+    <span class="kw">while</span> current:
+        nxt = current.next      <span class="cm"># save next</span>
+        current.next = prev     <span class="cm"># flip pointer</span>
+        prev = current          <span class="cm"># advance prev</span>
+        current = nxt           <span class="cm"># advance current</span>
+    self.head = prev            <span class="cm"># new head</span></pre>
+        <div class="node-row" style="font-size:12px; font-family:var(--font-mono); color:var(--color-text-secondary);">
+          Before: [1]→[2]→[3]→None &nbsp;|&nbsp; After: [3]→[2]→[1]→None
+        </div>
+        <div class="tip-box">Three variables: <code>prev</code>, <code>current</code>, <code>nxt</code>. Never lose nxt before flipping!</div>
+      </div>
+      <div class="card">
+        <h3>Detect a cycle — Floyd's algorithm <span class="badge badge-teal">O(n) time, O(1) space</span></h3>
+        <pre><span class="kw">def</span> <span class="fn">has_cycle</span>(self):
+    slow = fast = self.head
+    <span class="kw">while</span> fast <span class="kw">and</span> fast.next:
+        slow = slow.next         <span class="cm"># 1 step</span>
+        fast = fast.next.next    <span class="cm"># 2 steps</span>
+        <span class="kw">if</span> slow == fast:
+            <span class="kw">return True</span>          <span class="cm"># cycle!</span>
+    <span class="kw">return False</span></pre>
+        <div class="analogy-box"><div class="analogy-icon">🏃</div><div class="analogy-text">Imagine two runners on a circular track. The faster one eventually laps the slower one — they meet. If there's no cycle, the fast runner just falls off the end (hits None).</div></div>
+      </div>
+      <div class="card">
+        <h3>Common use cases</h3>
+        <ul>
+          <li><span class="hl">Undo/Redo</span> — each action is a node; undo = move head back</li>
+          <li><span class="hl">LRU Cache</span> — doubly linked list + hash map</li>
+          <li><span class="hl">Browser history</span> — doubly LL for back/forward</li>
+          <li><span class="hl">Queue / Deque</span> — O(1) enqueue at tail, O(1) dequeue at head</li>
+          <li><span class="hl">Polynomial arithmetic</span> — each term is a node</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 8: DRY RUNS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">💻</span>
+      <h2>Dry Runs</h2>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="section-body">
+      <div class="card">
+        <h3>Dry run: delete(20) on [10→20→30]</h3>
+        <div class="dry-run-steps">
+          <div class="dry-step">
+            <div class="dry-step-num">1</div>
+            <div class="dry-step-content">
+              Is head None? No. Is head.data (10) == 20? No. Continue.
+              <div class="dry-step-vis">
+                <div class="visual-row">
+                  <div class="node-wrapper"><div class="head-label">head/prev=None / cur</div><div class="node-box"><div class="node-data">10</div><div class="node-ptr">→</div></div></div>
+                  <div class="arrow">→</div><div class="node-box"><div class="node-data">20</div><div class="node-ptr">→</div></div>
+                  <div class="arrow">→</div><div class="node-box"><div class="node-data">30</div><div class="node-ptr">→</div></div>
+                  <div class="arrow">→</div><div class="null-box">None</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dry-step">
+            <div class="dry-step-num">2</div>
+            <div class="dry-step-content">
+              prev = node(10), current = node(20). Is current.data (20) == 20? YES!
+              <div class="dry-step-vis">
+                <div class="visual-row">
+                  <div class="node-wrapper"><div class="head-label">prev</div><div class="node-box"><div class="node-data">10</div><div class="node-ptr">→</div></div></div>
+                  <div class="arrow">→</div>
+                  <div class="node-wrapper"><div class="head-label" style="color:var(--coral);">current (target)</div><div class="highlight-node"><div class="node-box"><div class="node-data">20</div><div class="node-ptr">→</div></div></div></div>
+                  <div class="arrow">→</div><div class="node-box"><div class="node-data">30</div><div class="node-ptr">→</div></div>
+                  <div class="arrow">→</div><div class="null-box">None</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dry-step">
+            <div class="dry-step-num">3</div>
+            <div class="dry-step-content">
+              Execute: <code>prev.next = current.next</code> → node(10).next = node(30). Node(20) is bypassed.
+              <div class="dry-step-vis">
+                <div class="visual-row">
+                  <div class="node-wrapper"><div class="head-label">head</div><div class="node-box"><div class="node-data">10</div><div class="node-ptr">→</div></div></div>
+                  <div class="arrow" style="color:var(--green);">→→</div>
+                  <div class="node-box"><div class="node-data">30</div><div class="node-ptr">→</div></div>
+                  <div class="arrow">→</div><div class="null-box">None</div>
+                  &nbsp;&nbsp;&nbsp;<div class="delete-node"><div class="node-box"><div class="node-data">20</div><div class="node-ptr">✕</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dry-step">
+            <div class="dry-step-num">4</div>
+            <div class="dry-step-content">Result: <strong>[10 → 30 → None]</strong>. Node 20 has no references, Python GC will reclaim it.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 9: CONCEPT CHECKS -->
+  <div class="section">
+    <div class="section-header open" onclick="toggleSection(this)">
+      <span class="icon">🧠</span>
+      <h2>Concept Checks</h2>
+      <span class="chevron open">▶</span>
+    </div>
+    <div class="section-body open" id="quiz-section">
+      <div class="card" id="quiz-container">
+        <div id="quiz-display"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 10: PRACTICE PROBLEMS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">🧪</span>
+      <h2>Practice Problems</h2>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="section-body">
+      <div class="card">
+        <div id="practice-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 11: INTERVIEW TIPS -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">🚀</span>
+      <h2>Interview Tips</h2>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="section-body">
+      <div class="card">
+        <h3>Common mistakes</h3>
+        <div class="warn-box"><strong>Losing the reference:</strong> Always save <code>nxt = current.next</code> before modifying <code>current.next</code>. One wrong assignment and you orphan half your list.</div>
+        <div class="warn-box"><strong>Null/None handling:</strong> Always check <code>if not self.head</code> before any operation. Forgetting this causes AttributeError on empty lists.</div>
+        <div class="warn-box"><strong>Off-by-one in traversal:</strong> To reach the <em>last</em> node, stop when <code>current.next is None</code>, not when <code>current is None</code>.</div>
+        <div class="warn-box"><strong>Forgetting to update head:</strong> When deleting head or reversing, explicitly reassign <code>self.head</code>. It doesn't move itself.</div>
+      </div>
+      <div class="card">
+        <h3>Interview best practices</h3>
+        <ul>
+          <li>Draw the list before writing code — interviewers love visual thinkers</li>
+          <li>Always ask: singly or doubly? size constraints? what if empty?</li>
+          <li>Use <span class="hl">two-pointer technique</span> for cycle detection, finding middle, nth-from-end</li>
+          <li>For in-place reversal, articulate the three-pointer setup clearly</li>
+          <li>Mention time + space complexity unprompted — shows awareness</li>
+          <li>Edge cases to always mention: empty list, single node, duplicate values, cycle</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showLinkedSection(index, btn) {
+  const sections = document.querySelectorAll('.notes.tabbed > .section');
+  sections.forEach((section, i) => {
+    section.classList.toggle('active', i === index);
+    const header = section.querySelector('.section-header');
+    const body = section.querySelector('.section-body');
+    const chevron = section.querySelector('.chevron');
+    if (header) header.classList.toggle('open', i === index);
+    if (body) body.classList.toggle('open', i === index);
+    if (chevron) chevron.classList.toggle('open', i === index);
+  });
+
+  document.querySelectorAll('.linked-nav button').forEach(button => {
+    button.classList.toggle('active', button === btn);
+  });
+
+  const nav = document.querySelector('.linked-nav');
+  if (nav) nav.scrollIntoView({ block: 'nearest' });
+}
+
+function toggleSection(header) {
+  if (header.closest('.notes.tabbed')) return;
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+  const ch = header.querySelector('.chevron');
+  ch.classList.toggle('open');
+}
+
+function switchCRUD(tab, panel) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  document.querySelectorAll('.crud-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('crud-' + panel).classList.add('active');
+}
+
+const stepData = {
+  prepend: {
+    steps: [
+      { text: "Initial list: [10 → 20 → 30 → None]. We call prepend(5).", vis: () => makeVis([{v:10,h:'head'},{v:20},{v:30}]) },
+      { text: "Step 1: Create new node with data=5. It currently points to None.", vis: () => '<div class="visual-row">' + newNode(5) + arrow() + nullBox() + '<span style="margin-left:12px; font-size:12px; color:var(--color-text-secondary); font-family:var(--font-sans);">← new node</span></div>' },
+      { text: "Step 2: new_node.next = self.head. The new node now points to the old head (10).", vis: () => '<div class="visual-row">' + newNode(5) + arrow() + makeVis([{v:10,h:'old head'},{v:20},{v:30}]) + '</div>' },
+      { text: "Step 3: self.head = new_node. Head pointer moves to node 5. Done!", vis: () => makeVis([{v:5,h:'head (new!)',cls:'new'},{v:10},{v:20},{v:30}]) },
+    ]
+  },
+  search: {
+    steps: [
+      { text: "Initial list: [10 → 20 → 30]. We call search(20). current=head, i=0.", vis: () => makeVis([{v:10,h:'head/current',cls:'hi'},{v:20},{v:30}]) },
+      { text: "current.data = 10 ≠ 20. Move: current = current.next, i = 1.", vis: () => makeVis([{v:10},{v:20,h:'current',cls:'hi'},{v:30}]) },
+      { text: "current.data = 20 == 20! Found it at position 1.", vis: () => makeVis([{v:10},{v:20,h:'FOUND at i=1',cls:'new'},{v:30}]) },
+      { text: "Return 1. If target wasn't found, loop would exhaust and return -1.", vis: () => makeVis([{v:10},{v:20,h:'✓ index=1'},{v:30}]) },
+    ]
+  },
+  delete: {
+    steps: [
+      { text: "Initial list: [10 → 20 → 30]. delete(20). prev=None, current=head(10).", vis: () => makeVis([{v:10,h:'head/current'},{v:20},{v:30}]) },
+      { text: "current.data(10) ≠ 20. Advance: prev=node(10), current=node(20).", vis: () => makeVis([{v:10,h:'prev'},{v:20,h:'current',cls:'hi'},{v:30}]) },
+      { text: "current.data(20) == 20! Target found. Execute bypass.", vis: () => makeVis([{v:10,h:'prev'},{v:20,h:'DELETE ME',cls:'del'},{v:30}]) },
+      { text: "prev.next = current.next → node(10).next = node(30). Node 20 is bypassed!", vis: () => '<div class="visual-row">' + makeVis([{v:10,h:'head'},{v:30,h:'connected!',cls:'new'}]) + '<span style="margin-left:10px; font-size:12px; color:var(--color-text-secondary); font-family:var(--font-sans);">[20 orphaned]</span></div>' },
+      { text: "Result: [10 → 30 → None]. Node 20 has no references and will be garbage collected.", vis: () => makeVis([{v:10,h:'head'},{v:30}]) },
+    ]
+  }
+};
+
+const stepIndex = { prepend: 0, search: 0, delete: 0 };
+
+function makeNode(v, cls='') {
+  const bg = cls === 'hi' ? '#FAEEDA' : cls === 'del' ? '#FAECE7' : cls === 'new' ? '#EAF3DE' : '#EEEDFE';
+  const bc = cls === 'hi' ? '#EF9F27' : cls === 'del' ? '#D85A30' : cls === 'new' ? '#97C459' : '#AFA9EC';
+  const tc = cls === 'hi' ? '#BA7517' : cls === 'del' ? '#993C1D' : cls === 'new' ? '#3B6D11' : '#3C3489';
+  return `<div style="border:1.5px solid ${bc}; border-radius:6px; overflow:hidden; font-family:var(--font-mono); font-size:12px; display:flex;"><div style="background:${bg}; color:${tc}; padding:6px 10px; font-weight:500;">${v}</div><div style="background:var(--color-background-secondary); color:var(--color-text-secondary); padding:6px 8px; border-left:1px solid ${bc};">next →</div></div>`;
+}
+function newNode(v) { return makeNode(v, 'new'); }
+function arrow() { return `<span style="font-size:18px; color:#7F77DD; padding:0 4px;">→</span>`; }
+function nullBox() { return `<div style="background:var(--color-background-secondary); border:1.5px dashed var(--color-border-secondary); border-radius:6px; padding:6px 10px; font-size:12px; color:var(--color-text-secondary); font-family:var(--font-mono);">None</div>`; }
+
+function makeVis(nodes) {
+  let html = '<div class="visual-row">';
+  nodes.forEach((n, i) => {
+    if (n.h) html += `<div style="display:flex;flex-direction:column;align-items:center;"><div style="font-size:11px; color:#1D9E75; font-weight:500; margin-bottom:2px; font-family:var(--font-sans); text-align:center; max-width:90px;">${n.h}</div>${makeNode(n.v, n.cls||'')}</div>`;
+    else html += makeNode(n.v, n.cls||'');
+    if (i < nodes.length - 1) html += arrow();
+  });
+  html += arrow() + nullBox() + '</div>';
+  return html;
+}
+
+function runStep(key, dir) {
+  const data = stepData[key];
+  if (dir === -1) { stepIndex[key] = 0; }
+  else { stepIndex[key] = Math.min(stepIndex[key] + 1, data.steps.length); }
+  const si = stepIndex[key];
+  const sd = document.getElementById('sd-' + key);
+  const sc = document.getElementById('sc-' + key);
+  sc.textContent = si + ' / ' + data.steps.length;
+  if (si === 0) {
+    sd.innerHTML = 'Press "Next step" to begin.';
+    return;
+  }
+  const step = data.steps[si - 1];
+  sd.innerHTML = `<div style="margin-bottom:8px; font-family:var(--font-sans);">${step.text}</div>` + step.vis();
+}
+
+const quizzes = [
+  { q: "What is the output of: ll = [10→20→30]. ll.delete(10). ll.display()?", opts: ["10 → 20 → 30 → None", "20 → 30 → None", "10 → 30 → None", "Error"], ans: 1, exp: "Deleting the head moves head.next (node 20) to be the new head. Result: 20 → 30 → None." },
+  { q: "You have: head → [5] → [10] → [15] → None. What does current.next refer to when current = head?", opts: ["Node with data=5", "Node with data=10", "Node with data=15", "None"], ans: 1, exp: "head points to the first node (data=5). current = head, so current.next points to node(10)." },
+  { q: "What is the time complexity of finding the middle of a singly linked list without knowing its length?", opts: ["O(1)", "O(log n)", "O(n)", "O(n²)"], ans: 2, exp: "O(n) — use fast/slow pointer. Fast moves 2 steps, slow 1 step. When fast reaches end, slow is at middle." },
+  { q: "After this code runs, what does head point to?\n\nnew_node = Node(99)\nnew_node.next = head\nhead = new_node", opts: ["The original first node", "Node with data=99", "None", "The last node"], ans: 1, exp: "This is prepend: we create node(99), wire its next to the old head, then move head to point to node(99)." },
+  { q: "In Floyd's cycle detection, what happens if there is no cycle?", opts: ["slow and fast meet at head", "fast pointer reaches None", "slow pointer loops forever", "Both become equal at tail"], ans: 1, exp: "Without a cycle, the fast pointer (2 steps at a time) will eventually hit None. The while condition fails and we return False." },
+  { q: "What is the space complexity of reversing a linked list in-place (iterative)?", opts: ["O(n)", "O(log n)", "O(1)", "O(n²)"], ans: 2, exp: "O(1) — we only use 3 pointer variables (prev, current, nxt) regardless of list size. No extra data structure." },
+];
+let currentQ = 0;
+let answered = false;
+
+function renderQuiz() {
+  const q = quizzes[currentQ];
+  const container = document.getElementById('quiz-display');
+  container.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+      <span style="font-size:12px; color:var(--color-text-secondary); font-family:var(--font-sans);">Question ${currentQ+1} of ${quizzes.length}</span>
+      <div style="display:flex; gap:4px;">${quizzes.map((_,i)=>`<div style="width:8px;height:8px;border-radius:50%;background:${i===currentQ?'#7F77DD':i<currentQ?'#97C459':'var(--color-border-secondary)'}"></div>`).join('')}</div>
+    </div>
+    <div class="quiz-q">${q.q.replace(/\n/g,'<br>')}</div>
+    <div class="quiz-opts">${q.opts.map((o,i)=>`<div class="quiz-opt" onclick="answerQ(${i})" id="qopt-${i}"><span style="font-size:12px; font-weight:500; min-width:18px; color:var(--color-text-secondary);">${String.fromCharCode(65+i)}.</span> ${o}</div>`).join('')}</div>
+    <div class="quiz-feedback" id="qfb"></div>
+    <button class="quiz-next" id="qnext" style="display:none;" onclick="nextQ()">Next question →</button>
+  `;
+  answered = false;
+}
+
+function answerQ(idx) {
+  if (answered) return;
+  answered = true;
+  const q = quizzes[currentQ];
+  const fb = document.getElementById('qfb');
+  document.querySelectorAll('.quiz-opt').forEach((el, i) => {
+    if (i === q.ans) el.classList.add('correct');
+    else if (i === idx && i !== q.ans) el.classList.add('wrong');
+    el.style.cursor = 'default';
+  });
+  fb.textContent = (idx === q.ans ? '✓ Correct! ' : '✗ Not quite. ') + q.exp;
+  fb.className = 'quiz-feedback show ' + (idx === q.ans ? 'ok' : 'bad');
+  if (currentQ < quizzes.length - 1) document.getElementById('qnext').style.display = 'inline-block';
+  else {
+    const next = document.getElementById('qnext');
+    next.textContent = '↺ Restart quiz';
+    next.style.display = 'inline-block';
+    next.onclick = () => { currentQ = 0; renderQuiz(); };
+  }
+}
+
+function nextQ() {
+  currentQ++;
+  renderQuiz();
+}
+
+const practiceProblems = [
+  { level: '🟢 Beginner', title: 'Print in reverse', body: 'Given a singly linked list, print all elements in reverse order. Hint: recursion or collect into a list first. <br><br><strong>Bonus:</strong> Do it with O(1) space (no extra list).' },
+  { level: '🟢 Beginner', title: 'Count nodes', body: 'Write a method that returns the number of nodes in the list. What is the complexity? How would you make it O(1) if you could modify the class?' },
+  { level: '🟡 Intermediate', title: 'Find nth from end', body: 'Return the nth node from the tail. Example: [1→2→3→4→5], n=2 → return 4.<br><br><strong>Key insight:</strong> Two-pointer trick. Move first pointer n steps ahead, then move both until first hits end.' },
+  { level: '🟡 Intermediate', title: 'Remove duplicates', body: 'Remove all duplicate values from a sorted linked list. [1→1→2→3→3] → [1→2→3].<br><br><strong>Follow-up:</strong> What if the list is unsorted? (requires a set for O(n) solution)' },
+  { level: '🟠 Advanced', title: 'Merge two sorted lists', body: 'Given two sorted linked lists, merge them into one sorted list. Do it in-place (no new nodes).<br><br><strong>LeetCode:</strong> #21. Very common in interviews. Think about which head is smaller — pick that as your current node.' },
+  { level: '🔴 Interview', title: 'LRU Cache (design)', body: 'Design a Least Recently Used cache with O(1) get and put. Uses: doubly linked list + hashmap. This is LeetCode #146 and a top-10 system design question.<br><br><strong>Hint:</strong> DLL maintains order (MRU at head, LRU at tail). Hashmap gives O(1) node access.' },
+];
+
+function renderPractice() {
+  const container = document.getElementById('practice-list');
+  container.innerHTML = practiceProblems.map((p, i) => `
+    <div class="practice-item" id="pi-${i}" onclick="togglePractice(${i})">
+      <div class="pi-title"><span style="font-size:12px; margin-right:6px;">${p.level}</span> ${p.title}</div>
+      <div class="pi-body">${p.body}</div>
+    </div>
+  `).join('');
+}
+
+function togglePractice(i) {
+  document.getElementById('pi-' + i).classList.toggle('expanded');
+}
+
+renderQuiz();
+renderPractice();
+showLinkedSection(0, document.querySelector('.linked-nav button'));
+</script>

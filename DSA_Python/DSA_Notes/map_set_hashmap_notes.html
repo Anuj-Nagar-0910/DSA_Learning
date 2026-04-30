@@ -1,12 +1,14 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans)}
-.pg{max-width:740px;margin:0 auto;padding:1rem 0.5rem 3rem}
-.nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1.5rem}
-.nav button{font-size:11px;padding:4px 11px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+body{margin:0;background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.pg{width:min(1120px,calc(100% - 32px));max-width:1120px;margin:0 auto;padding:28px 0 56px}
+.nav{position:sticky;top:0;z-index:10;padding:12px;margin-bottom:18px;overflow-x:auto;flex-wrap:nowrap;display:flex;gap:5px;background:rgba(255,255,255,.94);border:1px solid var(--color-border-secondary);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,32,.08)}
+.nav button{flex:0 0 auto;font-size:11px;padding:4px 11px;border-radius:999px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.nav button:hover{background:var(--color-background-primary)}
 .nav button.on{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
-.sec{display:none}.sec.on{display:block}
+.sec{display:none}
+.sec.on{display:block;background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:8px;padding:22px}
 h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:.75rem}
 h3{font-size:15px;font-weight:500;color:var(--color-text-primary);margin:1.1rem 0 .4rem}
 p,li{font-size:13px;line-height:1.7;color:var(--color-text-secondary)}
@@ -54,10 +56,27 @@ tr:last-child td{border-bottom:none}
 .sbtns button{font-size:12.5px;padding:4px 13px}
 .chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:3px 11px;border:0.5px solid var(--color-border-tertiary);border-radius:20px;margin:2px 2px 4px;color:var(--color-text-secondary);background:var(--color-background-primary)}
 .hl{color:var(--color-text-primary);font-weight:500}
+:root{--font-sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--font-mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;--color-text-primary:#172026;--color-text-secondary:#66717a;--color-text-tertiary:#85919b;--color-background-primary:#ffffff;--color-background-secondary:#f5f8fb;--color-border-primary:#8db6e8;--color-border-secondary:#d9e1e8;--color-border-tertiary:#e6edf3;--border-radius-md:8px;--border-radius-lg:8px}
+body{margin:0;background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.pg{width:min(1120px,calc(100% - 32px));max-width:1120px;margin:0 auto;padding:28px 0 56px}
+.note-hero{margin-bottom:18px;padding:32px 24px;border-radius:8px;background:#0f1720;color:#f8fbff;font-family:var(--font-sans)}
+.back-link{display:inline-flex;margin-bottom:14px;color:#9fd3ff;font-size:.9rem;font-weight:700;text-decoration:none}
+.back-link:hover{text-decoration:underline}
+.note-hero h1{margin:0;font-size:clamp(2rem,5vw,3.5rem);line-height:1;letter-spacing:0;color:#f8fbff}
+.note-hero p{max-width:760px;margin:14px 0 0;color:#d8e2eb;font-size:1rem;line-height:1.6}
+.nav{position:sticky;top:0;z-index:10;padding:12px;margin-bottom:18px;overflow-x:auto;flex-wrap:nowrap;background:rgba(255,255,255,.94);border:1px solid var(--color-border-secondary);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,32,.08)}
+.nav button{flex:0 0 auto;min-height:34px;border-radius:999px}
+.sec.on{background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:8px;padding:22px}
+.card{border-radius:8px}
+@media(max-width:760px){.pg{width:min(100% - 20px,1120px)}.note-hero{padding:24px 18px}.sec.on{padding:16px}.g2,.g3{grid-template-columns:1fr}.nav{gap:8px}}
 </style>
 
 <div class="pg">
-<h2 style="font-size:22px;margin-bottom:1rem">Map, Set, HashMap, HashSet — Python Notes</h2>
+<header class="note-hero">
+  <a class="back-link" href="../index.html">Back to DSA Python report</a>
+  <h1>Map, Set, HashMap, HashSet</h1>
+  <p>Python notes for dictionaries, sets, hashing, operations, patterns, and quick checks.</p>
+</header>
 
 <nav class="nav">
   <button class="on" onclick="show('intuition',this)">Intuition</button>
