@@ -1,32 +1,73 @@
 
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-sans)}
-  .root{padding:1.5rem 0;max-width:660px;margin:0 auto}
-  h1{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.25rem}
-  h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin:2rem 0 0.75rem}
-  h3{font-size:15px;font-weight:500;color:var(--color-text-primary);margin:1rem 0 0.4rem}
-  p,li{font-size:14px;line-height:1.7;color:var(--color-text-primary)}
-  .subtitle{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.5rem}
-  .topic-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:2rem}
-  .tn-btn{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all 0.15s}
-  .tn-btn:hover,.tn-btn.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
-  .section{display:none}.section.active{display:block}
-  .card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:0.75rem}
-  .card-blue{border-left:3px solid #378ADD;padding-left:1rem}
-  .card-purple{border-left:3px solid #7F77DD;padding-left:1rem}
-  .card-teal{border-left:3px solid #1D9E75;padding-left:1rem}
-  .card-amber{border-left:3px solid #EF9F27;padding-left:1rem}
-  .card-coral{border-left:3px solid #D85A30;padding-left:1rem}
-  .badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;margin-right:4px;margin-bottom:4px}
-  .badge-blue{background:#E6F1FB;color:#185FA5}
-  .badge-purple{background:#EEEDFE;color:#3C3489}
-  .badge-teal{background:#E1F5EE;color:#0F6E56}
-  .badge-amber{background:#FAEEDA;color:#854F0B}
-  .badge-coral{background:#FAECE7;color:#993C1D}
-  .badge-green{background:#EAF3DE;color:#3B6D11}
-  code{font-family:var(--font-mono);font-size:13px;background:var(--color-background-secondary);padding:1px 5px;border-radius:4px;color:var(--color-text-primary)}
-  pre{font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem;overflow-x:auto;margin:0.5rem 0;line-height:1.6}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--font-sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--font-mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;--color-text-primary:#172026;--color-text-secondary:#66717a;--color-text-tertiary:#85919b;--color-background-primary:#ffffff;--color-background-secondary:#f5f8fb;--color-border-primary:#8db6e8;--color-border-secondary:#d9e1e8;--color-border-tertiary:#e6edf3;--border-radius-md:8px;--border-radius-lg:8px}
+body{margin:0;background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.page{width:min(1120px,calc(100% - 32px));max-width:1120px;margin:0 auto;padding:28px 0 56px}
+.note-hero{margin-bottom:18px;padding:32px 24px;border-radius:8px;background:#0f1720;color:#f8fbff;font-family:var(--font-sans)}
+.back-link{display:inline-flex;margin-bottom:14px;color:#9fd3ff;font-size:.9rem;font-weight:700;text-decoration:none}
+.back-link:hover{text-decoration:underline}
+.note-hero h1{margin:0;font-size:clamp(2rem,5vw,3.5rem);line-height:1;letter-spacing:0;color:#f8fbff}
+.note-hero p{max-width:760px;margin:14px 0 0;color:#d8e2eb;font-size:1rem;line-height:1.6}
+.tab-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:12px}
+.tab-bar{position:sticky;top:0;z-index:10;padding:12px;margin-bottom:18px;overflow-x:auto;flex-wrap:nowrap;background:rgba(255,255,255,.94);border:1px solid var(--color-border-secondary);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,32,.08)}
+.tab{flex:0 0 auto;min-height:34px;font-size:12px;padding:5px 12px;border-radius:999px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab:hover{background:var(--color-background-primary)}
+.tab.active{background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block;animation:fi .2s ease;background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:8px;padding:22px}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+h3{font-size:16px;font-weight:500;color:var(--color-text-primary);margin:0 0 12px}
+h4{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin:16px 0 6px}
+p,li{font-size:14px;line-height:1.7;color:var(--color-text-primary)}
+ul{padding-left:18px}
+li{margin-bottom:3px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:14px 16px;margin-bottom:10px}
+.card.purple{border-left:3px solid #7F77DD}
+.card.teal{border-left:3px solid #1D9E75}
+.card.amber{border-left:3px solid #EF9F27}
+.card.blue{border-left:3px solid #378ADD}
+.card.red{border-left:3px solid #E24B4A}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+pre{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:10px 12px;font-family:var(--font-mono);font-size:12px;line-height:1.6;overflow-x:auto;color:var(--color-text-primary);margin:8px 0}
+code{font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);padding:1px 5px;border-radius:4px;color:var(--color-text-primary)}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px;margin-right:4px}
+.bp{background:#EEEDFE;color:#534AB7}
+.bt{background:#E1F5EE;color:#0F6E56}
+.ba{background:#FAEEDA;color:#854F0B}
+.bb{background:#E6F1FB;color:#185FA5}
+.br{background:#FCEBEB;color:#A32D2D}
+svg.diagram{width:100%;border-radius:10px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary)}
+.stepbar{display:flex;align-items:center;gap:8px;margin:12px 0 6px}
+.sbtn{padding:7px 14px;font-size:13px;border-radius:8px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;color:var(--color-text-primary);transition:all .15s}
+.sbtn:hover{background:var(--color-background-secondary)}
+.sbtn.pri{background:#7F77DD;color:#fff;border-color:#7F77DD}
+.hint{font-size:12px;color:var(--color-text-secondary);padding:8px 12px;background:var(--color-background-secondary);border-radius:8px;margin-top:8px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+th{text-align:left;padding:7px 10px;font-weight:500;background:var(--color-background-secondary);color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+td{padding:7px 10px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+tr:last-child td{border-bottom:none}
+canvas#gc{border-radius:10px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);cursor:crosshair;display:block;width:100%}
+.ctrl-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px;align-items:center}
+.mode-btn{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.mode-btn:hover{background:var(--color-background-secondary)}
+.mode-btn.active{background:#1D9E75;color:#fff;border-color:#1D9E75}
+#gb-info{font-size:12px;color:var(--color-text-secondary);margin-top:6px;min-height:18px}
+#adj-out{font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:10px;color:var(--color-text-primary);min-height:48px;margin-top:8px;white-space:pre}
+@media(max-width:760px){.page{width:min(100% - 20px,1120px)}.note-hero{padding:24px 18px}.panel.active{padding:16px}.grid2,.grid3{grid-template-columns:1fr}.tab-bar{gap:8px}}
+  .analogy-box{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;background:var(--color-background-secondary);margin-bottom:0.75rem}
+  .emoji-icon{font-size:16px;margin-right:6px}
+  .input-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+  .input-row input[type=number]{width:70px;padding:4px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary)}
+  .run-btn{padding:5px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;font-size:12px;color:var(--color-text-secondary)}
+  .run-btn:hover{background:var(--color-background-secondary)}
+  .trace-line{font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);margin:2px 0}
+  .highlight{color:var(--color-text-info);font-weight:500}
+  .section-header{display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+  .section-icon{width:32px;height:32px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  ul{padding-left:1.2rem}
+  ul li{margin-bottom:4px}
   .demo-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem;margin:0.75rem 0}
   .demo-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
   .demo-row label{font-size:13px;color:var(--color-text-secondary);min-width:60px}
@@ -34,10 +75,6 @@
   .demo-row span{font-size:13px;font-weight:500;min-width:30px}
   .result-display{font-size:20px;font-weight:500;color:var(--color-text-info);margin-top:0.5rem}
   .big-result{font-size:28px;font-weight:500;color:#185FA5}
-  table{width:100%;border-collapse:collapse;font-size:13px;margin:0.5rem 0}
-  th{background:var(--color-background-secondary);font-weight:500;padding:6px 10px;text-align:left;border:0.5px solid var(--color-border-tertiary)}
-  td{padding:6px 10px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
-  tr:nth-child(even) td{background:var(--color-background-secondary)}
   .quiz-opt{display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;font-size:13px;color:var(--color-text-primary);transition:all 0.1s}
   .quiz-opt:hover{background:var(--color-background-secondary)}
   .quiz-opt.correct{background:#EAF3DE;border-color:#639922;color:#27500A}
@@ -52,42 +89,31 @@
   .step-num-teal{background:#E1F5EE;color:#0F6E56}
   .divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1.5rem 0}
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .analogy-box{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;background:var(--color-background-secondary);margin-bottom:0.75rem}
-  .emoji-icon{font-size:16px;margin-right:6px}
-  .input-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
-  .input-row input[type=number]{width:70px;padding:4px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary)}
-  .run-btn{padding:5px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;font-size:12px;color:var(--color-text-secondary)}
-  .run-btn:hover{background:var(--color-background-secondary)}
-  .trace-line{font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);margin:2px 0}
-  .highlight{color:var(--color-text-info);font-weight:500}
-  .section-header{display:flex;align-items:center;gap:8px;margin-bottom:1rem}
-  .section-icon{width:32px;height:32px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-  ul{padding-left:1.2rem}
-  ul li{margin-bottom:4px}
 </style>
 
-<div class="root">
-  <h2 class="sr-only" style="position:absolute;left:-9999px">Interactive Math Notes: Modulo, Primes, GCD, Coprime, Base Conversion, Polynomials</h2>
-
-  <div style="margin-bottom:0.25rem">
-    <span class="badge badge-purple">CS Math</span>
-    <span class="badge badge-blue">Interview Prep</span>
-    <span class="badge badge-teal">Interactive</span>
-  </div>
+<div class="page">
+<header class="note-hero">
+  <a class="back-link" href="../index.html">Back to DSA Python report</a>
   <h1>Mathematical Foundations</h1>
-  <p class="subtitle">Modulo · Prime Numbers · GCD · Coprime · Base Conversion · Polynomials</p>
+  <p>Interactive notes on modulo, primes, GCD, coprime numbers, base conversion, and polynomials — essential math for competitive programming and interviews.</p>
+</header>
 
-  <div class="topic-nav" id="topicNav">
-    <button class="tn-btn active" data-target="s-mod">% Modulo</button>
-    <button class="tn-btn" data-target="s-prime">Primes</button>
-    <button class="tn-btn" data-target="s-gcd">GCD</button>
-    <button class="tn-btn" data-target="s-coprime">Coprime</button>
-    <button class="tn-btn" data-target="s-base">Base Conversion</button>
-    <button class="tn-btn" data-target="s-poly">Polynomials</button>
-  </div>
+<div style="margin-bottom:16px">
+  <span style="font-size:20px;font-weight:500;color:var(--color-text-primary)">Math Foundations</span>
+  <span class="badge bt" style="vertical-align:middle;margin-left:8px">interactive</span>
+</div>
 
-  <!-- ==================== MODULO ==================== -->
-  <div class="section active" id="s-mod">
+<div class="tab-bar">
+  <button class="tab active" onclick="showPanel('mod',this)">% Modulo</button>
+  <button class="tab" onclick="showPanel('prime',this)">Primes</button>
+  <button class="tab" onclick="showPanel('gcd',this)">GCD</button>
+  <button class="tab" onclick="showPanel('coprime',this)">Coprime</button>
+  <button class="tab" onclick="showPanel('base',this)">Base Conversion</button>
+  <button class="tab" onclick="showPanel('poly',this)">Polynomials</button>
+</div>
+
+<!-- ==================== MODULO ==================== -->
+<div id="pan-mod" class="panel active">
     <div class="section-header">
       <div class="section-icon" style="background:#EEEDFE;color:#534AB7">%</div>
       <div><h2 style="margin:0">Modulo Operator</h2></div>
@@ -190,8 +216,8 @@
     </div>
   </div>
 
-  <!-- ==================== PRIMES ==================== -->
-  <div class="section" id="s-prime">
+<!-- ==================== PRIMES ==================== -->
+<div id="pan-prime" class="panel">
     <div class="section-header">
       <div class="section-icon" style="background:#E1F5EE;color:#0F6E56">P</div>
       <div><h2 style="margin:0">Prime Numbers</h2></div>
@@ -294,8 +320,8 @@ return True</pre>
     </div>
   </div>
 
-  <!-- ==================== GCD ==================== -->
-  <div class="section" id="s-gcd">
+<!-- ==================== GCD ==================== -->
+<div id="pan-gcd" class="panel">
     <div class="section-header">
       <div class="section-icon" style="background:#E6F1FB;color:#185FA5">G</div>
       <div><h2 style="margin:0">GCD — Greatest Common Divisor</h2></div>
@@ -382,8 +408,8 @@ def gcd(a, b):
     </div>
   </div>
 
-  <!-- ==================== COPRIME ==================== -->
-  <div class="section" id="s-coprime">
+<!-- ==================== COPRIME ==================== -->
+<div id="pan-coprime" class="panel">
     <div class="section-header">
       <div class="section-icon" style="background:#FAEEDA;color:#854F0B">C</div>
       <div><h2 style="margin:0">Coprime Numbers</h2></div>
@@ -484,8 +510,8 @@ def gcd(a, b):
     </div>
   </div>
 
-  <!-- ==================== BASE CONVERSION ==================== -->
-  <div class="section" id="s-base">
+<!-- ==================== BASE CONVERSION ==================== -->
+<div id="pan-base" class="panel">
     <div class="section-header">
       <div class="section-icon" style="background:#E1F5EE;color:#0F6E56">B</div>
       <div><h2 style="margin:0">Base Conversion</h2></div>
@@ -593,8 +619,8 @@ def gcd(a, b):
     </div>
   </div>
 
-  <!-- ==================== POLYNOMIALS ==================== -->
-  <div class="section" id="s-poly">
+<!-- ==================== POLYNOMIALS ==================== -->
+<div id="pan-poly" class="panel">
     <div class="section-header">
       <div class="section-icon" style="background:#FAECE7;color:#993C1D">P</div>
       <div><h2 style="margin:0">Polynomials</h2></div>
@@ -708,15 +734,12 @@ def poly_hash(s, p=31, m=10**9+7):
 </div>
 
 <script>
-function setSection(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tn-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelector(`[data-target="${id}"]`).classList.add('active');
+function showPanel(panelId, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pan-' + panelId).classList.add('active');
+  btn.classList.add('active');
 }
-document.getElementById('topicNav').addEventListener('click',e=>{
-  if(e.target.dataset.target) setSection(e.target.dataset.target);
-});
 
 function calcMod(){
   const a=parseInt(document.getElementById('modA').value)||0;

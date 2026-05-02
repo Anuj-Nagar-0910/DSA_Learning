@@ -314,10 +314,10 @@
         learning insights, and improvement notes for the next round of practice.
       </p>
       <div class="stats" aria-label="Repository summary">
-        <div class="stat"><strong>20</strong><span>Python files reviewed</span></div>
-        <div class="stat"><strong>2</strong><span>Main practice levels</span></div>
-        <div class="stat"><strong>6</strong><span>Interactive note pages</span></div>
-        <div class="stat"><strong>12</strong><span>Core DSA themes</span></div>
+        <div class="stat"><strong>26</strong><span>Python files reviewed</span></div>
+        <div class="stat"><strong>3</strong><span>Main practice levels</span></div>
+        <div class="stat"><strong>9</strong><span>Interactive note pages</span></div>
+        <div class="stat"><strong>16</strong><span>Core DSA themes</span></div>
       </div>
     </div>
   </header>
@@ -372,6 +372,18 @@
           <h3><a href="DSA_Notes/graphs_trees_python_interactive_notes.html">Graphs & Trees in Python</a></h3>
           <p>Interactive notes covering graphs, trees, traversals, implementations, complexity, and interview tips.</p>
         </article>
+        <article class="note-card">
+          <h3><a href="DSA_Notes/graphs_deep_dive_interactive.html">Graphs Deep Dive</a></h3>
+          <p>Nodes, edges, graph types, representations, BST intuition, and an interactive graph builder.</p>
+        </article>
+        <article class="note-card">
+          <h3><a href="DSA_Notes/binary_tree_search.html">Binary Tree Search</a></h3>
+          <p>Inorder search logic, short-circuiting, code walkthrough, and a clickable dry run table.</p>
+        </article>
+        <article class="note-card">
+          <h3><a href="DSA_Notes/math_notes_interactive.html">Math Notes Interactive</a></h3>
+          <p>Number theory and math patterns that support prime, GCD, counting, and modular-style practice.</p>
+        </article>
       </div>
     </section>
 
@@ -379,10 +391,11 @@
       <h2>Topic Balance</h2>
       <div class="bars" aria-label="Topic distribution">
         <div class="bar-row"><span>Arrays</span><div class="bar-track"><div class="bar-fill" style="width: 78%"></div></div><strong>7</strong></div>
-        <div class="bar-row"><span>Linked lists</span><div class="bar-track"><div class="bar-fill" style="width: 34%"></div></div><strong>3</strong></div>
-        <div class="bar-row"><span>Strings</span><div class="bar-track"><div class="bar-fill" style="width: 34%"></div></div><strong>3</strong></div>
+        <div class="bar-row"><span>Linked lists</span><div class="bar-track"><div class="bar-fill" style="width: 56%"></div></div><strong>5</strong></div>
+        <div class="bar-row"><span>Strings</span><div class="bar-track"><div class="bar-fill" style="width: 45%"></div></div><strong>4</strong></div>
         <div class="bar-row"><span>Stack/queue/heap</span><div class="bar-track"><div class="bar-fill" style="width: 45%"></div></div><strong>4</strong></div>
         <div class="bar-row"><span>Recursion</span><div class="bar-track"><div class="bar-fill" style="width: 12%"></div></div><strong>1</strong></div>
+        <div class="bar-row"><span>Trees/math</span><div class="bar-track"><div class="bar-fill" style="width: 45%"></div></div><strong>4</strong></div>
       </div>
     </section>
 
@@ -469,10 +482,36 @@
         </article>
 
         <article class="file-card">
-          <header class="file-title"><a href="Intermediate/LinkedListSplit.py">LinkedListSplit.py</a><span class="tag good">linked list</span></header>
+          <header class="file-title"><a href="Intermediate/enumberlessthanN.py">enumberlessthanN.py</a><span class="tag review">prime</span></header>
+          <p class="meta">Concepts: prime counting, square-root divisor scan, debug tracing.</p>
+          <p>Counts prime numbers less than n using trial division and prints each intermediate divisor check.</p>
+          <ul><li>Next step: remove debug prints when submitting to coding platforms.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/GCDofArray.py">GCDofArray.py</a><span class="tag">math</span></header>
+          <p class="meta">Concepts: Euclid's algorithm, array reduction, recursion.</p>
+          <p>Reduces an array by repeatedly computing the GCD of two values until one answer remains.</p>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/LinkedListInsert.py">LinkedListInsert.py</a><span class="tag good">linked list</span></header>
+          <p class="meta">Concepts: node creation, insert at head, insert at tail, traversal.</p>
+          <p>Implements beginning and end insertions for a singly linked list with query-style input.</p>
+          <ul><li>Clear helper functions make this ready for platform stubs and local practice.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/LinkedListisSplit.py">LinkedListisSplit.py</a><span class="tag good">linked list</span></header>
           <p class="meta">Concepts: stable partition, odd/even splitting, tail pointers.</p>
           <p>Splits a linked list into odd and even lists while preserving original order.</p>
           <ul><li>Strong use of separate head and tail pointers.</li><li>Correctly terminates both result lists with <code>None</code>.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Intermediate/LinkedListSearch.py">LinkedListSearch.py</a><span class="tag good">linked list</span></header>
+          <p class="meta">Concepts: linear scan, linked-list traversal, boolean result.</p>
+          <p>Searches node by node and returns whether the target value exists in the linked list.</p>
         </article>
 
         <article class="file-card">
@@ -515,12 +554,43 @@
       </div>
     </section>
 
+    <section id="advanced-folder">
+      <h2>Advanced Folder</h2>
+      <div class="cards">
+        <article class="file-card">
+          <header class="file-title"><a href="Advanced/BinaryToDecimal.py">BinaryToDecimal.py</a><span class="tag">math</span></header>
+          <p class="meta">Concepts: base conversion, powers of two, string reversal.</p>
+          <p>Converts a binary string into decimal by scanning from the least significant bit.</p>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Advanced/BinaryTreeInorderTraversal.py">BinaryTreeInorderTraversal.py</a><span class="tag good">tree</span></header>
+          <p class="meta">Concepts: tree construction, recursion, inorder traversal, multi-test input.</p>
+          <p>Builds a binary tree from node relationships and prints values in left-root-right order.</p>
+          <ul><li>Good connection between the code file and the binary tree notes page.</li></ul>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Advanced/GroupAnagrams.py">GroupAnagrams.py</a><span class="tag good">hash map</span></header>
+          <p class="meta">Concepts: sorted-string key, grouping, dictionary buckets.</p>
+          <p>Groups words by anagram signature and prints each anagram group on its own line.</p>
+        </article>
+
+        <article class="file-card">
+          <header class="file-title"><a href="Advanced/NumberOfPrimeInRange.py">NumberOfPrimeInRange.py</a><span class="tag">prime</span></header>
+          <p class="meta">Concepts: primality testing, square-root loop, inclusive range counting.</p>
+          <p>Counts prime numbers inside a start-to-end range with a helper function for prime checks.</p>
+          <ul><li>Next step: update the sample comment so it matches the example range.</li></ul>
+        </article>
+      </div>
+    </section>
+
     <section id="insights">
       <h2>Insights</h2>
       <div class="grid">
         <div class="insight">
           <h3>Most Ready Files</h3>
-          <p><code>QueueSimple.py</code>, <code>LinkedListSplit.py</code>, <code>SearchTarget.py</code>, and <code>ValidParanthesies.py</code> are clean practice solutions with clear core logic.</p>
+          <p><code>QueueSimple.py</code>, <code>LinkedListisSplit.py</code>, <code>LinkedListInsert.py</code>, <code>SearchTarget.py</code>, and <code>ValidParanthesies.py</code> are clean practice solutions with clear core logic.</p>
         </div>
         <div class="insight">
           <h3>Best Next Cleanup</h3>

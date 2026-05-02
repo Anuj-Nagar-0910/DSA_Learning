@@ -5,27 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Binary Tree Inorder Search Notes</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        h2 { color: #2980b9; margin-top: 0; }
-        code { background: #f8f8f8; padding: 2px 5px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; color: #e74c3c; }
-        pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; overflow-x: auto; position: relative; }
-        .keyword { color: #fd79a8; }
-        .comment { color: #636e72; font-style: italic; }
-        .function { color: #fab1a0; }
-        .important { border-left: 5px solid #f1c40f; background: #fef9e7; padding: 15px; margin: 15px 0; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; }
-        th { background-color: #3498db; color: white; }
-        tr:hover { background-color: #f1f1f1; cursor: pointer; }
-        .highlight-row { background-color: #e8f4fd !important; font-weight: bold; }
+        :root { --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; --color-text-primary: #172026; --color-text-secondary: #66717a; --color-text-tertiary: #85919b; --color-background-primary: #ffffff; --color-background-secondary: #f5f8fb; --color-border-primary: #8db6e8; --color-border-secondary: #d9e1e8; --color-border-tertiary: #e6edf3; --border-radius-md: 8px; --border-radius-lg: 8px; }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--color-background-secondary); color: var(--color-text-primary); font-family: var(--font-sans); line-height: 1.6; }
+        .page { width: min(1120px, calc(100% - 32px)); max-width: 1120px; margin: 0 auto; padding: 28px 0 56px; }
+        .note-hero { margin-bottom: 18px; padding: 32px 24px; border-radius: 8px; background: #0f1720; color: #f8fbff; }
+        .back-link { display: inline-flex; margin-bottom: 14px; color: #9fd3ff; font-size: .9rem; font-weight: 700; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .note-hero h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1; letter-spacing: 0; color: #f8fbff; }
+        .note-hero p { max-width: 760px; margin: 14px 0 0; color: #d8e2eb; font-size: 1rem; line-height: 1.6; }
+        .card { background: var(--color-background-primary); padding: 22px; border: 1px solid var(--color-border-secondary); border-radius: 8px; margin-bottom: 18px; }
+        h2 { color: var(--color-text-primary); font-size: 18px; font-weight: 500; margin: 0 0 0.75rem; }
+        p, li { font-size: 14px; line-height: 1.7; color: var(--color-text-secondary); }
+        code { background: var(--color-background-secondary); padding: 1px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); }
+        pre { background: var(--color-background-secondary); color: var(--color-text-primary); padding: 0.75rem 1rem; border: 0.5px solid var(--color-border-tertiary); border-radius: 8px; overflow-x: auto; position: relative; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; }
+        .keyword { color: #7F77DD; }
+        .comment { color: #888780; font-style: italic; }
+        .function { color: #1D9E75; }
+        .important { border-left: 3px solid #EF9F27; background: #FAEEDA; border-radius: 0 8px 8px 0; padding: 0.6rem 0.9rem; margin: 0.75rem 0; color: #633806; }
+        .important code { background: rgba(255, 255, 255, 0.5); color: #633806; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 0.5rem 0 0.75rem; }
+        th { background: var(--color-background-secondary); font-weight: 500; font-size: 12px; text-align: left; padding: 8px 12px; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+        td { padding: 7px 12px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); }
+        tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: var(--color-background-secondary); cursor: pointer; }
+        .highlight-row { background: #E6F1FB !important; font-weight: 500; }
+        @media (max-width: 760px) { .page { width: min(100% - 20px, 1120px); } .note-hero { padding: 24px 18px; } .card { padding: 16px; } }
     </style>
 </head>
 <body>
+<div class="page">
+
+    <header class="note-hero">
+        <a class="back-link" href="../index.html">Back to DSA Python report</a>
+        <h1>Binary Tree Search</h1>
+        <p>Interactive notes for inorder search logic, recursive short-circuiting, and a clickable dry run.</p>
+    </header>
 
     <div class="card">
-        <h1>Binary Tree: Inorder Search Logic</h1>
+        <h2>Binary Tree: Inorder Search Logic</h2>
         <p>Searching in a Binary Tree (not necessarily a BST) requires visiting nodes. Using <strong>Inorder</strong> means we check the <code>Left Child</code>, then the <code>Current Node</code>, then the <code>Right Child</code>.</p>
         
         <div class="important">
@@ -117,6 +135,8 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+
     </div>
 
     <script>
