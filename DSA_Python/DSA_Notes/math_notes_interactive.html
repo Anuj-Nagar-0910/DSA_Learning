@@ -1,0 +1,841 @@
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-sans)}
+  .root{padding:1.5rem 0;max-width:660px;margin:0 auto}
+  h1{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.25rem}
+  h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin:2rem 0 0.75rem}
+  h3{font-size:15px;font-weight:500;color:var(--color-text-primary);margin:1rem 0 0.4rem}
+  p,li{font-size:14px;line-height:1.7;color:var(--color-text-primary)}
+  .subtitle{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.5rem}
+  .topic-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:2rem}
+  .tn-btn{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all 0.15s}
+  .tn-btn:hover,.tn-btn.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+  .section{display:none}.section.active{display:block}
+  .card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:0.75rem}
+  .card-blue{border-left:3px solid #378ADD;padding-left:1rem}
+  .card-purple{border-left:3px solid #7F77DD;padding-left:1rem}
+  .card-teal{border-left:3px solid #1D9E75;padding-left:1rem}
+  .card-amber{border-left:3px solid #EF9F27;padding-left:1rem}
+  .card-coral{border-left:3px solid #D85A30;padding-left:1rem}
+  .badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;margin-right:4px;margin-bottom:4px}
+  .badge-blue{background:#E6F1FB;color:#185FA5}
+  .badge-purple{background:#EEEDFE;color:#3C3489}
+  .badge-teal{background:#E1F5EE;color:#0F6E56}
+  .badge-amber{background:#FAEEDA;color:#854F0B}
+  .badge-coral{background:#FAECE7;color:#993C1D}
+  .badge-green{background:#EAF3DE;color:#3B6D11}
+  code{font-family:var(--font-mono);font-size:13px;background:var(--color-background-secondary);padding:1px 5px;border-radius:4px;color:var(--color-text-primary)}
+  pre{font-family:var(--font-mono);font-size:12px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem;overflow-x:auto;margin:0.5rem 0;line-height:1.6}
+  .demo-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem;margin:0.75rem 0}
+  .demo-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .demo-row label{font-size:13px;color:var(--color-text-secondary);min-width:60px}
+  .demo-row input[type=range]{flex:1;min-width:80px}
+  .demo-row span{font-size:13px;font-weight:500;min-width:30px}
+  .result-display{font-size:20px;font-weight:500;color:var(--color-text-info);margin-top:0.5rem}
+  .big-result{font-size:28px;font-weight:500;color:#185FA5}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:0.5rem 0}
+  th{background:var(--color-background-secondary);font-weight:500;padding:6px 10px;text-align:left;border:0.5px solid var(--color-border-tertiary)}
+  td{padding:6px 10px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
+  tr:nth-child(even) td{background:var(--color-background-secondary)}
+  .quiz-opt{display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;font-size:13px;color:var(--color-text-primary);transition:all 0.1s}
+  .quiz-opt:hover{background:var(--color-background-secondary)}
+  .quiz-opt.correct{background:#EAF3DE;border-color:#639922;color:#27500A}
+  .quiz-opt.wrong{background:#FCEBEB;border-color:#E24B4A;color:#791F1F}
+  .feedback{font-size:13px;margin-top:8px;padding:8px 12px;border-radius:var(--border-radius-md)}
+  .feedback.ok{background:#EAF3DE;color:#27500A}
+  .feedback.err{background:#FCEBEB;color:#791F1F}
+  .step-box{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+  .step-num{min-width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+  .step-num-blue{background:#E6F1FB;color:#185FA5}
+  .step-num-purple{background:#EEEDFE;color:#534AB7}
+  .step-num-teal{background:#E1F5EE;color:#0F6E56}
+  .divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1.5rem 0}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .analogy-box{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;background:var(--color-background-secondary);margin-bottom:0.75rem}
+  .emoji-icon{font-size:16px;margin-right:6px}
+  .input-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+  .input-row input[type=number]{width:70px;padding:4px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary)}
+  .run-btn{padding:5px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;font-size:12px;color:var(--color-text-secondary)}
+  .run-btn:hover{background:var(--color-background-secondary)}
+  .trace-line{font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);margin:2px 0}
+  .highlight{color:var(--color-text-info);font-weight:500}
+  .section-header{display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+  .section-icon{width:32px;height:32px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  ul{padding-left:1.2rem}
+  ul li{margin-bottom:4px}
+</style>
+
+<div class="root">
+  <h2 class="sr-only" style="position:absolute;left:-9999px">Interactive Math Notes: Modulo, Primes, GCD, Coprime, Base Conversion, Polynomials</h2>
+
+  <div style="margin-bottom:0.25rem">
+    <span class="badge badge-purple">CS Math</span>
+    <span class="badge badge-blue">Interview Prep</span>
+    <span class="badge badge-teal">Interactive</span>
+  </div>
+  <h1>Mathematical Foundations</h1>
+  <p class="subtitle">Modulo · Prime Numbers · GCD · Coprime · Base Conversion · Polynomials</p>
+
+  <div class="topic-nav" id="topicNav">
+    <button class="tn-btn active" data-target="s-mod">% Modulo</button>
+    <button class="tn-btn" data-target="s-prime">Primes</button>
+    <button class="tn-btn" data-target="s-gcd">GCD</button>
+    <button class="tn-btn" data-target="s-coprime">Coprime</button>
+    <button class="tn-btn" data-target="s-base">Base Conversion</button>
+    <button class="tn-btn" data-target="s-poly">Polynomials</button>
+  </div>
+
+  <!-- ==================== MODULO ==================== -->
+  <div class="section active" id="s-mod">
+    <div class="section-header">
+      <div class="section-icon" style="background:#EEEDFE;color:#534AB7">%</div>
+      <div><h2 style="margin:0">Modulo Operator</h2></div>
+    </div>
+
+    <div class="analogy-box">
+      <p><strong>Real-life analogy:</strong> A clock. After 12 hours it wraps back to 1. <code>17 % 12 = 5</code>. A week has 7 days — day 10 lands on day <code>10 % 7 = 3</code> (Wednesday).</p>
+    </div>
+
+    <div class="card card-purple">
+      <h3>Definition</h3>
+      <p><code>a % m</code> returns the <strong>remainder</strong> when <code>a</code> is divided by <code>m</code>.</p>
+      <p style="margin-top:6px"><code>a = q × m + r</code>&nbsp; where <code>0 ≤ r &lt; m</code></p>
+    </div>
+
+    <h3>Live Calculator</h3>
+    <div class="demo-box">
+      <div class="input-row">
+        <label style="font-size:13px;color:var(--color-text-secondary)">a =</label>
+        <input type="number" id="modA" value="17" min="-1000" max="10000">
+        <label style="font-size:13px;color:var(--color-text-secondary)">m =</label>
+        <input type="number" id="modM" value="5" min="1" max="10000">
+        <button class="run-btn" onclick="calcMod()">Compute</button>
+      </div>
+      <div id="modResult" style="font-size:14px;color:var(--color-text-primary)"></div>
+    </div>
+
+    <h3>Key Properties</h3>
+    <div class="two-col">
+      <div class="card" style="padding:0.75rem 1rem">
+        <p class="badge badge-blue">Distributive</p>
+        <pre style="margin-top:6px">(a + b) % m
+= ((a%m) + (b%m)) % m</pre>
+      </div>
+      <div class="card" style="padding:0.75rem 1rem">
+        <p class="badge badge-purple">Multiplication</p>
+        <pre style="margin-top:6px">(a × b) % m
+= ((a%m) × (b%m)) % m</pre>
+      </div>
+    </div>
+    <div class="card" style="padding:0.75rem 1rem;margin-top:0">
+      <p class="badge badge-teal">Division — needs Modular Inverse</p>
+      <p style="font-size:13px;margin-top:4px"><code>(a / b) % m ≠ (a%m) / (b%m)</code>. Use <code>a × b⁻¹ % m</code> where <code>b⁻¹</code> is modular inverse (exists only when <code>gcd(b,m)=1</code>).</p>
+    </div>
+
+    <h3>Modular Exponentiation</h3>
+    <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Fast power: <code>a^n % m</code> in O(log n)</p>
+    <div class="demo-box">
+      <div class="input-row">
+        <label style="font-size:13px;color:var(--color-text-secondary)">a</label>
+        <input type="number" id="expA" value="2" min="1" max="1000">
+        <label style="font-size:13px;color:var(--color-text-secondary)">^n</label>
+        <input type="number" id="expN" value="10" min="0" max="1000">
+        <label style="font-size:13px;color:var(--color-text-secondary)">% m</label>
+        <input type="number" id="expM" value="1000" min="1" max="1000000">
+        <button class="run-btn" onclick="calcExp()">Run</button>
+      </div>
+      <div id="expResult"></div>
+    </div>
+
+    <pre>def mod_pow(a, n, m):
+    result = 1
+    a = a % m
+    while n > 0:
+        if n % 2 == 1:          # odd exponent
+            result = (result * a) % m
+        n //= 2
+        a = (a * a) % m         # square the base
+    return result</pre>
+
+    <h3>Common Use Cases</h3>
+    <table>
+      <thead><tr><th>Use Case</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Cyclic indexing</td><td><code>arr[(i+1) % n]</code> — wrap array</td></tr>
+        <tr><td>Even/odd check</td><td><code>n % 2 == 0</code></td></tr>
+        <tr><td>Hashing</td><td><code>key % bucket_count</code></td></tr>
+        <tr><td>Large number arithmetic</td><td><code>(a*b) % MOD</code> — prevent overflow</td></tr>
+        <tr><td>Calendar / scheduling</td><td><code>day % 7</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Concept Check</h3>
+    <div class="card" id="qMod">
+      <p style="font-size:13px;margin-bottom:8px"><strong>What is <code>(2^10) % 1000</code>?</strong></p>
+      <button class="quiz-opt" onclick="quizCheck('qMod',this,'✓ Correct! 1024 % 1000 = 24','24')">24</button>
+      <button class="quiz-opt" onclick="quizCheck('qMod',this,'✗ Wrong. 2^10 = 1024, 1024 % 1000 = 24','24')">10</button>
+      <button class="quiz-opt" onclick="quizCheck('qMod',this,'✗ Wrong. 2^10 = 1024, 1024 % 1000 = 24','24')">100</button>
+      <div class="feedback" id="qMod-fb" style="display:none"></div>
+    </div>
+
+    <hr class="divider">
+    <h3>Interview Tips</h3>
+    <div class="card card-amber">
+      <ul style="font-size:13px;padding-left:1.1rem">
+        <li>Always apply <code>% MOD</code> after every arithmetic op to avoid overflow (use <code>1e9+7</code> or <code>998244353</code>).</li>
+        <li>Negative modulo: <code>-7 % 3 = -1</code> in Python/C. Use <code>((-7) % 3 + 3) % 3 = 2</code> for always-positive result.</li>
+        <li>Division in modular arithmetic requires Fermat's little theorem when <code>m</code> is prime.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== PRIMES ==================== -->
+  <div class="section" id="s-prime">
+    <div class="section-header">
+      <div class="section-icon" style="background:#E1F5EE;color:#0F6E56">P</div>
+      <div><h2 style="margin:0">Prime Numbers</h2></div>
+    </div>
+
+    <div class="analogy-box">
+      <p><strong>Analogy:</strong> Atoms of arithmetic. Every number is built by multiplying primes. Like LEGO blocks — every structure decomposes into its fundamental bricks.</p>
+    </div>
+
+    <div class="card card-teal">
+      <h3>Definition</h3>
+      <p>A number <code>p &gt; 1</code> is prime if its only divisors are <code>1</code> and <code>p</code> itself.</p>
+      <p style="margin-top:6px"><span class="badge badge-teal">Prime</span> 2, 3, 5, 7, 11, 13, 17, 19, 23...</p>
+      <p style="margin-top:4px"><span class="badge badge-coral">Composite</span> 4=2×2, 6=2×3, 9=3×3...</p>
+      <p style="margin-top:4px"><span class="badge badge-amber">Special</span> 1 is neither prime nor composite</p>
+    </div>
+
+    <h3>Primality Check — Interactive</h3>
+    <div class="demo-box">
+      <div class="input-row">
+        <label style="font-size:13px;color:var(--color-text-secondary)">n =</label>
+        <input type="number" id="primeN" value="97" min="2" max="10000000">
+        <button class="run-btn" onclick="checkPrime()">Check</button>
+      </div>
+      <div id="primeResult"></div>
+    </div>
+
+    <div class="two-col" style="margin-top:0.75rem">
+      <div class="card" style="padding:0.75rem 1rem">
+        <p class="badge badge-coral">Brute Force O(n)</p>
+        <pre>for i in range(2, n):
+    if n % i == 0:
+        return False
+return True</pre>
+      </div>
+      <div class="card" style="padding:0.75rem 1rem">
+        <p class="badge badge-teal">Optimized O(√n)</p>
+        <pre>for i in range(2,
+    int(n**0.5)+1):
+  if n % i == 0:
+    return False
+return True</pre>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:var(--color-text-secondary);margin:0.5rem 0">Why √n? If <code>n = a × b</code> and both <code>a,b &gt; √n</code>, their product exceeds <code>n</code>. So one factor must be ≤ √n.</p>
+
+    <h3>Sieve of Eratosthenes — O(n log log n)</h3>
+    <div class="card card-teal">
+      <p style="font-size:13px;margin-bottom:8px">Find all primes up to <code>n</code> efficiently.</p>
+      <div class="step-box"><div class="step-num step-num-teal">1</div><p style="font-size:13px">Create boolean array <code>is_prime[0..n]</code>, all True</p></div>
+      <div class="step-box"><div class="step-num step-num-teal">2</div><p style="font-size:13px">Set <code>is_prime[0] = is_prime[1] = False</code></p></div>
+      <div class="step-box"><div class="step-num step-num-teal">3</div><p style="font-size:13px">For each prime <code>p</code> from 2 to √n: mark all multiples <code>p², p²+p, p²+2p...</code> as False</p></div>
+      <div class="step-box"><div class="step-num step-num-teal">4</div><p style="font-size:13px">Remaining True values are prime</p></div>
+    </div>
+
+    <h3>Sieve Demo</h3>
+    <div class="demo-box">
+      <div class="input-row">
+        <label style="font-size:13px;color:var(--color-text-secondary)">Find primes up to</label>
+        <input type="number" id="sieveN" value="50" min="2" max="200">
+        <button class="run-btn" onclick="runSieve()">Run Sieve</button>
+      </div>
+      <div id="sieveGrid" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"></div>
+    </div>
+
+    <pre>def sieve(n):
+    is_prime = [True] * (n + 1)
+    is_prime[0] = is_prime[1] = False
+    for p in range(2, int(n**0.5) + 1):
+        if is_prime[p]:
+            for mul in range(p*p, n+1, p):
+                is_prime[mul] = False
+    return [i for i, v in enumerate(is_prime) if v]</pre>
+
+    <h3>Fundamental Theorem of Arithmetic</h3>
+    <div class="card card-blue">
+      <p style="font-size:13px">Every integer &gt; 1 has a <strong>unique</strong> prime factorization.</p>
+      <p style="font-size:13px;margin-top:4px">Example: <code>360 = 2³ × 3² × 5</code></p>
+    </div>
+
+    <h3>Concept Check</h3>
+    <div class="card" id="qPrime">
+      <p style="font-size:13px;margin-bottom:8px"><strong>Smallest prime with two digits?</strong></p>
+      <button class="quiz-opt" onclick="quizCheck('qPrime',this,'✓ Correct! 11 is the smallest 2-digit prime.','11')">11</button>
+      <button class="quiz-opt" onclick="quizCheck('qPrime',this,'✗ Wrong. 10 = 2×5, not prime.','11')">10</button>
+      <button class="quiz-opt" onclick="quizCheck('qPrime',this,'✗ Wrong. 13 is prime but not the smallest 2-digit prime.','11')">13</button>
+      <div class="feedback" id="qPrime-fb" style="display:none"></div>
+    </div>
+
+    <hr class="divider">
+    <h3>Interview Tips</h3>
+    <div class="card card-amber">
+      <ul style="font-size:13px;padding-left:1.1rem">
+        <li>2 is the only even prime.</li>
+        <li>For range queries, always precompute with Sieve — don't check each n individually.</li>
+        <li>Segmented Sieve for very large ranges (when n &gt; 10⁷).</li>
+        <li>Miller-Rabin for probabilistic primality when n is astronomically large.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== GCD ==================== -->
+  <div class="section" id="s-gcd">
+    <div class="section-header">
+      <div class="section-icon" style="background:#E6F1FB;color:#185FA5">G</div>
+      <div><h2 style="margin:0">GCD — Greatest Common Divisor</h2></div>
+    </div>
+
+    <div class="analogy-box">
+      <p><strong>Analogy:</strong> You have a 12cm and 8cm ribbon. What's the largest ruler that measures both exactly? Answer: 4cm. That's <code>gcd(12, 8) = 4</code>.</p>
+    </div>
+
+    <div class="card card-blue">
+      <h3>Definition</h3>
+      <p>The largest integer that divides both <code>a</code> and <code>b</code> with no remainder.</p>
+      <p style="margin-top:6px">LCM: <code>lcm(a, b) = (a × b) / gcd(a, b)</code></p>
+    </div>
+
+    <h3>Euclidean Algorithm — O(log min(a,b))</h3>
+    <div class="card card-blue">
+      <p style="font-size:13px"><strong>Key insight:</strong> <code>gcd(a, b) = gcd(b, a % b)</code></p>
+      <p style="font-size:13px;margin-top:4px">Base case: <code>gcd(a, 0) = a</code></p>
+    </div>
+
+    <h3>Step-by-Step Trace</h3>
+    <div class="demo-box">
+      <div class="input-row">
+        <label style="font-size:13px;color:var(--color-text-secondary)">a =</label>
+        <input type="number" id="gcdA" value="48" min="1" max="100000">
+        <label style="font-size:13px;color:var(--color-text-secondary)">b =</label>
+        <input type="number" id="gcdB" value="18" min="1" max="100000">
+        <button class="run-btn" onclick="traceGCD()">Trace</button>
+      </div>
+      <div id="gcdTrace"></div>
+    </div>
+
+    <pre>def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+# Recursive version
+def gcd(a, b):
+    return a if b == 0 else gcd(b, a % b)</pre>
+
+    <h3>Extended Euclidean</h3>
+    <div class="card card-blue">
+      <p style="font-size:13px">Finds integers <code>x, y</code> such that: <code>ax + by = gcd(a, b)</code></p>
+      <p style="font-size:13px;margin-top:4px">Used for: modular inverse, solving linear Diophantine equations.</p>
+      <pre style="margin-top:8px">def extended_gcd(a, b):
+    if b == 0:
+        return a, 1, 0
+    g, x, y = extended_gcd(b, a % b)
+    return g, y, x - (a // b) * y</pre>
+    </div>
+
+    <h3>GCD Properties</h3>
+    <table>
+      <thead><tr><th>Property</th><th>Formula</th></tr></thead>
+      <tbody>
+        <tr><td>Commutative</td><td><code>gcd(a,b) = gcd(b,a)</code></td></tr>
+        <tr><td>Associative</td><td><code>gcd(a,gcd(b,c)) = gcd(gcd(a,b),c)</code></td></tr>
+        <tr><td>Identity</td><td><code>gcd(a,0) = a</code></td></tr>
+        <tr><td>Multiple</td><td><code>gcd(ka, kb) = k × gcd(a,b)</code></td></tr>
+        <tr><td>With LCM</td><td><code>gcd(a,b) × lcm(a,b) = a × b</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Concept Check</h3>
+    <div class="card" id="qGcd">
+      <p style="font-size:13px;margin-bottom:8px"><strong>gcd(100, 75) = ?</strong></p>
+      <button class="quiz-opt" onclick="quizCheck('qGcd',this,'✓ Correct! 100=4×25, 75=3×25, so gcd=25','25')">25</button>
+      <button class="quiz-opt" onclick="quizCheck('qGcd',this,'✗ Wrong. 5 divides both but 25 divides both too.','25')">5</button>
+      <button class="quiz-opt" onclick="quizCheck('qGcd',this,'✗ Wrong. 75 does not divide 100.','25')">75</button>
+      <div class="feedback" id="qGcd-fb" style="display:none"></div>
+    </div>
+
+    <hr class="divider">
+    <h3>Interview Tips</h3>
+    <div class="card card-amber">
+      <ul style="font-size:13px;padding-left:1.1rem">
+        <li>Python 3.5+: use <code>math.gcd(a, b)</code> — no need to implement.</li>
+        <li>GCD of an array: fold left — <code>reduce(gcd, arr)</code>.</li>
+        <li>Extended GCD is the basis for modular inverse computation.</li>
+        <li>Bézout's identity: solutions to <code>ax + by = c</code> exist iff <code>gcd(a,b) | c</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== COPRIME ==================== -->
+  <div class="section" id="s-coprime">
+    <div class="section-header">
+      <div class="section-icon" style="background:#FAEEDA;color:#854F0B">C</div>
+      <div><h2 style="margin:0">Coprime Numbers</h2></div>
+    </div>
+
+    <div class="analogy-box">
+      <p><strong>Analogy:</strong> Two gears rotate together cleanly only when their tooth counts share no common factor. Gear designers use coprimality to ensure full mesh patterns.</p>
+    </div>
+
+    <div class="card card-amber">
+      <h3>Definition</h3>
+      <p>Two numbers are <strong>coprime</strong> (relatively prime) if <code>gcd(a, b) = 1</code>.</p>
+      <p style="margin-top:4px">They share no common prime factor. Neither needs to be prime itself.</p>
+      <p style="margin-top:6px"><span class="badge badge-teal">Coprime</span> gcd(8,9)=1, gcd(14,15)=1, gcd(35,36)=1</p>
+      <p style="margin-top:4px"><span class="badge badge-coral">Not Coprime</span> gcd(6,9)=3, gcd(4,6)=2</p>
+    </div>
+
+    <h3>Coprime Checker</h3>
+    <div class="demo-box">
+      <div class="input-row">
+        <label style="font-size:13px;color:var(--color-text-secondary)">a =</label>
+        <input type="number" id="coA" value="14" min="1">
+        <label style="font-size:13px;color:var(--color-text-secondary)">b =</label>
+        <input type="number" id="coB" value="15" min="1">
+        <button class="run-btn" onclick="checkCoprime()">Check</button>
+      </div>
+      <div id="coResult"></div>
+    </div>
+
+    <h3>Euler's Totient Function φ(n)</h3>
+    <div class="card card-amber">
+      <p style="font-size:13px"><code>φ(n)</code> = count of integers in <code>[1, n]</code> that are coprime with <code>n</code>.</p>
+      <pre style="margin-top:8px">φ(p) = p - 1          (p is prime)
+φ(pᵏ) = pᵏ - pᵏ⁻¹
+φ(mn) = φ(m)×φ(n)    (if gcd(m,n)=1)
+
+# General formula
+φ(n) = n × ∏(1 - 1/p)  for all prime p|n</pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="input-row">
+        <label style="font-size:13px;color:var(--color-text-secondary)">φ(n), n =</label>
+        <input type="number" id="phiN" value="12" min="1" max="10000">
+        <button class="run-btn" onclick="calcPhi()">Compute φ</button>
+      </div>
+      <div id="phiResult"></div>
+    </div>
+
+    <pre>def euler_totient(n):
+    result = n
+    p = 2
+    while p * p <= n:
+        if n % p == 0:
+            while n % p == 0:
+                n //= p
+            result -= result // p
+        p += 1
+    if n > 1:
+        result -= result // n
+    return result</pre>
+
+    <h3>Fermat's Little Theorem</h3>
+    <div class="card card-amber">
+      <p style="font-size:13px">If <code>p</code> is prime and <code>gcd(a,p) = 1</code>:</p>
+      <p style="font-size:14px;font-weight:500;margin:6px 0"><code>aᵖ⁻¹ ≡ 1 (mod p)</code></p>
+      <p style="font-size:13px">Modular inverse: <code>a⁻¹ ≡ aᵖ⁻² (mod p)</code></p>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-top:4px">Used everywhere in competitive programming for division under mod.</p>
+    </div>
+
+    <h3>Where Coprimality Appears</h3>
+    <table>
+      <thead><tr><th>Context</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td>RSA encryption</td><td>Key generation uses coprime pairs</td></tr>
+        <tr><td>CRT (Chinese Remainder Theorem)</td><td>Moduli must be pairwise coprime</td></tr>
+        <tr><td>Hash tables</td><td>Table size and step should be coprime</td></tr>
+        <tr><td>Modular inverse</td><td>Exists iff <code>gcd(a,m) = 1</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Concept Check</h3>
+    <div class="card" id="qCo">
+      <p style="font-size:13px;margin-bottom:8px"><strong>Are 35 and 36 coprime?</strong></p>
+      <button class="quiz-opt" onclick="quizCheck('qCo',this,'✓ Yes! 35=5×7, 36=4×9. No shared prime factor.','yes')">Yes</button>
+      <button class="quiz-opt" onclick="quizCheck('qCo',this,'✗ No. gcd(35,36)=1. They share no common factor.','yes')">No</button>
+      <div class="feedback" id="qCo-fb" style="display:none"></div>
+    </div>
+
+    <hr class="divider">
+    <h3>Interview Tips</h3>
+    <div class="card card-amber">
+      <ul style="font-size:13px;padding-left:1.1rem">
+        <li>Consecutive integers are always coprime: <code>gcd(n, n+1) = 1</code>.</li>
+        <li>Euler's theorem generalization: <code>aᵠ⁽ⁿ⁾ ≡ 1 (mod n)</code> when <code>gcd(a,n)=1</code>.</li>
+        <li>CRT: solve simultaneous congruences only when moduli are pairwise coprime.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== BASE CONVERSION ==================== -->
+  <div class="section" id="s-base">
+    <div class="section-header">
+      <div class="section-icon" style="background:#E1F5EE;color:#0F6E56">B</div>
+      <div><h2 style="margin:0">Base Conversion</h2></div>
+    </div>
+
+    <div class="analogy-box">
+      <p><strong>Analogy:</strong> Different languages for the same number. 10 in decimal = "ten". 1010 in binary = still ten. 0xA in hex = still ten. Same quantity, different symbols.</p>
+    </div>
+
+    <div class="card card-teal">
+      <h3>Positional Number Systems</h3>
+      <p style="font-size:13px">A number in base <code>b</code>: each digit <code>dₙ</code> has value <code>dₙ × bⁿ</code>.</p>
+      <pre style="margin-top:6px">1011₂ = 1×2³ + 0×2² + 1×2¹ + 1×2⁰
+       = 8 + 0 + 2 + 1 = 11₁₀</pre>
+    </div>
+
+    <h3>Common Bases</h3>
+    <table>
+      <thead><tr><th>Base</th><th>Digits</th><th>Prefix</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td>Binary (2)</td><td>0–1</td><td><code>0b</code></td><td>CPU, memory, logic</td></tr>
+        <tr><td>Octal (8)</td><td>0–7</td><td><code>0o</code></td><td>Unix permissions</td></tr>
+        <tr><td>Decimal (10)</td><td>0–9</td><td>—</td><td>Human counting</td></tr>
+        <tr><td>Hex (16)</td><td>0–9, A–F</td><td><code>0x</code></td><td>Colors, memory addresses</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Live Converter</h3>
+    <div class="demo-box">
+      <div class="input-row">
+        <label style="font-size:13px;color:var(--color-text-secondary)">Number</label>
+        <input type="text" id="baseNum" value="255" style="width:100px;padding:4px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary)">
+        <label style="font-size:13px;color:var(--color-text-secondary)">From Base</label>
+        <input type="number" id="baseFrom" value="10" min="2" max="36" style="width:55px;padding:4px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary)">
+        <button class="run-btn" onclick="convertBase()">Convert</button>
+      </div>
+      <div id="baseResult"></div>
+    </div>
+
+    <h3>Algorithm: Any Base → Decimal → Any Base</h3>
+    <div class="two-col">
+      <div class="card card-teal">
+        <p class="badge badge-teal">Step 1: To Decimal</p>
+        <pre>def to_dec(num_str, base):
+    val = 0
+    for ch in num_str:
+        d = int(ch, base)
+        val = val * base + d
+    return val</pre>
+      </div>
+      <div class="card card-teal">
+        <p class="badge badge-blue">Step 2: To Target Base</p>
+        <pre>def from_dec(n, base):
+    if n == 0: return "0"
+    digits = []
+    while n:
+        digits.append(
+          "0123456789ABCDEF"
+          [n % base])
+        n //= base
+    return ''.join(
+      reversed(digits))</pre>
+      </div>
+    </div>
+
+    <h3>Binary ↔ Hex Shortcut</h3>
+    <div class="card card-teal">
+      <p style="font-size:13px">Group binary digits in 4s (right to left). Each group = one hex digit.</p>
+      <pre>1111 0011 0101₂
+  F    3    5   = 0xF35</pre>
+    </div>
+
+    <h3>Step-by-Step Dry Run</h3>
+    <div class="demo-box">
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">Converting <strong>42</strong> (decimal) → binary</p>
+      <div id="binTrace">
+        <div class="trace-line">42 ÷ 2 = 21 remainder <span class="highlight">0</span></div>
+        <div class="trace-line">21 ÷ 2 = 10 remainder <span class="highlight">1</span></div>
+        <div class="trace-line">10 ÷ 2 = 5  remainder <span class="highlight">0</span></div>
+        <div class="trace-line">5  ÷ 2 = 2  remainder <span class="highlight">1</span></div>
+        <div class="trace-line">2  ÷ 2 = 1  remainder <span class="highlight">0</span></div>
+        <div class="trace-line">1  ÷ 2 = 0  remainder <span class="highlight">1</span></div>
+        <div style="margin-top:6px;font-size:13px">Read remainders <strong>bottom to top</strong>: <span class="big-result">101010₂</span></div>
+      </div>
+    </div>
+
+    <h3>Concept Check</h3>
+    <div class="card" id="qBase">
+      <p style="font-size:13px;margin-bottom:8px"><strong>What is 0xFF in decimal?</strong></p>
+      <button class="quiz-opt" onclick="quizCheck('qBase',this,'✓ Correct! F=15, 0xFF = 15×16 + 15 = 255','255')">255</button>
+      <button class="quiz-opt" onclick="quizCheck('qBase',this,'✗ Wrong. FF in hex = 15×16 + 15 = 255','255')">256</button>
+      <button class="quiz-opt" onclick="quizCheck('qBase',this,'✗ Wrong. 0xFF is 255 in decimal','255')">128</button>
+      <div class="feedback" id="qBase-fb" style="display:none"></div>
+    </div>
+
+    <hr class="divider">
+    <h3>Interview Tips</h3>
+    <div class="card card-amber">
+      <ul style="font-size:13px;padding-left:1.1rem">
+        <li>Python built-ins: <code>bin(n)</code>, <code>oct(n)</code>, <code>hex(n)</code>, <code>int('FF', 16)</code>.</li>
+        <li>Bit tricks: <code>n &amp; (n-1)</code> clears lowest set bit; <code>n &amp; (-n)</code> isolates it.</li>
+        <li>Check power of 2: <code>n &amp; (n-1) == 0</code>.</li>
+        <li>Base-26 encoding commonly appears in Excel column naming problems.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== POLYNOMIALS ==================== -->
+  <div class="section" id="s-poly">
+    <div class="section-header">
+      <div class="section-icon" style="background:#FAECE7;color:#993C1D">P</div>
+      <div><h2 style="margin:0">Polynomials</h2></div>
+    </div>
+
+    <div class="analogy-box">
+      <p><strong>Analogy:</strong> A polynomial is a recipe. Each term is an ingredient with a quantity (coefficient) and a "serving size multiplier" (power of x). Evaluating it means: "how much total given x = amount?"</p>
+    </div>
+
+    <div class="card card-coral">
+      <h3>Definition</h3>
+      <p style="font-size:13px"><code>P(x) = aₙxⁿ + aₙ₋₁xⁿ⁻¹ + ... + a₁x + a₀</code></p>
+      <p style="margin-top:6px;font-size:13px"><span class="badge badge-coral">Degree</span> highest power with non-zero coefficient</p>
+      <p style="font-size:13px;margin-top:4px"><span class="badge badge-blue">Leading term</span> term with highest degree</p>
+    </div>
+
+    <h3>Polynomial Evaluator</h3>
+    <div class="demo-box">
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">Enter coefficients (highest degree first, space separated)</p>
+      <div class="input-row">
+        <label style="font-size:13px;color:var(--color-text-secondary)">Coefficients</label>
+        <input type="text" id="polyCoeffs" value="1 -3 2" style="width:130px;padding:4px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary)">
+        <label style="font-size:13px;color:var(--color-text-secondary)">x =</label>
+        <input type="number" id="polyX" value="2" style="width:60px;padding:4px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary)">
+        <button class="run-btn" onclick="evalPoly()">Evaluate</button>
+      </div>
+      <div id="polyResult"></div>
+    </div>
+
+    <h3>Horner's Method — O(n)</h3>
+    <div class="card card-coral">
+      <p style="font-size:13px">Rewrite to minimize multiplications: no need to compute x², x³...</p>
+      <pre>P(x) = a₀ + x(a₁ + x(a₂ + x(a₃)))
+
+def horner(coeffs, x):
+    # coeffs: [a_n, ..., a_1, a_0]
+    result = 0
+    for c in coeffs:
+        result = result * x + c
+    return result</pre>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-top:6px">Naive: O(n²) multiplications. Horner: O(n). Same answer, much faster.</p>
+    </div>
+
+    <h3>Polynomial Operations</h3>
+    <table>
+      <thead><tr><th>Operation</th><th>Complexity</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Add / Subtract</td><td>O(n)</td><td>Add same-degree coefficients</td></tr>
+        <tr><td>Multiply (naive)</td><td>O(n²)</td><td>Convolve coefficients</td></tr>
+        <tr><td>Multiply (FFT)</td><td>O(n log n)</td><td>Fast Fourier Transform</td></tr>
+        <tr><td>Evaluate</td><td>O(n)</td><td>Horner's method</td></tr>
+        <tr><td>GCD of polynomials</td><td>O(n²)</td><td>Euclidean algorithm adapted</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Polynomial Hashing</h3>
+    <div class="card card-coral">
+      <p style="font-size:13px">Treat a string as a polynomial: each character is a coefficient.</p>
+      <pre>hash("abc") = a×p² + b×p + c  (mod M)
+
+# Rolling hash for substring matching
+def poly_hash(s, p=31, m=10**9+7):
+    h, pw = 0, 1
+    for ch in s:
+        h = (h + (ord(ch)-96) * pw) % m
+        pw = pw * p % m
+    return h</pre>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-top:6px">Powers of p and mod prevent collision. Used in Rabin-Karp string matching.</p>
+    </div>
+
+    <h3>Polynomial Interpolation</h3>
+    <div class="card card-coral">
+      <p style="font-size:13px"><strong>Lagrange:</strong> Given n+1 points, exactly one degree-n polynomial passes through all of them.</p>
+      <pre>L(x) = Σᵢ yᵢ × ∏ⱼ≠ᵢ (x - xⱼ)/(xᵢ - xⱼ)</pre>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-top:4px">Used in: secret sharing, error-correcting codes, numerical integration.</p>
+    </div>
+
+    <h3>Dry Run — Polynomial Multiplication</h3>
+    <div class="demo-box">
+      <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px"><strong>(x + 2)(x + 3) = x² + 5x + 6</strong></p>
+      <div class="trace-line">Coefficients A: [1, 2]  → x + 2</div>
+      <div class="trace-line">Coefficients B: [1, 3]  → x + 3</div>
+      <div class="trace-line" style="margin-top:6px">result[0+0] += 1×1 = <span class="highlight">1</span>  → x²</div>
+      <div class="trace-line">result[0+1] += 1×3 = <span class="highlight">3</span>  → x¹</div>
+      <div class="trace-line">result[1+0] += 2×1 = <span class="highlight">2</span>  → x¹ (add to 3 → 5)</div>
+      <div class="trace-line">result[1+1] += 2×3 = <span class="highlight">6</span>  → x⁰</div>
+      <div style="margin-top:6px;font-size:13px">Result: <span class="big-result">[1, 5, 6]</span> = x² + 5x + 6 ✓</div>
+    </div>
+
+    <h3>Concept Check</h3>
+    <div class="card" id="qPoly">
+      <p style="font-size:13px;margin-bottom:8px"><strong>Horner eval of [2, -1, 3] at x=2 (i.e. 2x² - x + 3)?</strong></p>
+      <button class="quiz-opt" onclick="quizCheck('qPoly',this,'✓ Correct! 2×4 - 2 + 3 = 8-2+3=9. Horner: ((2×2)-1)×2+3 = 3×2+3=9','9')">9</button>
+      <button class="quiz-opt" onclick="quizCheck('qPoly',this,'✗ Wrong. 2(4)-2+3=9, not 13','9')">13</button>
+      <button class="quiz-opt" onclick="quizCheck('qPoly',this,'✗ Wrong. Recompute: 2×4=8, 8-2=6, 6+3=9','9')">6</button>
+      <div class="feedback" id="qPoly-fb" style="display:none"></div>
+    </div>
+
+    <hr class="divider">
+    <h3>Interview Tips</h3>
+    <div class="card card-amber">
+      <ul style="font-size:13px;padding-left:1.1rem">
+        <li>Polynomial hashing is the foundation of Rabin-Karp and rolling hash problems.</li>
+        <li>Always apply mod to prevent overflow in hash computations.</li>
+        <li>Polynomial multiplication = string/array convolution — often solved with FFT in competitive programming.</li>
+        <li>Lagrange interpolation appears in secret sharing (Shamir's scheme).</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function setSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tn-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector(`[data-target="${id}"]`).classList.add('active');
+}
+document.getElementById('topicNav').addEventListener('click',e=>{
+  if(e.target.dataset.target) setSection(e.target.dataset.target);
+});
+
+function calcMod(){
+  const a=parseInt(document.getElementById('modA').value)||0;
+  const m=parseInt(document.getElementById('modM').value)||1;
+  if(m===0){document.getElementById('modResult').innerHTML='<span style="color:var(--color-text-danger)">Modulo by 0 is undefined</span>';return;}
+  const q=Math.trunc(a/m), r=((a%m)+m)%m;
+  document.getElementById('modResult').innerHTML=
+    `<div style="font-size:13px;margin-top:4px">${a} = ${q} × ${m} + <span style="color:#185FA5;font-weight:500">${r}</span></div><div class="big-result">${a} % ${m} = ${r}</div>`;
+}
+calcMod();
+
+function modPow(a,n,m){let r=1;a=((a%m)+m)%m;while(n>0){if(n&1)r=r*a%m;n>>=1;a=a*a%m;}return r;}
+function calcExp(){
+  const a=parseInt(document.getElementById('expA').value)||2;
+  const n=parseInt(document.getElementById('expN').value)||0;
+  const m=parseInt(document.getElementById('expM').value)||1000;
+  const res=modPow(a,n,m);
+  document.getElementById('expResult').innerHTML=`<div class="big-result">${a}^${n} % ${m} = ${res}</div>`;
+}
+calcExp();
+
+function checkPrime(){
+  const n=parseInt(document.getElementById('primeN').value)||2;
+  if(n<2){document.getElementById('primeResult').innerHTML='<span style="font-size:13px;color:var(--color-text-secondary)">Enter n ≥ 2</span>';return;}
+  let isPrime=true,factor=0;
+  for(let i=2;i<=Math.sqrt(n);i++){if(n%i===0){isPrime=false;factor=i;break;}}
+  const el=document.getElementById('primeResult');
+  if(isPrime) el.innerHTML=`<div style="font-size:14px;color:#0F6E56;font-weight:500;margin-top:6px">${n} is PRIME</div>`;
+  else el.innerHTML=`<div style="font-size:14px;color:#993C1D;font-weight:500;margin-top:6px">${n} is COMPOSITE — ${n} = ${factor} × ${n/factor}</div>`;
+}
+checkPrime();
+
+function runSieve(){
+  const n=parseInt(document.getElementById('sieveN').value)||50;
+  const ip=new Array(n+1).fill(true);ip[0]=ip[1]=false;
+  for(let p=2;p<=Math.sqrt(n);p++) if(ip[p]) for(let m=p*p;m<=n;m+=p) ip[m]=false;
+  const g=document.getElementById('sieveGrid');g.innerHTML='';
+  for(let i=2;i<=n;i++){
+    const d=document.createElement('div');
+    d.style.cssText=`width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:11px;font-weight:500;`;
+    if(ip[i]){d.style.background='#E1F5EE';d.style.color='#0F6E56';d.style.border='0.5px solid #9FE1CB';}
+    else{d.style.background='var(--color-background-secondary)';d.style.color='var(--color-text-secondary)';d.style.border='0.5px solid var(--color-border-tertiary)';}
+    d.textContent=i;g.appendChild(d);
+  }
+}
+runSieve();
+
+function gcdCalc(a,b){while(b){[a,b]=[b,a%b];}return a;}
+function traceGCD(){
+  let a=parseInt(document.getElementById('gcdA').value)||48;
+  let b=parseInt(document.getElementById('gcdB').value)||18;
+  const el=document.getElementById('gcdTrace');el.innerHTML='';
+  let steps=[];
+  let aa=a,bb=b;
+  while(bb){const r=aa%bb;steps.push(`gcd(${aa}, ${bb}) → ${aa} % ${bb} = <span class="highlight">${r}</span>`);aa=bb;bb=r;}
+  steps.push(`gcd(${aa}, 0) = <span class="highlight" style="font-size:16px">${aa}</span>`);
+  el.innerHTML=steps.map(s=>`<div class="trace-line">${s}</div>`).join('')+`<div class="big-result">gcd(${a},${b}) = ${gcdCalc(a,b)}</div>`;
+}
+traceGCD();
+
+function checkCoprime(){
+  const a=parseInt(document.getElementById('coA').value)||14;
+  const b=parseInt(document.getElementById('coB').value)||15;
+  const g=gcdCalc(a,b);
+  const el=document.getElementById('coResult');
+  if(g===1) el.innerHTML=`<div style="font-size:14px;color:#0F6E56;font-weight:500;margin-top:6px">gcd(${a},${b}) = 1 — They ARE coprime!</div>`;
+  else el.innerHTML=`<div style="font-size:14px;color:#993C1D;font-weight:500;margin-top:6px">gcd(${a},${b}) = ${g} — NOT coprime</div>`;
+}
+checkCoprime();
+
+function calcPhi(){
+  let n=parseInt(document.getElementById('phiN').value)||12;
+  let orig=n,result=n,p=2;
+  while(p*p<=n){if(n%p===0){while(n%p===0)n=Math.floor(n/p);result-=Math.floor(result/p);}p++;}
+  if(n>1) result-=Math.floor(result/n);
+  const coprimes=[];for(let i=1;i<=orig;i++) if(gcdCalc(i,orig)===1) coprimes.push(i);
+  document.getElementById('phiResult').innerHTML=`<div class="big-result">φ(${orig}) = ${result}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:4px">Coprime integers: {${coprimes.slice(0,12).join(', ')}${coprimes.length>12?'...':''}}</div>`;
+}
+calcPhi();
+
+function convertBase(){
+  const numStr=document.getElementById('baseNum').value.trim().toUpperCase();
+  const fromBase=parseInt(document.getElementById('baseFrom').value)||10;
+  try{
+    const dec=parseInt(numStr,fromBase);
+    if(isNaN(dec)){document.getElementById('baseResult').innerHTML='<span style="color:#993C1D;font-size:13px">Invalid number for given base</span>';return;}
+    const toBases=[[2,'Binary'],[8,'Octal'],[10,'Decimal'],[16,'Hex']];
+    let html='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">';
+    toBases.forEach(([b,label])=>{
+      let s=dec.toString(b).toUpperCase();
+      if(b===16) s='0x'+s;
+      else if(b===2) s=s+'₂';
+      else if(b===8) s=s+'₈';
+      html+=`<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 10px;"><div style="font-size:11px;color:var(--color-text-secondary)">${label}</div><div style="font-size:14px;font-weight:500;font-family:var(--font-mono)">${s}</div></div>`;
+    });
+    html+='</div>';
+    document.getElementById('baseResult').innerHTML=html;
+  }catch(e){document.getElementById('baseResult').innerHTML='<span style="color:#993C1D;font-size:13px">Conversion error</span>';}
+}
+convertBase();
+
+function evalPoly(){
+  const coeffs=document.getElementById('polyCoeffs').value.trim().split(/\s+/).map(Number);
+  const x=parseFloat(document.getElementById('polyX').value)||0;
+  let result=0,steps=[];
+  for(let c of coeffs){result=result*x+c;steps.push(`result = ${result.toFixed(4).replace(/\.?0+$/,'')}`);}
+  const el=document.getElementById('polyResult');
+  el.innerHTML=`<div class="big-result">P(${x}) = ${result}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:4px">Horner steps: ${steps.join(' → ')}</div>`;
+}
+evalPoly();
+
+function quizCheck(qid,btn,msg,correct){
+  const btns=document.querySelectorAll(`#${qid} .quiz-opt`);
+  btns.forEach(b=>b.disabled=true);
+  const isCorrect=btn.textContent===correct;
+  btn.classList.add(isCorrect?'correct':'wrong');
+  const fb=document.getElementById(`${qid}-fb`);
+  fb.style.display='block';
+  fb.className='feedback '+(isCorrect?'ok':'err');
+  fb.textContent=msg;
+}
+</script>
