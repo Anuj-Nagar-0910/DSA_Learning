@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Tree Inorder Search Notes</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 0; }
+        code { background: #f8f8f8; padding: 2px 5px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; color: #e74c3c; }
+        pre { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 8px; overflow-x: auto; position: relative; }
+        .keyword { color: #fd79a8; }
+        .comment { color: #636e72; font-style: italic; }
+        .function { color: #fab1a0; }
+        .important { border-left: 5px solid #f1c40f; background: #fef9e7; padding: 15px; margin: 15px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; }
+        th { background-color: #3498db; color: white; }
+        tr:hover { background-color: #f1f1f1; cursor: pointer; }
+        .highlight-row { background-color: #e8f4fd !important; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Binary Tree: Inorder Search Logic</h1>
+        <p>Searching in a Binary Tree (not necessarily a BST) requires visiting nodes. Using <strong>Inorder</strong> means we check the <code>Left Child</code>, then the <code>Current Node</code>, then the <code>Right Child</code>.</p>
+        
+        <div class="important">
+            <strong>Key Concept: Short-Circuiting</strong><br>
+            To be efficient, if we find the value in the left subtree, we stop and return <code>True</code> immediately without checking the root or the right subtree.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>The Code</h2>
+        <pre>
+<span class="keyword">def</span> <span class="function">inorder_search</span>(node, target):
+    <span class="comment"># Base Case: Reach a leaf's child</span>
+    <span class="keyword">if</span> node <span class="keyword">is</span> None:
+        <span class="keyword">return</span> <span class="keyword">False</span>
+
+    <span class="comment"># 1. Search Left</span>
+    <span class="keyword">if</span> inorder_search(node.left, target):
+        <span class="keyword">return</span> <span class="keyword">True</span>
+
+    <span class="comment"># 2. Check Current</span>
+    <span class="keyword">if</span> node.val == target:
+        <span class="keyword">return</span> <span class="keyword">True</span>
+
+    <span class="comment"># 3. Search Right</span>
+    <span class="keyword">return</span> inorder_search(node.right, target)</pre>
+    </div>
+
+    <div class="card">
+        <h2>Interactive Dry Run (Target: 4)</h2>
+        <p>Click a row to see the state.</p>
+        <table id="dryRunTable">
+            <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Call</th>
+                    <th>Action</th>
+                    <th>Return</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick="highlight(this)">
+                    <td>1</td>
+                    <td>search(5, 4)</td>
+                    <td>Go Left</td>
+                    <td>Pending</td>
+                </tr>
+                <tr onclick="highlight(this)">
+                    <td>2</td>
+                    <td>search(1, 4)</td>
+                    <td>Check Value (1 != 4)</td>
+                    <td>False</td>
+                </tr>
+                <tr onclick="highlight(this)">
+                    <td>3</td>
+                    <td>search(5, 4)</td>
+                    <td>Left failed. Check 5 == 4?</td>
+                    <td>No</td>
+                </tr>
+                <tr onclick="highlight(this)">
+                    <td>4</td>
+                    <td>search(5, 4)</td>
+                    <td>Go Right -> search(3, 4)</td>
+                    <td>Pending</td>
+                </tr>
+                <tr onclick="highlight(this)">
+                    <td>5</td>
+                    <td>search(3, 4)</td>
+                    <td>Go Left -> search(4, 4)</td>
+                    <td>Pending</td>
+                </tr>
+                <tr onclick="highlight(this)">
+                    <td>6</td>
+                    <td>search(4, 4)</td>
+                    <td><strong>Check 4 == 4?</strong></td>
+                    <td><strong>True</strong></td>
+                </tr>
+                <tr onclick="highlight(this)">
+                    <td>7</td>
+                    <td>search(3, 4)</td>
+                    <td>Propagate True from Left</td>
+                    <td>True</td>
+                </tr>
+                <tr onclick="highlight(this)">
+                    <td>8</td>
+                    <td>search(5, 4)</td>
+                    <td>Propagate True from Right</td>
+                    <td>True</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function highlight(row) {
+            const rows = document.querySelectorAll('tr');
+            rows.forEach(r => r.classList.remove('highlight-row'));
+            row.classList.add('highlight-row');
+        }
+    </script>
+</body>
+</html>
